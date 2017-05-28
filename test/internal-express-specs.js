@@ -18,11 +18,13 @@ let should = chai.should();
 let fs = require('fs');
 let t = require('t-motion-detector');
 let ent = require('../Entities');
-let main = require('../main.js');
+let main = require('../main');
 let events = require('events');
 let express = require('express');
 let chaiHttp = require('chai-http');
 let expect = chai.expect;
+let motion = main.md;
+let Entities = motion.Entities;
 
 
 //Chai will use promises for async events
@@ -60,11 +62,33 @@ describe('Before: ', () => {
       });
     });
 
-    it('1st test', function () {
+    it('when I pass a custom config file, the app should know whats my current working directory.', function () {
       //Prepare
-      should.fail();
+      let alternativeConfig = new motion.Config("/test/config_express_test.js");
+      alternativeConfig.isFallback().should.equal(false);
+      alternativeConfig.cwd().should.equal(process.cwd() + "/");
     });
-    it('2nd test', function () {
+
+    it('when I request for the list of Motion detectors I should get it', function (done) {
+      //Prepare
+      let alternativeConfig = new motion.Config("test/config_express_test.js");
+      motion.StartWithConfig(alternativeConfig);
+
+      let detectors = motion.GetMotionDetectors();
+      detectors.length.should.equal(1);
+      let pirDetector = detectors[0];
+      alternativeConfig.isFallback().should.equal(false);
+      pirDetector.name.should.equal("unnamed detector.");
+      //Assert
+      chai.request(main)
+        .get('/config/detectors')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.eql({message: [{ PIRMotiondetector: { name: pirDetector.name, pin: pirDetector.pin } }]});
+          done();
+      });
+    });
+    it('when I request for the list of Notifiers I should get it', function () {
       //Prepare
       should.fail();
     });

@@ -3,7 +3,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "request": "^2.81.0",
-    "t-motion-detector": "^0.2.8"
+    "t-motion-detector": "latest"
   },
   "devDependencies": {
     "chai": "*",
@@ -14,5 +14,5 @@
   "name": "t-motion-detector-cli",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.1.1"
+  "version": "0.1.2"
 }

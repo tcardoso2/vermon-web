@@ -31,17 +31,13 @@ after(function(done) {
   done();
 });
 
-describe("After installing a new t-motion-detector, ", function() {
-  it('a setup executable should run/exist (postinstall)', function () {
+describe("After installing a new t-motion-detector-cli", function() {
+  it('a setup page should exist', function () {
     //Prepare
 
     should.fail();
   });
-  it('should prompt if the user wishes to exit or setup', function () {
-    //Prepare
-    should.fail();
-  });
-  it('should allow the user set options from a list (e.g. slack, raspbian camera, etc)', function () {
+  it('it should be possible for the user to exit that page', function () {
     //Prepare
     should.fail();
   });

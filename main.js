@@ -1,4 +1,5 @@
-let m = require('t-motion-detector');
+let md = require('t-motion-detector');
+let log = md.Log;
 let ent = require('./Entities.js');
 
 let express = require('express');
@@ -7,15 +8,19 @@ let app = express();
 let morgan = require('morgan');*/
 let bodyParser = require('body-parser');
 let port = 3300;
-/*let book = require('./app/routes/book');
-let config = require('config'); //we load the db location from the JSON files
 
+log.info("Starting t-motion-detector-cli web app...");
+
+/*
+//TODO: Create routes in future
+let item = require('./app/routes/route1');
+let config = require('config'); //we load the db location from the JSON files
 
 //db options
 let options = { 
-                server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }, 
-                replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } } 
-              }; 
+  server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }, 
+  replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } } 
+}; 
 
 //db connection      
 mongoose.connect(config.DBHost, options);
@@ -28,7 +33,7 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
     app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
 }*/
 
-//parse application/json and look for raw text                                        
+//parse application/json and look for raw text
 app.use(bodyParser.json());                                     
 app.use(bodyParser.urlencoded({extended: true}));               
 app.use(bodyParser.text());                                    
@@ -36,15 +41,17 @@ app.use(bodyParser.json({ type: 'application/json'}));
 
 app.get("/", (req, res) => res.json({message: "Welcome!"}));
 
-/*app.route("/book")
-    .get(book.getBooks)
-    .post(book.postBook);
-app.route("/book/:id")
-    .get(book.getBook)
-    .delete(book.deleteBook)
-    .put(book.updateBook);
+/*app.route("/route1")
+    .get(item.getItems)
+    .post(item.postItem);
+app.route("/route1/:id")
+    .get(item.getItem)
+    .delete(item.deleteItem)
+    .put(item.updateItem);
 */
 app.listen(port);
-console.log("Listening on port " + port);
+log.info("Listening on port " + port);
 
 module.exports = app; // for testing
+app.md = md;
+app.Log = log;
