@@ -32,13 +32,9 @@ after(function(done) {
 });
 
 describe("After installing a new t-motion-detector-cli", function() {
-  it('a setup page should exist', function () {
+  it('a setup web-page should exist', function () {
     //Prepare
 
-    should.fail();
-  });
-  it('it should be possible for the user to exit that page', function () {
-    //Prepare
     should.fail();
   });
 });
