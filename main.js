@@ -41,6 +41,9 @@ app.use(bodyParser.json({ type: 'application/json'}));
 
 app.get("/", (req, res) => res.json({message: "Welcome!"}));
 
+//Serve content from public folder as static
+app.use(express.static('public'))
+
 /*app.route("/route1")
     .get(item.getItems)
     .post(item.postItem);

@@ -41,6 +41,7 @@ after(function(done) {
   done();
 });
 
+var mainEnv;
 //Our parent block
 describe('Before: ', () => {
     beforeEach((done) => { //Before each test we empty the database
@@ -51,6 +52,7 @@ describe('Before: ', () => {
   /*
   * Test the /GET route
   */
+
   describe("After starting express", function() {
     it('it should GET a Welcome message', (done) => {
       chai.request(main)
@@ -78,21 +80,16 @@ describe('Before: ', () => {
   describe("When starting t-motion with an ExpressNotifier", function(){
     
     it('it should start a web-server at default port 8080', function (done) {
-      let n = new ent.ExpressNotifier() 
-      if(motion.AddNotifier(n))
-      {
-        let app = n.getWebApp();
-        chai.request(app)
-          .get('/')
-          .end((err, res) => {
-            n.getPort().should.equal(8080)
-            res.should.have.status(200);
-            done();
+      mainEnv = new ent.ExpressEnvironment() 
+      motion.Start({ environment: mainEnv});
+      let app = mainEnv.getWebApp();
+      chai.request(app)
+        .get('/')
+        .end((err, res) => {
+          mainEnv.getPort().should.equal(8080)
+          res.should.have.status(200);
+          done();
         });
-      }
-      else{
-        should.fail();
-      }
     });
     
     it('it should be able to start a server if I declare the ExpressNotifier via Config file', function (done) {
@@ -107,24 +104,73 @@ describe('Before: ', () => {
 
     it('should be able to take the first parameter in the constructor as being the port', function () {
       let n2 = new ent.ExpressNotifier(8033) 
-      if(motion.AddNotifier(n2))
-      {
-        let app2 = n2.getWebApp();
-        chai.request(app2)
-          .get('/')
-          .end((err, res) => {
-            n2.getPort().should.equal(8033)
-            res.should.have.status(200);
-            done();
+      motion.Start({ environment: e});
+      let app2 = n2.getWebApp();
+      chai.request(app)
+        .get('/')
+        .end((err, res) => {
+          n2.getPort().should.equal(8033)
+          res.should.have.status(200);
+          done();
+          n2.stop();
         });
-      }
-      else{
-        should.fail();
-      }
     });
 
     it('it should be able to serve static content', function (done) {
-      should.fail();
+      //In this test we are just reusing the same server
+      let app = mainEnv.getWebApp();
+      mainEnv.setStatic('public');
+      chai.request(app)
+        .get('/test.html')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.should.equal("This is a test file!");
+          done();
+        });
+    });
+
+    it('js folder should exist with angular.js library', function (done) {
+      //In this test we are just reusing the same server
+      let app = mainEnv.getWebApp();
+      chai.request(app)
+        .get('/js/angular.min.js')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+
+    it('main index html file should exist', function (done) {
+      //In this test we are just reusing the same server
+      let app = mainEnv.getWebApp();
+      chai.request(app)
+        .get('/index.html')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+
+    it('js folder should exist with angular.js library', function (done) {
+      //In this test we are just reusing the same server
+      let app = mainEnv.getWebApp();
+      chai.request(app)
+        .get('/js/angular.min.js')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+
+    it('js folder should exist with app.js client library for Model and controller', function (done) {
+      //In this test we are just reusing the same server
+      let app = mainEnv.getWebApp();
+      chai.request(app)
+        .get('/js/app.js')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
     });
 
     it('when I request for the list of Motion detectors I should get it', function (done) {
