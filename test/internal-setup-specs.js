@@ -34,7 +34,11 @@ after(function(done) {
 describe("After installing a new t-motion-detector-cli", function() {
   it('a setup web-page should exist', function () {
     //Prepare
-
-    should.fail();
+    chai.request(main)
+      .get('/setup')
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+    });
   });
 });

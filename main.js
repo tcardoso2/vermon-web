@@ -9,7 +9,14 @@ let morgan = require('morgan');*/
 let bodyParser = require('body-parser');
 let port = 3300;
 
+md.Reset();
 log.info("Starting t-motion-detector-cli web app...");
+
+function Start(){
+  md.Start({
+    environment: mainEnv
+  });
+}
 
 /*
 //TODO: Create routes in future
@@ -42,7 +49,7 @@ app.use(bodyParser.json({ type: 'application/json'}));
 app.get("/", (req, res) => res.json({message: "Welcome!"}));
 
 //Serve content from public folder as static
-app.use(express.static('public'))
+//app.use(express.static('public'))
 
 /*app.route("/route1")
     .get(item.getItems)
@@ -52,9 +59,26 @@ app.route("/route1/:id")
     .delete(item.deleteItem)
     .put(item.updateItem);
 */
-app.listen(port);
+//app.listen(port);
+
+mainEnv = new ent.ExpressEnvironment(port);
+Start();
+let routeDConfig = new ent.RequestDetector("My route for detectors", "/config/detectors", (req, res) => {
+  res.json(t.GetMotionDetectors());
+});
+routeDConfig.name = "Config Route for Detectors";
+md.AddDetector(routeDConfig);
+
+let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/notifiers", (req, res) => {
+  res.json(t.GetNotifiers());
+});
+routeNConfig.name = "Config Route for Notifiers";
+md.AddDetector(routeNConfig);
+
 log.info("Listening on port " + port);
+console.log("Started.");
 
 module.exports = app; // for testing
 app.md = md;
 app.Log = log;
+app.Start = Start;
