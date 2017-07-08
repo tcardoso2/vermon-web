@@ -16,16 +16,16 @@ class ExpressEnvironment extends ent.Environment{
     super();
     this.port = port ? port : defaultPort;
     //Sets up a default route
-    app.use(express.static('public'))
-    app.get("/", (req, res) => res.json({message: "Welcome to T-Motion-CLI Web server!"}));
-    //Sets up the routes for the services
-    /*app.get("/config/detectors", (req, res) => {
-      console.log("Showing detectors of:", m.GetEnvironment().name);
-      res.json(m.GetMotionDetectors());
-    });*/
+    app.use(express.static('public'));
+    let e = this;
+    app.get("/welcome", (req, res) => {
+      e.addChange(req.url);
+      res.json({message: "Welcome to T-Motion-CLI Web server!"});
+    });
+
     this.server = app.listen(this.port);
   }
-
+  
   setStatic(path)
   {
   	app.use(express.static(path));
@@ -40,9 +40,14 @@ class ExpressEnvironment extends ent.Environment{
   //Only when Detector is binded, it is added to the app
   bindDetector(md, notifiers){
 
-    super.bindDetector(md, notifiers)
+    super.bindDetector(md, notifiers);
+    let e = this;
   	if(md instanceof RequestDetector) {
-  	  app.get(md.route, md.handler);
+  	  console.log("Adding route: ", md.route);
+  	  app.get(md.route, (req, res) => {
+  	  	md.send(req.url, e);;
+  	  	md.handler(req, res);
+  	  });
   	}
   }
 

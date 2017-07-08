@@ -2,8 +2,8 @@ let md = require('t-motion-detector');
 let log = md.Log;
 let ent = require('./Entities.js');
 
-let express = require('express');
-let app = express();
+//let express = require('express');
+//let app = express();
 /*let mongoose = require('mongoose');
 let morgan = require('morgan');*/
 let bodyParser = require('body-parser');
@@ -18,6 +18,10 @@ function Start(){
   });
 }
 
+mainEnv = new ent.ExpressEnvironment(port);
+Start();
+
+let app = mainEnv.getWebApp();
 /*
 //TODO: Create routes in future
 let item = require('./app/routes/route1');
@@ -46,7 +50,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());                                    
 app.use(bodyParser.json({ type: 'application/json'}));  
 
-app.get("/", (req, res) => res.json({message: "Welcome!"}));
+//app.get("/", (req, res) => res.json({message: "Welcome!"}));
 
 //Serve content from public folder as static
 //app.use(express.static('public'))
@@ -61,22 +65,25 @@ app.route("/route1/:id")
 */
 //app.listen(port);
 
-mainEnv = new ent.ExpressEnvironment(port);
-Start();
 let routeDConfig = new ent.RequestDetector("My route for detectors", "/config/detectors", (req, res) => {
-  res.json(t.GetMotionDetectors());
+  res.json(md.GetMotionDetectors());
 });
 routeDConfig.name = "Config Route for Detectors";
 md.AddDetector(routeDConfig);
 
 let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/notifiers", (req, res) => {
-  res.json(t.GetNotifiers());
+  res.json(md.GetNotifiers());
 });
 routeNConfig.name = "Config Route for Notifiers";
 md.AddDetector(routeNConfig);
 
 log.info("Listening on port " + port);
 console.log("Started.");
+
+//TO DELETE
+let key = new md.Config().slackHook();
+let n = new md.Extensions.SlackNotifier("My slack notifier", key);
+md.AddNotifier(n);
 
 module.exports = app; // for testing
 app.md = md;

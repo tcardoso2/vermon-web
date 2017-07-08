@@ -54,12 +54,12 @@ describe('Before the test...', () => {
   */
 
   describe("After starting express from main", function() {
-    it('I should GET a Welcome message, on the root path', (done) => {
+    it('I should GET a Welcome message, on the welcome path', (done) => {
       chai.request(main)
-        .get('/')
+        .get('/welcome')
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.eql({message: 'Welcome!'});
+          res.body.should.be.eql({message: 'Welcome to T-Motion-CLI Web server!'});
           done();
       });
     });
@@ -71,11 +71,10 @@ describe('Before the test...', () => {
         .get('/config/detectors')
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.eql({message: 'Welcome!'});
+          res.body.length.should.equal(2);
           done();
       });
     });
-
     
     it('After Reseting the environment, if I try to get the environment without initializing after Reset, I should get an error that Environment does not exist.', function () {
       //Prepare
@@ -271,7 +270,7 @@ describe('Before the test...', () => {
       d.length.should.equal(2);
       let app2 = myEnv.getWebApp();
       chai.request(app2)
-        .get('/config/detectors1')
+        .get('/config/detectors2')
         .end((err, res) => {
           myEnv.stop();
           res.should.have.status(200);

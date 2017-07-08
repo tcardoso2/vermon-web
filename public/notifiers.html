@@ -7,14 +7,12 @@
     <script src="js/angular.min.js"></script>
     <script src="js/app.js"></script>
   </head>
-  <body ng-controller="MotionDetectorController">
+  <body ng-controller="NotifierController">
 
-  <h2>List of Motion Detectors:</h2>
+  <h2>List of Notifiers:</h2>
   <ul>
     <li ng-repeat="detector in detectors">
-      <span>Name: {{detector.name}}</span>
-      <p>Filters: {{detector.filters}}</p>
-      <p>Is Active: {{detector._isActive}}</p>
+      <span>Name: {{notifier.name}}</span>
     </li>
   </ul>
 

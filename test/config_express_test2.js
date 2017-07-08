@@ -1,14 +1,14 @@
 profiles = {
   default: {
   	ExpressEnvironment: {
-      port: 8776      
+      port: 8777    
     },
   	PIRMotionDetector: {
       pin: 17
     },
     RequestDetector: {
       name: "My Detectors Route",
-      route: "/config/detectors1",
+      route: "/config/detectors2",
       callback: (req, res)=>{ res.json(this.md); }
     },
 	  SlackNotifier: {
