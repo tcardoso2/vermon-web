@@ -274,8 +274,7 @@ describe('Before the test...', () => {
         .end((err, res) => {
           myEnv.stop();
           res.should.have.status(200);
-          res.body.should.be.eql({});
-          res.length.should.equal(d.length);
+          res.body.length.should.equal(d.length);
           done();
         });
     });

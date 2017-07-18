@@ -1,6 +1,6 @@
 let md = require('t-motion-detector');
 let log = md.Log;
-let ent = require('./Entities.js');
+let ent = require('./Entities');
 
 //let express = require('express');
 //let app = express();
@@ -65,20 +65,16 @@ app.route("/route1/:id")
 */
 //app.listen(port);
 
-let routeDConfig = new ent.RequestDetector("My route for detectors", "/config/detectors", (req, res) => {
-  res.json(md.GetMotionDetectors());
-});
+let routeDConfig = new ent.RequestDetector("My route for detectors", "/config/detectors", "GetMotionDetectors");
 routeDConfig.name = "Config Route for Detectors";
 md.AddDetector(routeDConfig);
 
-let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/notifiers", (req, res) => {
-  res.json(md.GetNotifiers());
-});
+let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/notifiers", "GetNotifiers");
 routeNConfig.name = "Config Route for Notifiers";
 md.AddDetector(routeNConfig);
 
-log.info("Listening on port " + port);
-console.log("Started.");
+log.info(`Listening on port ${port}`);
+console.log(`Started on port ${port}`);
 
 //TO DELETE
 let key = new md.Config().slackHook();

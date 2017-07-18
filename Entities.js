@@ -68,7 +68,14 @@ class RequestDetector extends ent.MotionDetector{
   	super(name);
   	//app.get(route, handler);
   	this.route = route;
-  	this.handler = handler;
+    if (typeof handler == "string"){
+  	  this.handler = (req, res)=> {
+        let result = m[handler]();
+        res.json(result);
+      };
+    } else {
+      this.handler = handler;
+    }
   }
 }
 

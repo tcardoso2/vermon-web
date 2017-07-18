@@ -10,11 +10,16 @@
   <body ng-controller="MotionDetectorController">
 
   <h2>List of Motion Detectors:</h2>
-  <ul>
-    <li ng-repeat="detector in detectors">
-      <span>Name: {{detector.name}}</span>
-      <p>Filters: {{detector.filters}}</p>
-      <p>Is Active: {{detector._isActive}}</p>
+  <ul id="motionDetectors">
+    <li class="headerRow">
+      <div>Name</div>
+      <div>Filters</div>
+      <div>Is Active</div>
+    </li>
+    <li class="baseRow" ng-repeat="detector in detectors">
+      <div>{{detector.name}}</div>
+      <div>{{detector.filters}}</div>
+      <div class="{{ detector._isActive ? 'activeStatus' : 'inactive'}}" alt="{{detector._isActive}}"></div>
     </li>
   </ul>
 

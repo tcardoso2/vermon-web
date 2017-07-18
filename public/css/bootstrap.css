@@ -1,0 +1,27 @@
+#motionDetectors {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.baseRow {
+  padding: 2px;  
+}
+
+.headerRow div{
+  float: left;
+  padding: 2px;
+}
+
+.baseRow div{
+  float: left;
+  padding: 2px;
+}
+
+.activeStatus{
+  border: 1px solid;
+  border-radius: 16px;
+  background-color: lightgreen;
+  width: 16px;
+  height: 16px;
+}

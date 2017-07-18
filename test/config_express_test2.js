@@ -9,7 +9,7 @@ profiles = {
     RequestDetector: {
       name: "My Detectors Route",
       route: "/config/detectors2",
-      callback: (req, res)=>{ res.json(this.md); }
+      callback: "GetMotionDetectors"
     },
 	  SlackNotifier: {
 	    name: "My Slack channel",
