@@ -71,7 +71,21 @@ class RequestDetector extends ent.MotionDetector{
     if (typeof handler == "string"){
   	  this.handler = (req, res)=> {
         let result = m[handler]();
-        res.json(result);
+        //res.json(result);
+
+        let cache = []; //Not perfect but...
+        res.json(JSON.parse(JSON.stringify(result, function(key, value) {
+            if (typeof value === 'object' && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    // Circular reference found, discard key
+                    return;
+                }
+                // Store value in our collection
+                cache.push(value);
+            }
+            return value;
+        })));
+        cache = null; // Enable garbage collection
       };
     } else {
       this.handler = handler;
