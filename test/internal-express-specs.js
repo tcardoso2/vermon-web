@@ -280,4 +280,118 @@ describe('Before the test...', () => {
     });
 
   });
+
+  describe("To be able to disable temporarily a Motion Detector..., ", function() {
+    let fail_helper = true;
+    it('I should be able to deactivate an existing active MD by name', function () {
+      //Prepare
+      motion.Reset();
+
+      let alternativeConfig = new motion.Config("test/config_express_test3.js");
+      motion.StartWithConfig(alternativeConfig, ()=>{
+        let myEnv = motion.GetEnvironment();
+        let n = motion.GetNotifiers();
+        n[0].on('pushedNotification', function(message, text, data){
+          fail_helper.should.equal(false);
+        });
+        motion.DeactivateDetector("My Detectors Route");
+        let app2 = myEnv.getWebApp();
+        chai.request(app2)
+          .get('/config/detectors3')
+          .end((err, res) => {
+            res.should.have.status(200);
+          });     
+      });
+    });
+    it('I should fail if the MD name Being deactivated does not exist', function () {
+      //Prepare
+      try{
+        motion.DeactivateDetector("MD unexisting");
+      } catch(e){
+        e.message.should.equal("'MD unexisting' does not exist.")
+        return;
+      }
+      should.fail();
+    });
+    it('I should be able to reactivate a previously deactivated MD by name', function () {
+      //Prepare
+      motion.ActivateDetector("My Detectors Route");
+      fail_helper = false;
+      chai.request(motion.GetEnvironment().getWebApp())
+        .get('/config/detectors3')
+        .end((err, res) => {
+          res.should.have.status(200);
+        });     
+    });
+    it('I should fail if the MD name Being activated does not exist', function () {
+      //Prepare
+      try{
+        motion.ActivateDetector("MD unexisting");
+      } catch(e){
+        e.message.should.equal("'MD unexisting' does not exist.")
+        return;
+      }
+      should.fail();
+    });
+    it('I should be able to POST messages', function (done) {
+      //Prepare
+      let myEnv = motion.GetEnvironment();
+      motion.AddDetector(new ent.RequestDetector("My_Route", "/config/detector4",
+        (req, res) => {
+          res.json({ "req": req.body });
+        }, "POST"));
+
+      chai.request(myEnv.getWebApp())
+        .post('/config/detector4')
+        .send({myparam: 'test'})
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.eql({ "req": { "myparam": "test"}});
+          done();
+        });
+    });
+    it('I should throw and Error if a HTTP verb is not implemented', function () {
+      //Prepare
+      motion.AddDetector(new ent.RequestDetector("My Detectors Route with some weird verb", "/config/detector4",
+        (req, res) => {
+          res.json({});
+        }, "SOME_VERB"));
+    });
+    it('I should be able to Deactivate a MD via POST message', function (done) {
+      //Prepare
+      let myEnv = motion.GetEnvironment();
+      motion.AddDetector(new ent.RequestDetector("Deactivate Route", 
+        "/config/detector/deactivate?[name]",
+        "DeactivateMotionDetector([name])", 
+        "POST"));
+
+      chai.request(myEnv.getWebApp())
+        .post('/config/detector/deactivate?My_Route')
+        .send({active: false})
+        .end((err, res) => {
+          res.should.have.status(200);
+          motion.GetMotionDetector("My_Route")._IsActive.should.equal(false);
+          done();
+        });
+    });
+    it('I should be able to Activate a MD via POST message', function () {
+      //Prepare
+      //Prepare
+      let myEnv = motion.GetEnvironment();
+      motion.AddDetector(new ent.RequestDetector("Activate Route", 
+        "/config/detector/activate?[name]",
+        "ActivateMotionDetector([name])", 
+        "POST"));
+
+      chai.request(myEnv.getWebApp())
+        .post('/config/detector/activate?My_Route')
+        .send({active: true})
+        .end((err, res) => {
+          res.should.have.status(200);
+          motion.GetMotionDetector("My_Route")._IsActive.should.equal(true);
+          done();
+        });
+      should.fail();
+    });
+  });
 });

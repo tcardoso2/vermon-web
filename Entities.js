@@ -43,11 +43,25 @@ class ExpressEnvironment extends ent.Environment{
     super.bindDetector(md, notifiers);
     let e = this;
   	if(md instanceof RequestDetector) {
-  	  console.log("Adding route: ", md.route);
-  	  app.get(md.route, (req, res) => {
-  	  	md.send(req.url, e);;
-  	  	md.handler(req, res);
-  	  });
+  	  console.log(`Adding route: ${md.route} with verb: ${md.verb}`);
+      switch (md.verb)
+      {
+  	    case "GET": 
+          app.get(md.route, (req, res) => {
+    	  	  md.send(req.url, e);;
+    	  	  md.handler(req, res);
+  	      });
+          break;
+        case "POST":    
+          app.post(md.route, (req, res) => {
+            md.send(req.url, e);;
+            md.handler(req, res);
+          });
+          break;
+        default:
+          throw new Error (`Verb ${md.verb} is not implemented.`)
+          break;
+      }
   	}
   }
 
@@ -64,16 +78,16 @@ class ExpressEnvironment extends ent.Environment{
 }
 
 class RequestDetector extends ent.MotionDetector{
-  constructor(name, route, handler){
+  constructor(name, route, handler, verb){
   	super(name);
-  	//app.get(route, handler);
   	this.route = route;
+    this.verb = verb ? verb : "GET";
     if (typeof handler == "string"){
   	  this.handler = (req, res)=> {
         let result = m[handler]();
         //res.json(result);
 
-        let cache = []; //Not perfect but...
+        let cache = []; //This is a method of avoiding circular reference error in JSON
         res.json(JSON.parse(JSON.stringify(result, function(key, value) {
             if (typeof value === 'object' && value !== null) {
                 if (cache.indexOf(value) !== -1) {
