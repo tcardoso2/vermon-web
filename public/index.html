@@ -17,9 +17,11 @@
       <div>Is Active</div>
     </li>
     <li class="baseRow" ng-repeat="detector in detectors">
+      <br/> <!--FIXME: have the break done via CSS-->
       <div>{{detector.name}}</div>
       <div>{{detector.filters}}</div>
-      <div class="{{ detector._isActive ? 'activeStatus' : 'inactive'}}" alt="{{detector._isActive}}"></div>
+      <div ng-click="toggleActive(detector)" 
+        class="status {{ detector._isActive ? 'activeStatus' : 'inactiveStatus'}}" alt="{{detector._isActive}}"></div>
     </li>
   </ul>
 

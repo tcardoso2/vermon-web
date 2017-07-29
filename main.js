@@ -73,6 +73,12 @@ let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/no
 routeNConfig.name = "Config Route for Notifiers";
 md.AddDetector(routeNConfig);
 
+let routeDeactivateD = new ent.RequestDetector("Deactivate Detectors", "/config/detector/deactivate", "DeactivateDetector;name", "POST");
+md.AddDetector(routeDeactivateD);
+
+let routeActivateD = new ent.RequestDetector("Activate Detectors", "/config/detector/activate", "ActivateDetector;name", "POST");
+md.AddDetector(routeActivateD);
+
 log.info(`Listening on port ${port}`);
 console.log(`Started on port ${port}`);
 

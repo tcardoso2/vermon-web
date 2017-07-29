@@ -4,6 +4,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either then what the t-motion-detector tool will
 provide, via the npm run-script command.
 
+* v 0.1.9: Concluded implementation of POST method to activate and deactivate Detectors.
 * v 0.1.8: WIP, Started testing POST methods, adding activation and deactivation of Motion Detectors.
 * v 0.1.7: Configuration allows to map routes to functions in main file in t-motion-detector, WIP on HTML  
 * v 0.1.6: Fixed some bugs create dinamic page for detectors and notifiers, binded to temporary slack notifier.  

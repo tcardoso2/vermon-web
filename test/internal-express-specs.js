@@ -71,7 +71,7 @@ describe('Before the test...', () => {
         .get('/config/detectors')
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.length.should.equal(2);
+          res.body.length.should.equal(4);
           done();
       });
     });
@@ -352,46 +352,65 @@ describe('Before the test...', () => {
     });
     it('I should throw and Error if a HTTP verb is not implemented', function () {
       //Prepare
-      motion.AddDetector(new ent.RequestDetector("My Detectors Route with some weird verb", "/config/detector4",
-        (req, res) => {
-          res.json({});
-        }, "SOME_VERB"));
+      try{
+        motion.AddDetector(new ent.RequestDetector("My Detectors Route with some weird verb", "/config/detector4",
+          (req, res) => {
+            res.json({});
+          }, "SOME_VERB"));
+      } catch(e){
+        e.message.should.equal("Verb SOME_VERB is not implemented.");
+        return;
+      }
+      should.fail();
+    });
+    it('I should throw an error if the handler function is not implemented', function () {
+      //Prepare
+      let myEnv = motion.GetEnvironment();
+      try{
+        motion.AddDetector(new ent.RequestDetector("Deactivate Route", 
+          "/config/detector/function1",
+          "SomeUnknownFunction", 
+          "POST"));
+      }
+      catch(e){
+        e.message.should.equal('Error: function "SomeUnknownFunction" is not defined in t-motion-detector.');
+        return;
+      }
+      should.fail();
     });
     it('I should be able to Deactivate a MD via POST message', function (done) {
       //Prepare
       let myEnv = motion.GetEnvironment();
       motion.AddDetector(new ent.RequestDetector("Deactivate Route", 
-        "/config/detector/deactivate?[name]",
-        "DeactivateMotionDetector([name])", 
+        "/config/detector/deactivate",
+        "DeactivateDetector;name", 
         "POST"));
 
       chai.request(myEnv.getWebApp())
-        .post('/config/detector/deactivate?My_Route')
-        .send({active: false})
+        .post('/config/detector/deactivate')
+        .send({name: "My_Route"})
         .end((err, res) => {
           res.should.have.status(200);
-          motion.GetMotionDetector("My_Route")._IsActive.should.equal(false);
+          motion.GetMotionDetector("My_Route")._isActive.should.equal(false);
           done();
         });
     });
-    it('I should be able to Activate a MD via POST message', function () {
-      //Prepare
+    it('I should be able to Activate a MD via POST message', function (done) {
       //Prepare
       let myEnv = motion.GetEnvironment();
       motion.AddDetector(new ent.RequestDetector("Activate Route", 
-        "/config/detector/activate?[name]",
-        "ActivateMotionDetector([name])", 
+        "/config/detector/activate",
+        "ActivateDetector;name", 
         "POST"));
 
       chai.request(myEnv.getWebApp())
-        .post('/config/detector/activate?My_Route')
-        .send({active: true})
+        .post('/config/detector/activate')
+        .send({name: "My_Route"})
         .end((err, res) => {
           res.should.have.status(200);
-          motion.GetMotionDetector("My_Route")._IsActive.should.equal(true);
+          motion.GetMotionDetector("My_Route")._isActive.should.equal(true);
           done();
         });
-      should.fail();
     });
   });
 });

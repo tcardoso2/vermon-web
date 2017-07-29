@@ -5,6 +5,7 @@
 }
 
 .baseRow {
+  display: block;
   padding: 2px;  
 }
 
@@ -24,4 +25,16 @@
   background-color: lightgreen;
   width: 16px;
   height: 16px;
+}
+
+.inactiveStatus{
+  border: 1px solid;
+  border-radius: 16px;
+  background-color: red;
+  width: 16px;
+  height: 16px;
+}
+
+.status{
+  cursor: pointer;
 }

@@ -83,12 +83,13 @@ class RequestDetector extends ent.MotionDetector{
   	this.route = route;
     this.verb = verb ? verb : "GET";
     if (typeof handler == "string"){
+      let parts = _GetFuncParts(handler);
   	  this.handler = (req, res)=> {
-        let result = m[handler]();
-        //res.json(result);
-
-        let cache = []; //This is a method of avoiding circular reference error in JSON
-        res.json(JSON.parse(JSON.stringify(result, function(key, value) {
+        console.log(`Request body: ${req.body} \nExecuting function main.${parts[0]}...`)
+        try{
+          let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
+          let cache = []; //This is a method of avoiding circular reference error in JSON
+          res.json(JSON.parse(JSON.stringify(result ? result : {}, function(key, value) {
             if (typeof value === 'object' && value !== null) {
                 if (cache.indexOf(value) !== -1) {
                     // Circular reference found, discard key
@@ -98,13 +99,33 @@ class RequestDetector extends ent.MotionDetector{
                 cache.push(value);
             }
             return value;
-        })));
-        cache = null; // Enable garbage collection
+          })));
+          cache = null; // Enable garbage collection
+        }catch(e){
+          console.error(`Error: ${e.message}`);
+          res.json(e.message);
+        }
       };
     } else {
       this.handler = handler;
     }
   }
+}
+
+//Given the configuration handler portion, separates into the function and arguments name and verifies if
+//the function really exists
+function _GetFuncParts(fn_name){
+  let funcParts = fn_name.split(";");
+  console.log(`Checking if function ${funcParts} exists...`)
+  let func = m[funcParts[0]];
+  if (!func) throw new Error(`Error: function "${fn_name}" is not defined in t-motion-detector.`);
+  return funcParts;
+}
+
+//Executes a function with name fn_name in the main t-motion-detector module and passes its args
+function _GetFuncResult(fn_name, args){
+  console.log(`Calling function ${fn_name}(${args})...`)
+  return m[fn_name](args);
 }
 
 //Extending Entities Factory
