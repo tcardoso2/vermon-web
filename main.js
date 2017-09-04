@@ -8,18 +8,31 @@ let ent = require('./Entities');
 let morgan = require('morgan');*/
 let bodyParser = require('body-parser');
 let port = 3300;
+let $ = {};
 
-md.Reset();
 log.info("Starting t-motion-detector-cli web app...");
 
+//Used for tests
 function Start(){
+
   md.Start({
     environment: mainEnv
   });
+  md.AddDetector(routeDConfig);
+  md.AddDetector(routeNConfig);
+  md.AddDetector(routeDeactivateD);
+  md.AddDetector(routeActivateD);
+
+  log.info(`Listening on port ${port}`);
+  console.log(`Started on port ${port}`);
+  //TO DELETE
+  let key = new md.Config().slackHook();
+  let n = new md.Extensions.SlackNotifier("My slack notifier", key);
+  md.AddNotifier(n);
+
 }
 
 mainEnv = new ent.ExpressEnvironment(port);
-Start();
 
 let app = mainEnv.getWebApp();
 /*
@@ -50,44 +63,33 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());                                    
 app.use(bodyParser.json({ type: 'application/json'}));  
 
-//app.get("/", (req, res) => res.json({message: "Welcome!"}));
-
-//Serve content from public folder as static
-//app.use(express.static('public'))
-
-/*app.route("/route1")
-    .get(item.getItems)
-    .post(item.postItem);
-app.route("/route1/:id")
-    .get(item.getItem)
-    .delete(item.deleteItem)
-    .put(item.updateItem);
-*/
-//app.listen(port);
-
 let routeDConfig = new ent.RequestDetector("My route for detectors", "/config/detectors", "GetMotionDetectors");
 routeDConfig.name = "Config Route for Detectors";
-md.AddDetector(routeDConfig);
 
 let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/notifiers", "GetNotifiers");
 routeNConfig.name = "Config Route for Notifiers";
-md.AddDetector(routeNConfig);
 
 let routeDeactivateD = new ent.RequestDetector("Deactivate Detectors", "/config/detector/deactivate", "DeactivateDetector;name", "POST");
-md.AddDetector(routeDeactivateD);
 
 let routeActivateD = new ent.RequestDetector("Activate Detectors", "/config/detector/activate", "ActivateDetector;name", "POST");
-md.AddDetector(routeActivateD);
 
-log.info(`Listening on port ${port}`);
-console.log(`Started on port ${port}`);
+//Plugin exports
+function PreAddPlugin()
+{}
+function PostAddPlugin()
+{}
+function PreRemovePlugin()
+{}
+function PostRemovePlugin()
+{}
 
-//TO DELETE
-let key = new md.Config().slackHook();
-let n = new md.Extensions.SlackNotifier("My slack notifier", key);
-md.AddNotifier(n);
-
-module.exports = app; // for testing
+module.exports = app;
 app.md = md;
 app.Log = log;
 app.Start = Start;
+app.PreAddPlugin = PreAddPlugin;
+app.PostAddPlugin = PostAddPlugin;
+app.PreRemovePlugin = PreRemovePlugin;
+app.PostRemovePlugin = PostRemovePlugin;
+
+md.AddPlugin(module);

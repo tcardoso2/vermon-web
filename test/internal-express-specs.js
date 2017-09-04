@@ -66,7 +66,7 @@ describe('Before the test...', () => {
 
     it('"/config/detectors" should return an array of 2', function (done) {
       //Prepare
-      //Main needs to be reset explicitely because it keeps objects from previous test
+      main.Start();
       chai.request(main)
         .get('/config/detectors')
         .end((err, res) => {
@@ -308,7 +308,7 @@ describe('Before the test...', () => {
       try{
         motion.DeactivateDetector("MD unexisting");
       } catch(e){
-        e.message.should.equal("'MD unexisting' does not exist.")
+        e.message.should.equal("Error: cannot find Detector with name 'MD unexisting'.")
         return;
       }
       should.fail();

@@ -3,16 +3,21 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "request": "^2.81.0",
-    "t-motion-detector": "^0.4.5"
+    "t-motion-detector": "^0.4.9"
   },
   "devDependencies": {
     "chai": "*",
     "mocha": "*",
     "chai-http": "*"
   },
+    "repository": {
+    "type": "git",
+    "url": "git://github.com/tcardoso2/t-motion-detector-cli.git"
+  },
+  "license": "MIT",
   "description": "A cli tool to respond to user-typed commands / text, based on t-motion-detector.",
   "name": "t-motion-detector-cli",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.2.0"
+  "version": "0.2.1"
 }
