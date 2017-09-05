@@ -104,14 +104,15 @@ describe('Before the test...', () => {
     });
 
     it('it should start a web-server at default port 8123', function (done) {
-      mainEnv = new ent.ExpressEnvironment(8123) 
+      mainEnv = new ent.ExpressEnvironment(8123, "public"); 
       motion.Start({ environment: mainEnv});
       let app = mainEnv.getWebApp();
       chai.request(app)
         .get('/')
         .end((err, res) => {
           mainEnv.stop();
-          mainEnv.getPort().should.equal(8123)
+          mainEnv.getPort().should.equal(8123);
+          mainEnv.getStaticAddr().should.equal("public");
           res.should.have.status(200);
           done();
         });

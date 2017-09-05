@@ -3,20 +3,28 @@ let ent = m.Entities;
 let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
+let path = require("path");
+
 const defaultPort = 8080;
 
-/*
+/**
  * Wraps an Express web-server. See more in
  * https://expressjs.com/en/api.html
  * Acts like a Singleton, in the sense that the wrapped express app is a single instance
+ * @param {integer} port is the port of the web-app, if not provided, will default to 8080.
+ * @param {string} static_addr, is the relative URL of the static resources, it defaults to the 
+ * module's internal public folder
  */
 class ExpressEnvironment extends ent.Environment{
   
-  constructor(port){
+  constructor(port, static_addr){
     super();
     this.port = port ? port : defaultPort;
-    //Sets up a default route
-    app.use(express.static('public'));
+    this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
+
+    console.log(`Setting static address to ${this.static_addr}...`);
+    app.use(express.static(this.static_addr));
+    
     let e = this;
     app.get("/welcome", (req, res) => {
       e.addChange(req.url);
@@ -29,6 +37,11 @@ class ExpressEnvironment extends ent.Environment{
   setStatic(path)
   {
   	app.use(express.static(path));
+  }
+
+  getStaticAddr()
+  {
+    return this.static_addr;
   }
 
   /* Gets a reference to the express web-app */
