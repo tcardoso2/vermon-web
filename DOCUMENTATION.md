@@ -8,7 +8,8 @@
 
 **Extends ent.Environment**
 
-Wraps an Express web-server. See more in
+Wraps an Express web-server, which will allow viewing all the Motion Detectors and \\n
+Notifiers in the system. See more in
 <https://expressjs.com/en/api.html>
 Acts like a Singleton, in the sense that the wrapped express app is a single instance
 
@@ -17,3 +18,46 @@ Acts like a Singleton, in the sense that the wrapped express app is a single ins
 -   `port` **integer** is the port of the web-app, if not provided, will default to 8080.
 -   `static_addr` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** , is the relative URL of the static resources, it defaults to the 
     module's internal public folder
+
+**Examples**
+
+```javascript
+let web = require("t-motion-detector-cli");
+let config = new web.$.Config('./config.js');
+web.$.StartWithConfig(config, (e,d,n,f)=>{
+console.log("Good to go!");
+});
+//Example of a config file which creates the routes necessary
+
+profiles = {
+default: {
+ExpressEnvironment: {
+port: 8777
+},
+RequestDetector: [{
+name: "My Detectors Route",
+route: "/config/detectors",
+callback: "GetMotionDetectors"
+},
+{
+name: "My Notifiers Route",
+route: "/config/notifiers",
+callback: "GetNotifiers"
+},
+{
+name: "Activate route",
+route: "/config/detector/activate",
+callback: "ActivateDetector;name",
+verb: "POST"
+},
+{
+name: "Deactivate route",
+route: "/config/detector/deactivate",
+callback: "DeactivateDetector;name",
+verb: "POST"
+}]
+}
+}
+exports.profiles = profiles;
+exports.default = profiles.default;
+```
