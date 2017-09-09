@@ -5,7 +5,8 @@ create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command.
 * Provides an Express web-application which a basic API (REST services) to view and manage the environment
 
-* v 0.2.2: Added static address in the ExpressEnvironment constructor, defaulting to internal public folder
+* v 0.2.3: Binding to t-motion-detector version 0.4.10  
+* v 0.2.2: Added static address in the ExpressEnvironment constructor, defaulting to internal public folder  
 * v 0.2.1: Testing Support to Extension integration with t-motion-detector v 0.4.9 (WIP)  
 * v 0.2.0: First version published to npm. Added Code of Conduct and template for Documentation (WIP)  
 * v 0.1.9: Concluded implementation of POST method to activate and deactivate Detectors.  

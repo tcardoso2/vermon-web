@@ -8,7 +8,7 @@ let path = require("path");
 const defaultPort = 8080;
 
 /**
- * Wraps an Express web-server, which will allow viewing all the Motion Detectors and \n
+ * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
  * Notifiers in the system. See more in
  * https://expressjs.com/en/api.html
  * Acts like a Singleton, in the sense that the wrapped express app is a single instance
