@@ -9,8 +9,9 @@
   },
   "devDependencies": {
     "chai": "*",
-    "mocha": "*",
-    "chai-http": "*"
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "*",
+    "mocha": "*"
   },
   "repository": {
     "type": "git",
