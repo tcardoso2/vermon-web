@@ -5,6 +5,8 @@ create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command.
 * Provides an Express web-application which a basic API (REST services) to view and manage the environment
 
+* v 0.2.6: adding travis-ci config files.  
+* v 0.2.5: Adding new unit tests for a new detector, NetworkDetector.  
 * v 0.2.4: Binding to t-motion-detector version 0.4.11, to allow avoiding type checks when adding Detector instances.  
 * v 0.2.3: Binding to t-motion-detector version 0.4.10  
 * v 0.2.2: Added static address in the ExpressEnvironment constructor, defaulting to internal public folder  

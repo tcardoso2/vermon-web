@@ -48,3 +48,27 @@ describe("When creating a t-motion-detector-cli extension, ", function() {
     });
   });
 });
+
+describe("When creating a NetworkDetector, ", function() {
+
+  it('It should detect the current discoverable nodes present in the network.', function (done) {
+    //Prepare
+    
+    main.$.Reset();
+    let alternativeConfig = new main.$.Config("/test/config_express_test4.js");
+
+    main.$.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
+      n.on('pushedNotification', function(notifierName, text, data){
+        if ((text != "Started") && !detected)
+        {
+          if(data.newState.length > 0 && data.newState[0].indexOf("192.168.") > 0)
+          { 
+            detected = true;
+            text.should.equal("'Default Base Notifier' received Notification received from: 'Network Detector'");
+            done();
+          }
+        }
+      });      
+    });
+  });
+});
