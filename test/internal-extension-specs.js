@@ -58,7 +58,7 @@ describe("When creating a NetworkDetector, ", function() {
     let alternativeConfig = new main.$.Config("/test/config_express_test4.js");
 
     main.$.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
-      n.on('pushedNotification', function(notifierName, text, data){
+      n[0].on('pushedNotification', function(notifierName, text, data){
         if ((text != "Started") && !detected)
         {
           if(data.newState.length > 0 && data.newState[0].indexOf("192.168.") > 0)

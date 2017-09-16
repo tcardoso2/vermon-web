@@ -1,3 +1,8 @@
+[![NPM info](https://nodei.co/npm/t-motion-detector-cli.png?downloads=true)](https://nodei.co/npm/t-motion-detector-cli.png?downloads=true)
+
+[![Travis build status](https://travis-ci.org/tcardoso2/t-motion-detector-cli.png?branch=master)](https://travis-ci.org/tcardoso2/t-motion-detector-cli)
+[![dependencies](https://david-dm.org/tcardoso2/t-motion-detector-cli.svg)](https://david-dm.org/tcardoso2/t-motion-detector-cli.svg)
+
 # t-motion-detector-cli
 A cli/API tool (dashboard) to monitor your Environment, Motion sensors and Notifiers.
 It has been repurposed from the original intent because I didn't see the need to
@@ -5,7 +10,8 @@ create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command.
 * Provides an Express web-application which a basic API (REST services) to view and manage the environment
 
-* v 0.2.7: updating to t-motion-detector@0v.4.14 to remove postinstall script  
+* v 0.2.8: updating to t-motion-detector@0v.0.5.0, adding badges for npm, travis build and dependency status
+* v 0.2.7: updating to t-motion-detector@0v.0.4.14 to remove postinstall script  
 * v 0.2.6: adding travis-ci config files, updating to t-motion-detector@0v.4.13  
 * v 0.2.5: Adding new unit tests for a new detector, NetworkDetector.  
 * v 0.2.4: Binding to t-motion-detector version 0.4.11, to allow avoiding type checks when adding Detector instances.  

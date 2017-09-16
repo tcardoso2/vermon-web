@@ -1,13 +1,16 @@
 profiles = {
   default: {
   	ExpressEnvironment: {
-      port: 8777    
+      port: 8276    
     },
-    NetworkDetector: {
-      name: "My Network Detector",
+    RequestDetector: {
+      name: "My Detector Activator Post Route",
+      route: "/config/detector4/",
+      callback: "ActivateDetector"
     },
-	  BaseNotifier: {
-	    name: "My Notifier",
+	  SlackNotifier: {
+	    name: "My Slack channel",
+	    key: "https://hooks.slack.com/services/<MySlackURL>"
 	  }
   }
 }
