@@ -1,7 +1,7 @@
 profiles = {
   default: {
   	ExpressEnvironment: {
-      port: 8796      
+      port: 8716      
     },
   	PIRMotionDetector: {
       pin: 17

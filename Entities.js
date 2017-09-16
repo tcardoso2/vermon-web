@@ -1,5 +1,6 @@
 let m = require('t-motion-detector');
 let ent = m.Entities;
+let ext = m.Extensions;
 let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
@@ -54,10 +55,10 @@ profiles = {
 exports.profiles = profiles;
 exports.default = profiles.default;
  */
-class ExpressEnvironment extends ent.Environment{
+class ExpressEnvironment extends ext.SystemEnvironment{
   
-  constructor(port, static_addr){
-    super();
+  constructor(port, static_addr, command = "pwd", interval = 10000){
+    super(command, interval);
     this.port = port ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
 

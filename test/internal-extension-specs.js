@@ -56,12 +56,14 @@ describe("When creating a NetworkDetector, ", function() {
     
     main.$.Reset();
     let alternativeConfig = new main.$.Config("/test/config_express_test4.js");
+    let detected = false;
 
     main.$.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
       n[0].on('pushedNotification', function(notifierName, text, data){
-        if ((text != "Started") && !detected)
-        {
-          if(data.newState.length > 0 && data.newState[0].indexOf("192.168.") > 0)
+        console.log("CONSOLE:", data.newState.stdout.data);
+        if (!detected){
+          data.newState.stdout.data.should.include("1 packets transmitted, 1 packets received, 0.0% packet loss");
+          if(data.newState.stdout.data.indexOf("127.0.0.1") > 0)
           { 
             detected = true;
             text.should.equal("'Default Base Notifier' received Notification received from: 'Network Detector'");
