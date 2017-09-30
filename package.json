@@ -17,12 +17,12 @@
     "type": "git",
     "url": "git://github.com/tcardoso2/t-motion-detector-cli.git"
   },
-  "license": "BSD-2",
+  "license": "BSD-2-Clause",
   "description": "A cli tool to respond to user-typed commands / text, based on t-motion-detector.",
   "name": "t-motion-detector-cli",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "scripts": {
     "test": "mocha"
   }

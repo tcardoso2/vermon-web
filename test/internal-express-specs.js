@@ -298,7 +298,7 @@ describe('Before the test...', () => {
         .end((err, res) => {
           myEnv.stop();
           res.should.have.status(200);
-          res.body.should.eql({});
+          res.body.lastState.should.eql({ "cpus": -1, "freemem": -1, "totalmem": -1});
           done();
         });
     });
