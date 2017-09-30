@@ -5,7 +5,7 @@
     "libnmap": "^0.4.5",
     "local-network-scanner": "^0.1.1",
     "request": "^2.81.0",
-    "t-motion-detector": "^0.5.1"
+    "t-motion-detector": "^0.5.3"
   },
   "devDependencies": {
     "chai": "*",
@@ -17,12 +17,12 @@
     "type": "git",
     "url": "git://github.com/tcardoso2/t-motion-detector-cli.git"
   },
-  "license": "MIT",
+  "license": "BSD-2",
   "description": "A cli tool to respond to user-typed commands / text, based on t-motion-detector.",
   "name": "t-motion-detector-cli",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "scripts": {
     "test": "mocha"
   }

@@ -257,7 +257,7 @@ describe('Before the test...', () => {
         });
     });
 
-    it('when responding via handler, I should be able to access the Detectors and Notifiers info', function (done) {
+    it('when responding via handler, I should be able to access the Detectors info', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
       motion.Reset();
@@ -280,6 +280,28 @@ describe('Before the test...', () => {
         });
     });
 
+
+    it('should be able to access system info via GET request', function (done) {
+      //Prepare
+      //Main needs to be reset explicitely because it keeps objects from previous test
+      motion.Reset();
+      let alternativeConfig = new motion.Config("test/config_express_test5.js");
+      motion.StartWithConfig(alternativeConfig);
+
+      let d = motion.GetMotionDetectors();
+      let myEnv = motion.GetEnvironment();
+
+      (myEnv instanceof ent.ExpressEnvironment).should.equal(true);
+      let app2 = myEnv.getWebApp();
+      chai.request(app2)
+        .get('/config/environment')
+        .end((err, res) => {
+          myEnv.stop();
+          res.should.have.status(200);
+          res.body.should.eql({});
+          done();
+        });
+    });
   });
 
   describe("To be able to disable temporarily a Motion Detector..., ", function() {
@@ -413,5 +435,39 @@ describe('Before the test...', () => {
           done();
         });
     });
+
+    it('When the port is already taken and if a set searchRange=True the server should try next ports in range until successfully started.', function (done) {
+      should.fail(); //Continue  
+    });
+  });
+});
+
+describe("When accessing the entry page", function() {
+  it('I should be prompted for OTP pass-code', function () {
+    should.fail(); //continue
+  });
+
+  it('I should send the OTP to the slack channel', function () {
+    should.fail(); //continue
+  });
+
+  it('When entering that OTP pass the system should allow access to the sensors page', function () {
+    should.fail(); //continue
+  });
+
+  it('I should be able to enter in listening mode', function () {
+    should.fail(); //continue
+  });
+
+  it('I should be able to capture a radio signal and save it', function () {
+    should.fail(); //continue
+  });
+
+  it('I should be able to reproduce that same signal', function () {
+    should.fail(); //continue
+  });
+
+  it('I should be able to detect the signal I sent', function () {
+    should.fail(); //continue
   });
 });
