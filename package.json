@@ -5,7 +5,7 @@
     "libnmap": "^0.4.5",
     "local-network-scanner": "^0.1.1",
     "request": "^2.81.0",
-    "t-motion-detector": "^0.5.3"
+    "t-motion-detector": "^0.5.6"
   },
   "devDependencies": {
     "chai": "*",
@@ -22,7 +22,7 @@
   "name": "t-motion-detector-cli",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "scripts": {
     "test": "mocha"
   }
