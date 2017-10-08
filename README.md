@@ -10,6 +10,8 @@ create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command.
 * Provides an Express web-application which a basic API (REST services) to view and manage the environment
 
+* v 0.3.0 :Updated dependency reference to t-motion-detector@v0.5.9, fixes. Working on maxAttampts for the Environment when address is already in use. Added more tests to run directly application from main, and be able to add elements from the web-UI (WIP). Working on proper HTML CSS formating. "Start" function of the main module
+is now called after StartWithConfig   
 * v 0.2.13:Updated dependency reference to t-motion-detector@v0.5.6  
 * v 0.2.12:Tested SystemEnvironment json service  
 * v 0.2.11:Added new tests, working on SystemEnvironment json service, updated license and reference to t-motion-detector@v0.5.3  

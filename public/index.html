@@ -10,20 +10,18 @@
   <body ng-controller="MotionDetectorController">
 
   <h2>List of Motion Detectors:</h2>
-  <ul id="motionDetectors">
-    <li class="headerRow">
-      <div>Name</div>
-      <div>Filters</div>
-      <div>Is Active</div>
-    </li>
-    <li class="baseRow" ng-repeat="detector in detectors">
-      <br/> <!--FIXME: have the break done via CSS-->
-      <div>{{detector.name}}</div>
-      <div>{{detector.filters}}</div>
-      <div ng-click="toggleActive(detector)" 
-        class="status {{ detector._isActive ? 'activeStatus' : 'inactiveStatus'}}" alt="{{detector._isActive}}"></div>
-    </li>
-  </ul>
-
+  <div id="motionDetectors" class="table">
+    <ul class="headerRow">
+      <li class="title">Name</li>
+      <li class="odd">Filters</li>
+      <li class="even">Is Active</li>
+    </ul>
+    <ul class="baseRow" ng-repeat="detector in detectors">
+      <li class="title">{{detector.name}}</li>
+      <li class="odd">{{detector.filters ? detector.filters : "n/a"}}</li>
+      <li ng-click="toggleActive(detector)" 
+        class="even status {{ detector._isActive ? 'activeStatus' : 'inactiveStatus'}}" alt="{{detector._isActive}}"></li>
+    </ul>
+  </div>
   </body>
 </html>

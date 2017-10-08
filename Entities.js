@@ -57,7 +57,7 @@ exports.default = profiles.default;
  */
 class ExpressEnvironment extends ext.SystemEnvironment{
   
-  constructor(port, static_addr, command = "pwd", interval = 10000){
+  constructor(port, static_addr, command = "pwd", interval = 10000, maxAttempts = 10){
     super(command, interval);
     this.port = port ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
@@ -70,8 +70,20 @@ class ExpressEnvironment extends ext.SystemEnvironment{
       e.addChange(req.url);
       res.json({message: "Welcome to T-Motion-CLI Web server!"});
     });
+    this.maxAttempts = maxAttempts;
+    this.port--;
+    this.__listen();
+  }
 
-    this.server = app.listen(this.port);
+  __listen()
+  {
+    this.port++;
+    this.maxAttempts--;
+    if(this.maxAttempts > 0){
+      console.log(`Attempting to listen to port ${this.port}`);
+      this.server = app.listen(this.port).on('error', this.__listen);
+      console.log("OK!");
+    }
   }
   
   setStatic(path)
@@ -126,7 +138,9 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   stop()
   {
   	//Do some closing steps here.
-  	this.server.close();
+    if(this.server){
+  	  this.server.close();
+    }
   }
 }
 

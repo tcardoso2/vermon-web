@@ -4,16 +4,15 @@ profiles = {
       port: 8276,
       static_addr: undefined,
       command: "ping -c 1 localhost",
-      interval: 0    
+      interval: 1000    
     },
     RequestDetector: {
       name: "My System Environment route",
       route: "/config/environment/",
       callback: "GetEnvironment"
     },
-	  SlackNotifier: {
-	    name: "My Slack channel",
-	    key: "https://hooks.slack.com/services/<MySlackURL>"
+	  BaseNotifier: {
+	    name: "My Notifier"
 	  },
     SystemEnvironmentFilter: [
     {

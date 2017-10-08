@@ -22,7 +22,7 @@ let events = require('events');
 let express = require('express');
 let chaiHttp = require('chai-http');
 let expect = chai.expect;
-let motion = main.md;
+let motion = main._; //Assesses parent's export functions. Another short assessor is '$' which is only binded later
 let Entities = motion.Entities;
 
 
@@ -64,9 +64,11 @@ describe('Before the test...', () => {
       });
     });
 
-    it('"/config/detectors" should return an array of 2', function (done) {
+    it('"/config/detectors" should return an array of 4 System Detectors', function (done) {
       //Prepare
       main.Start();
+      main._.should.not.equal(undefined);
+      main._.GetPlugins().should.not.eql({});
       chai.request(main)
         .get('/config/detectors')
         .end((err, res) => {
@@ -75,7 +77,16 @@ describe('Before the test...', () => {
           done();
       });
     });
-    
+
+    it('When adding a plugin, a start method callback should be provided and called after motion._.StartWithConfig', function (done) {
+      //Prepare
+      let alternativeConfig = new motion.Config("/test/config_express_test.js");
+      motion.StartWithConfig(alternativeConfig, (e,d,n,f) =>{
+        d.length.should.equal(10); //2 from the config file,  +4 from the main.js file, +4 again from the main.js file
+        done();
+      });
+    });
+
     it('After Reseting the environment, if I try to get the environment without initializing after Reset, I should get an error that Environment does not exist.', function () {
       //Prepare
       motion.Reset();
@@ -86,6 +97,32 @@ describe('Before the test...', () => {
         return;
       }
       should.fail();
+    });
+
+    it('When running that motion._.StartWithConfig, the system should setup detectors to add and remove elements.', function () {
+      should.fail(); //continue
+    });
+
+    it('If no admin user exists should prompt to create one', function () {
+      should.fail(); //continue
+    });
+    it('If no default config.js file exists should prompt to create one', function () {
+      should.fail(); //continue
+    });
+    it('Should not be possible to remove System routes, started by the system (Start)', function () {
+      should.fail(); //continue
+    });
+    it('The 2 system detector routes should be pointing to AddDetector, and RemoveDetector respectively', function () {
+      should.fail(); //continue
+    });
+    it('Should be able to add elements to it (Detectors, Notifiers, etc...)', function () {
+      should.fail(); //continue
+    });
+    it('Should be able to delete elements to it (Detectors, Notifiers, etc...)', function () {
+      should.fail(); //continue
+    });
+    it('Should be able to redirect to login page if User admin exists but is not logged in.', function () {
+      should.fail(); //continue
     });
   });
 
@@ -286,21 +323,29 @@ describe('Before the test...', () => {
       //Main needs to be reset explicitely because it keeps objects from previous test
       motion.Reset();
       let alternativeConfig = new motion.Config("test/config_express_test5.js");
-      motion.StartWithConfig(alternativeConfig);
+      motion.StartWithConfig(alternativeConfig, (myEnv, d, n, f)=>{
 
-      let d = motion.GetMotionDetectors();
-      let myEnv = motion.GetEnvironment();
-
-      (myEnv instanceof ent.ExpressEnvironment).should.equal(true);
-      let app2 = myEnv.getWebApp();
-      chai.request(app2)
-        .get('/config/environment')
-        .end((err, res) => {
-          myEnv.stop();
-          res.should.have.status(200);
-          res.body.lastState.should.eql({ "cpus": -1, "freemem": -1, "totalmem": -1});
-          done();
+        (myEnv instanceof ent.ExpressEnvironment).should.equal(true);
+        let app2 = myEnv.getWebApp();
+        let _done = false;
+        n[0].on('pushedNotification', function(message, text, data){
+          console.log(data.newState.stdout);
+          chai.request(app2)
+            .get('/config/environment')
+            .end((err, res) => {
+              myEnv.exit();
+              console.log(res.body);
+              res.should.have.status(200);
+              res.body.currentState.cpus.should.not.equal(undefined);
+              res.body.currentState.freemem.should.not.equal(undefined);
+              res.body.currentState.totalmem.should.not.equal(undefined);
+              if(!_done){
+                _done = true;             
+                done();
+              }
+            });
         });
+      });
     });
   });
 
@@ -437,7 +482,13 @@ describe('Before the test...', () => {
     });
 
     it('When the port is already taken and if a set searchRange=True the server should try next ports in range until successfully started.', function (done) {
-      should.fail(); //Continue  
+      let alternativeConfig = new motion.Config("test/config_express_test3.js");
+      motion.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
+        motion.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
+          e.port.should.equal(8379);
+          done();
+        });
+      });
     });
   });
 });

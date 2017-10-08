@@ -6,9 +6,9 @@
 
 ## ExpressEnvironment
 
-**Extends ent.Environment**
+**Extends ext.SystemEnvironment**
 
-Wraps an Express web-server, which will allow viewing all the Motion Detectors and \\n
+Wraps an Express web-server, which will allow viewing all the Motion Detectors and
 Notifiers in the system. See more in
 <https://expressjs.com/en/api.html>
 Acts like a Singleton, in the sense that the wrapped express app is a single instance
@@ -18,6 +18,9 @@ Acts like a Singleton, in the sense that the wrapped express app is a single ins
 -   `port` **integer** is the port of the web-app, if not provided, will default to 8080.
 -   `static_addr` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** , is the relative URL of the static resources, it defaults to the 
     module's internal public folder
+-   `command`   (optional, default `"pwd"`)
+-   `interval`   (optional, default `10000`)
+-   `maxAttempts`   (optional, default `10`)
 
 **Examples**
 

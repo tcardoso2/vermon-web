@@ -1,23 +1,23 @@
+body{
+  font: 14px arial, sans-serif;
+}
+
 #motionDetectors {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.baseRow {
-  display: block;
-  padding: 2px;  
+.status{
+  cursor: pointer;
 }
 
-.headerRow div{
-  float: left;
-  padding: 2px;
-}
-
-.baseRow div{
-  float: left;
-  padding: 2px;
-}
+.table{background:None;}
+.table ul{float:left;margin:0px;padding:0px}
+.table ul li{list-style:none;padding:4px 9px;}
+.table ul li.title{font-weight:bold;background:#333;color:#fff;}
+.table ul li.even{}
+.table ul li.odd{background:#FFFFE6;}
 
 .activeStatus{
   border: 1px solid;
@@ -33,8 +33,4 @@
   background-color: red;
   width: 16px;
   height: 16px;
-}
-
-.status{
-  cursor: pointer;
 }

@@ -8,27 +8,26 @@ let ent = require('./Entities');
 let morgan = require('morgan');*/
 let bodyParser = require('body-parser');
 let port = 3300;
-let $ = {};
+let _;
 
 log.info("Starting t-motion-detector-cli web app...");
 
 //Used for tests
 function Start(){
-
-  md.Start({
+  _.Start({
     environment: mainEnv
   });
-  md.AddDetector(routeDConfig);
-  md.AddDetector(routeNConfig);
-  md.AddDetector(routeDeactivateD);
-  md.AddDetector(routeActivateD);
+  _.AddDetector(routeDConfig);
+  _.AddDetector(routeNConfig);
+  _.AddDetector(routeDeactivateD);
+  _.AddDetector(routeActivateD);
 
   log.info(`Listening on port ${port}`);
   console.log(`Started on port ${port}`);
   //TO DELETE
-  let key = new md.Config().slackHook();
-  let n = new md.Extensions.SlackNotifier("My slack notifier", key);
-  md.AddNotifier(n);
+  let key = new _.Config().slackHook();
+  let n = new _.Extensions.SlackNotifier("My slack notifier", key);
+  _.AddNotifier(n);
 
 }
 
@@ -75,21 +74,26 @@ let routeActivateD = new ent.RequestDetector("Activate Detectors", "/config/dete
 
 //Plugin exports
 function PreAddPlugin()
-{}
-function PostAddPlugin()
-{}
-function PreRemovePlugin()
-{}
+{
+}
+function PostAddPlugin(plugin)
+{
+  _ = plugin._;
+}
+function PreRemovePlugin(plugin)
+{
+}
 function PostRemovePlugin()
-{}
+{
+}
 
 module.exports = app;
-app.md = md;
 app.Log = log;
 app.Start = Start;
 app.PreAddPlugin = PreAddPlugin;
 app.PostAddPlugin = PostAddPlugin;
 app.PreRemovePlugin = PreRemovePlugin;
 app.PostRemovePlugin = PostRemovePlugin;
+app._ = _;
 
-md.AddPlugin(module);
+if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
