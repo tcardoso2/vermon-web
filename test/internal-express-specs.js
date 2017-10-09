@@ -64,7 +64,7 @@ describe('Before the test...', () => {
       });
     });
 
-    it('"/config/detectors" should return an array of 4 System Detectors', function (done) {
+    it('"/config/detectors" should return an array of 8 System Detectors', function (done) {
       //Prepare
       main.Start();
       main._.should.not.equal(undefined);
@@ -73,7 +73,7 @@ describe('Before the test...', () => {
         .get('/config/detectors')
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.length.should.equal(4);
+          res.body.length.should.equal(8);
           done();
       });
     });
@@ -82,7 +82,7 @@ describe('Before the test...', () => {
       //Prepare
       let alternativeConfig = new motion.Config("/test/config_express_test.js");
       motion.StartWithConfig(alternativeConfig, (e,d,n,f) =>{
-        d.length.should.equal(10); //2 from the config file,  +4 from the main.js file, +4 again from the main.js file
+        d.length.should.equal(18); //2 from the config file,  +8 from the main.js file, +8 again from the main.js file
         done();
       });
     });
@@ -99,8 +99,36 @@ describe('Before the test...', () => {
       should.fail();
     });
 
-    it('When running that motion._.StartWithConfig, the system should setup detectors to add and remove elements.', function () {
-      should.fail(); //continue
+    it('Plugins should also implement the "Reset" method which is run when the main.Reset() method is called, via event handler', function (done) {
+      //Prepare
+      //For the test to be done properly I need to require the file again, so that AddPlugin is run.
+      delete require.cache[require.resolve('../main')];
+      main = require('../main');
+      motion = main._;
+      main.on("reset", ()=>{
+        done();
+      });
+      motion.Reset();
+    });
+
+    it('When running that motion._.StartWithConfig, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
+      //Prepare
+      //For the test to be done properly I need to require the file again, so that AddPlugin is run.
+      delete require.cache[require.resolve('../main')];
+      main = require('../main');
+      motion = main._;
+
+      let emptyConfig = new main._.Config("/test/config_empty_test.js");
+      main._.StartWithConfig(emptyConfig, (e,d,n,f) =>{
+      chai.request(main)
+        .get('/config/detectors')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.length.should.equal(8);  //AddDetector, AddNotifier, RemoveNotifier, GetEnvironment + 2 for Activate/Deactivate Detectors, Get Detectors, Get Notifiers
+          res.body[0]._isActive.should.equal(true);
+          done();
+        });
+      });
     });
 
     it('If no admin user exists should prompt to create one', function () {
@@ -113,6 +141,11 @@ describe('Before the test...', () => {
       should.fail(); //continue
     });
     it('The 2 system detector routes should be pointing to AddDetector, and RemoveDetector respectively', function () {
+      should.fail(); //continue
+    });
+    it('Can check if a detector is Active or not via its property', function () {
+      //_isActive is an Internal property! How to not hide it? it is hidden in "t-motion-detector".
+      //How to call getIsActive 
       should.fail(); //continue
     });
     it('Should be able to add elements to it (Detectors, Notifiers, etc...)', function () {

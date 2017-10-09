@@ -1,6 +1,7 @@
 let md = require('t-motion-detector');
-let log = md.Log;
+var log = md.Log;
 let ent = require('./Entities');
+let eventEmitter = require("events");
 
 //let express = require('express');
 //let app = express();
@@ -12,18 +13,25 @@ let _;
 
 log.info("Starting t-motion-detector-cli web app...");
 
-//Used for tests
+/**
+ * Called when t-motion-detector is started. Called when StartWithConfig is called.
+ * Adds default detector routes needed for the t-motion-detector-cli web-app
+ * @return {boolean} True the plugin was successfully added.
+ */
 function Start(){
   _.Start({
     environment: mainEnv
   });
-  _.AddDetector(routeDConfig);
-  _.AddDetector(routeNConfig);
-  _.AddDetector(routeDeactivateD);
-  _.AddDetector(routeActivateD);
+  _.AddDetector(routeAddDetector);
+  _.AddDetector(routeAddNotifier);
+  _.AddDetector(routeRemoveNotifier);
+  _.AddDetector(routeGetDetectors);
+  _.AddDetector(routeGetNotifiers);
+  _.AddDetector(routeDeactivateDetector);
+  _.AddDetector(routeActivateDetector);
+  _.AddDetector(routeGetEnvironment);
 
   log.info(`Listening on port ${port}`);
-  console.log(`Started on port ${port}`);
   //TO DELETE
   let key = new _.Config().slackHook();
   let n = new _.Extensions.SlackNotifier("My slack notifier", key);
@@ -31,7 +39,18 @@ function Start(){
 
 }
 
-mainEnv = new ent.ExpressEnvironment(port);
+/**
+ * Called when t-motion-detector is reset. Called when Reset is called.
+ * Emits also a "reset" event which can be used for performing additional tasks
+ * @return {boolean} True the plugin was successfully added.
+ */
+function Reset(){
+  log.info("Calling plugin Reset method...");
+  //Do some reset stuff here
+  this.emit("reset");
+}
+
+mainEnv = new ent.ExpressEnvironment(port, undefined, undefined, 200000, 10);
 
 let app = mainEnv.getWebApp();
 /*
@@ -62,15 +81,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.text());                                    
 app.use(bodyParser.json({ type: 'application/json'}));  
 
-let routeDConfig = new ent.RequestDetector("My route for detectors", "/config/detectors", "GetMotionDetectors");
-routeDConfig.name = "Config Route for Detectors";
 
-let routeNConfig = new ent.RequestDetector("My route for notifiers", "/config/notifiers", "GetNotifiers");
-routeNConfig.name = "Config Route for Notifiers";
+let routeAddDetector = new ent.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
+let routeAddNotifier = new ent.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
+let routeRemoveNotifier = new ent.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
 
-let routeDeactivateD = new ent.RequestDetector("Deactivate Detectors", "/config/detector/deactivate", "DeactivateDetector;name", "POST");
+let routeGetDetectors = new ent.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectors");
+let routeGetNotifiers = new ent.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
 
-let routeActivateD = new ent.RequestDetector("Activate Detectors", "/config/detector/activate", "ActivateDetector;name", "POST");
+let routeDeactivateDetector = new ent.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
+let routeActivateDetector = new ent.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
+
+let routeGetEnvironment = new ent.RequestDetector("Get Environment route", "/config/environment", "GetEnvironment");
 
 //Plugin exports
 function PreAddPlugin()
@@ -90,10 +112,14 @@ function PostRemovePlugin()
 module.exports = app;
 app.Log = log;
 app.Start = Start;
+app.Reset = Reset;
 app.PreAddPlugin = PreAddPlugin;
 app.PostAddPlugin = PostAddPlugin;
 app.PreRemovePlugin = PreRemovePlugin;
 app.PostRemovePlugin = PostRemovePlugin;
 app._ = _;
 
+log.info("Adding this module as plugin...");
 if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
+
+eventEmitter.call(this);

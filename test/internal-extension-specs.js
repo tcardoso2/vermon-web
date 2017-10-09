@@ -32,17 +32,17 @@ after(function(done) {
 
 describe("When creating a t-motion-detector-cli extension, ", function() {
 
-  it('It should be able to access the t-motion-detector Entities via the "$" accessor.', function (done) {
+  it('It should be able to access the t-motion-detector Entities via the "_" accessor.', function (done) {
      //Prepare
     let Entities = main.$.Entities;
     done();
   });
   it('The developer should link both libraries using the AddPlugin function.', function (done) {
      //Prepare
-    main.$.Reset();
-    let alternativeConfig = new main.$.Config("/test/config_express_test3.js");
+    main._.Reset();
+    let alternativeConfig = new main._.Config("/test/config_express_test3.js");
 
-    main.$.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
+    main._.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
       
       done();
     });
@@ -54,11 +54,11 @@ describe("When creating a NetworkDetector, ", function() {
   it('It should detect the current discoverable nodes present in the network.', function (done) {
     //Prepare
     
-    main.$.Reset();
-    let alternativeConfig = new main.$.Config("/test/config_express_test4.js");
+    main._.Reset();
+    let alternativeConfig = new main._.Config("/test/config_express_test4.js");
     let detected = false;
 
-    main.$.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
+    main._.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
       n[0].on('pushedNotification', function(notifierName, text, data){
         console.log("CONSOLE:", data.newState.stdout.data);
         if (!detected){

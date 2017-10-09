@@ -1,5 +1,6 @@
 let m = require('t-motion-detector');
 let ent = m.Entities;
+var log = m.Log;
 let ext = m.Extensions;
 let express = require('express');
 let app = express();
@@ -62,7 +63,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.port = port ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
 
-    console.log(`Setting static address to ${this.static_addr}...`);
+    log.info(`Setting static address to ${this.static_addr}...`);
     app.use(express.static(this.static_addr));
     
     let e = this;
@@ -80,9 +81,9 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.port++;
     this.maxAttempts--;
     if(this.maxAttempts > 0){
-      console.log(`Attempting to listen to port ${this.port}`);
+      log.info(`Attempting to listen to port ${this.port}`);
       this.server = app.listen(this.port).on('error', this.__listen);
-      console.log("OK!");
+      log.info("Listening to port successful.");
     }
   }
   
@@ -108,7 +109,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     super.bindDetector(md, notifiers);
     let e = this;
   	if(md instanceof RequestDetector) {
-  	  console.log(`Adding route: ${md.route} with verb: ${md.verb}`);
+  	  log.info(`Adding route: ${md.route} with verb: ${md.verb}`);
       switch (md.verb)
       {
   	    case "GET": 
@@ -152,7 +153,7 @@ class RequestDetector extends ent.MotionDetector{
     if (typeof handler == "string"){
       let parts = _GetFuncParts(handler);
   	  this.handler = (req, res)=> {
-        console.log(`Request body: ${req.body} \nExecuting function main.${parts[0]}...`)
+        log.info(`Request body: ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
           let cache = []; //This is a method of avoiding circular reference error in JSON
@@ -169,7 +170,7 @@ class RequestDetector extends ent.MotionDetector{
           })));
           cache = null; // Enable garbage collection
         }catch(e){
-          console.error(`Error: ${e.message}`);
+          log.error(`Error: ${e.message}`);
           res.json(e.message);
         }
       };
@@ -183,7 +184,7 @@ class RequestDetector extends ent.MotionDetector{
 //the function really exists
 function _GetFuncParts(fn_name){
   let funcParts = fn_name.split(";");
-  console.log(`Checking if function ${funcParts} exists...`)
+  log.info(`Checking if function ${funcParts} exists...`)
   let func = m[funcParts[0]];
   if (!func) throw new Error(`Error: function "${fn_name}" is not defined in t-motion-detector.`);
   return funcParts;
@@ -191,7 +192,7 @@ function _GetFuncParts(fn_name){
 
 //Executes a function with name fn_name in the main t-motion-detector module and passes its args
 function _GetFuncResult(fn_name, args){
-  console.log(`Calling function ${fn_name}(${args})...`)
+  log.info(`Calling function ${fn_name}(${args})...`)
   return m[fn_name](args);
 }
 

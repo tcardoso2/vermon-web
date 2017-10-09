@@ -3,6 +3,8 @@
 ### Table of Contents
 
 -   [ExpressEnvironment](#expressenvironment)
+-   [Start](#start)
+-   [Reset](#reset)
 
 ## ExpressEnvironment
 
@@ -64,3 +66,17 @@ verb: "POST"
 exports.profiles = profiles;
 exports.default = profiles.default;
 ```
+
+## Start
+
+Called when t-motion-detector is started. Called when StartWithConfig is called.
+Adds default detector routes needed for the t-motion-detector-cli web-app
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** True the plugin was successfully added.
+
+## Reset
+
+Called when t-motion-detector is reset. Called when Reset is called.
+Emits also a "reset" event which can be used for performing additional tasks
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** True the plugin was successfully added.
