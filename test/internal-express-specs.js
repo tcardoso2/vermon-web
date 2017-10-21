@@ -30,6 +30,13 @@ let Entities = motion.Entities;
 chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
+function helperReset(){
+  motion.Reset();
+  delete require.cache[require.resolve('../main')];
+  main = require('../main');
+  motion = main._;
+}
+
 before(function(done) {
   var n = undefined;
   done();
@@ -54,6 +61,15 @@ describe('Before the test...', () => {
   */
 
   describe("After starting express from main", function() {
+    it('If ran directly from command line should return not proceed without a proper command.', (done) => {
+      main._.Cmd.get('node main',(err, data, stderr) => {
+        err.message.should.not.equal(null);
+        stderr.should.equal('');
+        data.indexOf('ERROR Module called directly, please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application.').should.be.gt(0);
+        done();
+      });
+    });
+
     it('I should GET a Welcome message, on the welcome path', (done) => {
       chai.request(main)
         .get('/welcome')
@@ -105,7 +121,11 @@ describe('Before the test...', () => {
       delete require.cache[require.resolve('../main')];
       main = require('../main');
       motion = main._;
+      let _done = false;
       main.on("reset", ()=>{
+        if (_done) return;
+        _done = true;
+        console.log("Test: Called done");
         done();
       });
       motion.Reset();
@@ -129,33 +149,6 @@ describe('Before the test...', () => {
           done();
         });
       });
-    });
-
-    it('If no admin user exists should prompt to create one', function () {
-      should.fail(); //continue
-    });
-    it('If no default config.js file exists should prompt to create one', function () {
-      should.fail(); //continue
-    });
-    it('Should not be possible to remove System routes, started by the system (Start)', function () {
-      should.fail(); //continue
-    });
-    it('The 2 system detector routes should be pointing to AddDetector, and RemoveDetector respectively', function () {
-      should.fail(); //continue
-    });
-    it('Can check if a detector is Active or not via its property', function () {
-      //_isActive is an Internal property! How to not hide it? it is hidden in "t-motion-detector".
-      //How to call getIsActive 
-      should.fail(); //continue
-    });
-    it('Should be able to add elements to it (Detectors, Notifiers, etc...)', function () {
-      should.fail(); //continue
-    });
-    it('Should be able to delete elements to it (Detectors, Notifiers, etc...)', function () {
-      should.fail(); //continue
-    });
-    it('Should be able to redirect to login page if User admin exists but is not logged in.', function () {
-      should.fail(); //continue
     });
   });
 
@@ -523,35 +516,5 @@ describe('Before the test...', () => {
         });
       });
     });
-  });
-});
-
-describe("When accessing the entry page", function() {
-  it('I should be prompted for OTP pass-code', function () {
-    should.fail(); //continue
-  });
-
-  it('I should send the OTP to the slack channel', function () {
-    should.fail(); //continue
-  });
-
-  it('When entering that OTP pass the system should allow access to the sensors page', function () {
-    should.fail(); //continue
-  });
-
-  it('I should be able to enter in listening mode', function () {
-    should.fail(); //continue
-  });
-
-  it('I should be able to capture a radio signal and save it', function () {
-    should.fail(); //continue
-  });
-
-  it('I should be able to reproduce that same signal', function () {
-    should.fail(); //continue
-  });
-
-  it('I should be able to detect the signal I sent', function () {
-    should.fail(); //continue
   });
 });

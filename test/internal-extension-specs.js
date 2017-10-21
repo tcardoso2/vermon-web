@@ -34,7 +34,8 @@ describe("When creating a t-motion-detector-cli extension, ", function() {
 
   it('It should be able to access the t-motion-detector Entities via the "_" accessor.', function (done) {
      //Prepare
-    let Entities = main.$.Entities;
+    let Entities = main._.Entities;
+    Entities.should.not.equal(undefined);
     done();
   });
   it('The developer should link both libraries using the AddPlugin function.', function (done) {

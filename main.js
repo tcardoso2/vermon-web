@@ -1,7 +1,15 @@
+#!/usr/bin/env node
+
 let md = require('t-motion-detector');
 var log = md.Log;
 let ent = require('./Entities');
 let eventEmitter = require("events");
+let readline = require('readline');
+ 
+let rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 //let express = require('express');
 //let app = express();
@@ -12,6 +20,12 @@ let port = 3300;
 let _;
 
 log.info("Starting t-motion-detector-cli web app...");
+
+log.info("Registering new commands...");
+md.Cli
+  .option('-sw, --startweb', 'Starts the Web server')
+  .option('-nc, --defaultConfig', "Ignore any config file (won't prompt to create a new one)")
+  .parse(process.argv);
 
 /**
  * Called when t-motion-detector is started. Called when StartWithConfig is called.
@@ -117,9 +131,26 @@ app.PreAddPlugin = PreAddPlugin;
 app.PostAddPlugin = PostAddPlugin;
 app.PreRemovePlugin = PreRemovePlugin;
 app.PostRemovePlugin = PostRemovePlugin;
+app.RL = rl;
 app._ = _;
 
 log.info("Adding this module as plugin...");
 if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
+
+if (md.Cli.startweb) {
+  log.info('  Starting web server;');
+  if (md.Cli.defaultConfig) {
+    log.info('  No config declared, proceeding...;');
+  } else {
+    log.info('  No config file seems to exist, to run without a config run with --defaultConfig option;');;
+  }
+}
+else {
+  if (require.main === module) {
+    //Module was called directly instead of using commands
+    log.error('Module called directly, please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application.');
+    process.exit(1);
+  }
+}
 
 eventEmitter.call(this);
