@@ -3,6 +3,8 @@
 ### Table of Contents
 
 -   [ExpressEnvironment](#expressenvironment)
+-   [CommandStdoutDetector](#commandstdoutdetector)
+-   [RequestDetector](#requestdetector)
 -   [Start](#start)
 -   [Reset](#reset)
 
@@ -28,8 +30,8 @@ Acts like a Singleton, in the sense that the wrapped express app is a single ins
 
 ```javascript
 let web = require("t-motion-detector-cli");
-let config = new web.$.Config('./config.js');
-web.$.StartWithConfig(config, (e,d,n,f)=>{
+let config = new web._.Config('./config.js');
+web._.StartWithConfig(config, (e,d,n,f)=>{
 console.log("Good to go!");
 });
 //Example of a config file which creates the routes necessary
@@ -65,6 +67,42 @@ verb: "POST"
 }
 exports.profiles = profiles;
 exports.default = profiles.default;
+```
+
+## CommandStdoutDetector
+
+**Extends ent.MotionDetector**
+
+A Detector which takes a line command and will send a change if detects the pattern given on stdout
+
+**Parameters**
+
+-   `name` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** is a friendly name for reference for this route, will be the detector name.
+-   `command` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** will be executed by the command line
+-   `args` **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** is an array of arguments for the command to execute (optional, default `[]`)
+-   `pattern` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** is a pattern which the detector will attempt to find in the log (optional, default `""`)
+
+## RequestDetector
+
+**Extends ent.MotionDetector**
+
+A Web Request Detector which implements an URL route to some known available serve-moethod.
+
+**Parameters**
+
+-   `name` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** is a friendly name for reference for this route, will be the detector name.
+-   `route` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** an URL route
+-   `handler` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** is the name of the method / function to call when this route is used, the function's return contents are displayed as a Web Response.
+-   `verb` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** is the HTTP Verb to be used, if ommited defaults to "GET". (optional, default `"GET"`)
+
+**Examples**
+
+```javascript
+new RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
+//GET route which calls the GetNotifiers function
+new RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
+//POST request route. in this case expects in the query string a "name" argument which should refer the name of the detector to deactivate e.g.
+///config/detectors/deactivate?name=MyDetectorToDeactivate
 ```
 
 ## Start

@@ -18,8 +18,8 @@ const defaultPort = 8080;
  * @param {string} static_addr, is the relative URL of the static resources, it defaults to the 
  * module's internal public folder
  * @example  let web = require("t-motion-detector-cli");
-let config = new web.$.Config('./config.js');
-web.$.StartWithConfig(config, (e,d,n,f)=>{
+let config = new web._.Config('./config.js');
+web._.StartWithConfig(config, (e,d,n,f)=>{
   console.log("Good to go!");
 });
 //Example of a config file which creates the routes necessary
@@ -144,12 +144,39 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     }
   }
 }
-
+/**
+ * A Detector which takes a line command and will send a change if detects the pattern given on stdout
+ * @param {String} name is a friendly name for reference for this route, will be the detector name.
+ * @param {String} command will be executed by the command line
+ * @param {Array} args is an array of arguments for the command to execute
+ * @param {String} pattern is a pattern which the detector will attempt to find in the log
+ */
+class CommandStdoutDetector extends ent.MotionDetector{
+  constructor(name, command, args = [], pattern = ""){
+    super(name);
+    if (!command){
+      throw new Error("The second argument 'command' is mandatory.");
+    }
+  }
+}
+/**
+ * A Web Request Detector which implements an URL route to some known available serve-moethod.
+ * @param {String} name is a friendly name for reference for this route, will be the detector name.
+ * @param {String} route an URL route
+ * @param {String} handler is the name of the method / function to call when this route is used, the function's return contents are displayed as a Web Response.
+ * @param {String} verb is the HTTP Verb to be used, if ommited defaults to "GET".
+ * @example
+ * new RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
+ * //GET route which calls the GetNotifiers function
+ * new RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
+ * //POST request route. in this case expects in the query string a "name" argument which should refer the name of the detector to deactivate e.g.
+ * ///config/detectors/deactivate?name=MyDetectorToDeactivate
+ */
 class RequestDetector extends ent.MotionDetector{
-  constructor(name, route, handler, verb){
+  constructor(name, route, handler, verb = "GET"){
   	super(name);
   	this.route = route;
-    this.verb = verb ? verb : "GET";
+    this.verb = verb;
     if (typeof handler == "string"){
       let parts = _GetFuncParts(handler);
   	  this.handler = (req, res)=> {
@@ -197,9 +224,10 @@ function _GetFuncResult(fn_name, args){
 }
 
 //Extending Entities Factory
-const classes = { ExpressEnvironment, RequestDetector };
+const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector };
 
 new ent.EntitiesFactory().extend(classes);
 
+exports.CommandStdoutDetector = CommandStdoutDetector;
 exports.ExpressEnvironment = ExpressEnvironment;
 exports.RequestDetector = RequestDetector;

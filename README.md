@@ -1,4 +1,4 @@
-[![NPM info](https://nodei.co/npm/t-motion-detector-cli.png?downloads=true)](https://nodei.co/npm/t-motion-detector-cli.png?downloads=true)
+[![NPM info](https://nodei.co/npm/t-motion-detector-cli.png?downloads=true)](https://www.npmjs.com/package/t-motion-detector-cli)
 
 [![Travis build status](https://travis-ci.org/tcardoso2/t-motion-detector-cli.png?branch=master)](https://travis-ci.org/tcardoso2/t-motion-detector-cli)
 [![dependencies](https://david-dm.org/tcardoso2/t-motion-detector-cli.svg)](https://david-dm.org/tcardoso2/t-motion-detector-cli.svg)
@@ -6,13 +6,15 @@
 [![Unit tests](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/badge.svg)](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/badge.svg) 
 
 # t-motion-detector-cli
-A cli/API tool (dashboard) to monitor your Environment, Motion sensors and Notifiers.
+A t-motion-detector Plugin CLI/API tool (dashboard) to monitor your Environment, Motion sensors and Notifiers.
 It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command.
 * Provides an Express web-application which a basic API (REST services) to view and manage the environment
 
-* v 0.3.2 :Updated dependency reference to t-motion-detector@v0.5.13. Added handling to not allow starting main.js directly, only via 'require' keyword; Added reporter badge for unit tests. Started creating tests for CommandStdoutDetector.  
+* v 0.3.4 :Working on CommandStdoutDetector (WIP), small fixes. Minor improvements on documentation 
+* v 0.3.3 :Added handling to not allow starting main.js directly, only via 'require' keyword; Added reporter badge for unit tests. Started creating tests for CommandStdoutDetector.  
+* v 0.3.2 :Updated dependency reference to t-motion-detector@v0.5.13.  
 * v 0.3.1 :Implementing Reset method for Plugins. Implementing default Detectors created when t-motion-detector-cli is ran directly (e.g. there should be default detectors to create and remove elements and a default ExpressEnvironment) - WIP. Normalizing logging to use log library instead of console.log for proper logging. Update to version t-motion-detector@v0.5.10  
 * v 0.3.0 :Updated dependency reference to t-motion-detector@v0.5.9, fixes. Working on maxAttampts for the Environment when address is already in use. Added more tests to run directly application from main, and be able to add elements from the web-UI (WIP). Working on proper HTML CSS formating. "Start" function of the main module
 is now called after StartWithConfig   

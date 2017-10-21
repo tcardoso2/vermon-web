@@ -57,18 +57,28 @@ describe('Before the test...', () => {
     });
 
   describe("There should be an abstraction layer CommandStdoutDetector detecting changes in log after a command is issued", function() {
-    it('CommandStdoutDetector should take a line command as the first argument', function (done) {
-      let d = new CommandStdoutDetector();
+    it('CommandStdoutDetector should take a line command as the second argument', function (done) {
+      try{
+        let d = new ent.CommandStdoutDetector("my detector");
+      } catch(e){
+        e.message.should.equal("The second argument 'command' is mandatory.");
+        done(); 
+      }
       should.fail();
     });
 
-    it('CommandStdoutDetector should take an array of arguments as second argument', function (done) {
-      let d = new CommandStdoutDetector();
-      should.fail();
+    it('CommandStdoutDetector should take an array of arguments as third argument', function (done) {
+      try{
+        let d = new ent.CommandStdoutDetector("my detector", "pwd", "Bla bla");
+      } catch(e){
+        e.message.should.equal("Third argument should be an array.");
+        done();  
+      }
+      throw new Error("Should not have reached here, check the unit test again.");
     });
 
-    it('CommandStdoutDetector should take a line command as the first argument, arguments as second, and a Log pattern as text to search', function (done) {
-      let d = new CommandStdoutDetector("node main", ["startweb"], "INFO   Starting web server");
+    it('CommandStdoutDetector should take a line command as the 2nd args, arguments as 3rd, and a Log pattern as text to search', function (done) {
+      let d = new ent.CommandStdoutDetector("node main", ["startweb"], "INFO   Starting web server");
       should.fail();
     });
   });
