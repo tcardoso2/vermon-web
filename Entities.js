@@ -149,14 +149,47 @@ class ExpressEnvironment extends ext.SystemEnvironment{
  * @param {String} name is a friendly name for reference for this route, will be the detector name.
  * @param {String} command will be executed by the command line
  * @param {Array} args is an array of arguments for the command to execute
- * @param {String} pattern is a pattern which the detector will attempt to find in the log
+ * @param {String} pattern is a pattern which the detector will attempt to find in the log, by default it searches for "ERROR"
  */
 class CommandStdoutDetector extends ent.MotionDetector{
-  constructor(name, command, args = [], pattern = ""){
+  constructor(name, command, args = [], pattern = "ERROR"){
     super(name);
+    //Validate 2nd argument
     if (!command){
       throw new Error("The second argument 'command' is mandatory.");
     }
+    //Validate 3rd argument
+    if(!Array.isArray(args)){
+      throw new Error("The third argument 'args' must be an Array.");
+    }
+    this.command = command;
+    this.args = args;
+    this.pattern = pattern;
+  }
+
+  startMonitoring(){
+    super.startMonitoring();
+    let _args = '';
+    for (let i in this.args){
+      _args += ` --${this.args[i]}`;
+    }
+    let data_line = '';
+    let line = 0;
+    log.info(`Executing command: "${this.command} ${this._args}"...`);
+    this.processRef = m.Cmd.get(this.command + _args);
+    let d = this;
+    this.processRef.stdout.on(
+      'data', (data)=> {
+        line++;
+        data_line += data;
+        if (data_line[data_line.length-1] == '\n') {
+          if (data.indexOf(d.pattern) > 0){
+            log.info(`Pattern detected by ${d.name} on line ${line}, sending change to notifiers....`);
+            d.send({ "line": data, "row": line, "col": data.indexOf(d.pattern), "allData": data_line });
+          }
+        }
+      }
+    );
   }
 }
 /**

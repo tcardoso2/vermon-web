@@ -71,15 +71,24 @@ describe('Before the test...', () => {
       try{
         let d = new ent.CommandStdoutDetector("my detector", "pwd", "Bla bla");
       } catch(e){
-        e.message.should.equal("Third argument should be an array.");
+        e.message.should.equal("The third argument 'args' must be an Array.");
         done();  
       }
       throw new Error("Should not have reached here, check the unit test again.");
     });
 
     it('CommandStdoutDetector should take a line command as the 2nd args, arguments as 3rd, and a Log pattern as text to search', function (done) {
-      let d = new ent.CommandStdoutDetector("node main", ["startweb"], "INFO   Starting web server");
-      should.fail();
+      helperReset();
+      let _config = new main._.Config("/test/config_command_test1.js");
+      main._.StartWithConfig(_config, (e,d,n,f) =>{
+        n[0].on('pushedNotification', function(message, text, data){
+          console.log(data.newState);
+          data.newState.row.should.be.gt(5);
+          data.newState.line.indexOf("INFO   Starting web server").should.be.gt(0);
+          (data.newState.line.length-1).should.be.lt(data.newState.allData.length);
+          done();
+        });
+      });
     });
   });
 
@@ -151,26 +160,13 @@ describe('Before the test...', () => {
     it('If --defaultConfig is specified, then it creates a new default config', function (done) {
       //Prepare
       helperReset();
-      let data_line = '';
-
-      const processRef = main._.Cmd.get('node main --startweb --defaultConfig');
-      processRef.stdout.on(
-        'data',
-        function(data) {
-          data_line += data;
-          if (data_line[data_line.length-1] == '\n') {
-            console.log(data_line);
-            let _done = false;
-            //CONTINUAR DAQUI, CRIAR UM FICHEIRO config.js - Mas criar testes para checkar se ja existe, so grave se fizer --defaultConfig-force
-            if (data_line.indexOf("Created a new config file;") > 0){
-              //Check if the file is really there.
-              if(_done) return;
-              _done = true;
-              done();
-            }
-          }
-        }
-      );
+      let _config = new main._.Config("/test/config_command_test2.js");
+      main._.StartWithConfig(_config, (e,d,n,f) =>{
+        n[0].on('pushedNotification', function(message, text, data){
+          data.newState.line.indexOf("INFO   Created a new config file").should.be.gt(0);
+          done();
+        });
+      });
     });
     it('Should not be possible to remove System routes, started by the system (Start)', function () {
       should.fail(); //continue
