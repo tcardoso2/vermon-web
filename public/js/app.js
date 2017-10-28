@@ -11,7 +11,7 @@ tMotionDetector.controller('MotionDetectorController', function MotionDetectorCo
   $scope.toggleActive = function(detector){
   	let req = {
   	  method: 'POST',
-  	  url: '/config/detector/' + (detector._isActive ? 'deactivate' : 'activate'),
+  	  url: '/config/detectors/' + (detector._isActive ? 'deactivate' : 'activate'),
   	  data: { name: detector.name }
   	}
     $http(req).then(function(response) {

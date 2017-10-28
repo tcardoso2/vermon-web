@@ -97,14 +97,14 @@ describe('Before the test...', () => {
       helperReset();
       let data_line = '';
 
-      const processRef = main._.Cmd.get('node main --startweb');
+      let processRef = main._.Cmd.get('node main --startweb');
+      let _done = false;
       processRef.stdout.on(
         'data',
         function(data) {
           data_line += data;
           if (data_line[data_line.length-1] == '\n') {
             console.log(data_line);
-            let _done = false;
             if (data_line.indexOf("INFO   Starting web server") > 0){
               if(_done) return;
               _done = true;
@@ -118,7 +118,7 @@ describe('Before the test...', () => {
       helperReset();
       let data_line = '';
 
-      const processRef = main._.Cmd.get('node main');
+      let processRef = main._.Cmd.get('node main');
       processRef.stdout.on(
         'data',
         function(data) {
@@ -133,21 +133,36 @@ describe('Before the test...', () => {
       );
     });
     it('If no admin user exists should prompt to create one', function () {
-      should.fail(); //continue
-    });
-    it('If no default config.js file exists should prompt to create one', function (done) {
-      //Prepare
       helperReset();
       let data_line = '';
 
-      const processRef = main._.Cmd.get('node main --startweb');
+      let processRef = main._.Cmd.get('node main --startweb');
       processRef.stdout.on(
         'data',
         function(data) {
           data_line += data;
           if (data_line[data_line.length-1] == '\n') {
             console.log(data_line);
-            let _done = false;
+            if (data_line.indexOf('ERROR Module called directly, please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application.') > 0){
+              done();
+            }
+          }
+        }
+      );
+    });
+    it('If no default config.js file exists should prompt to create one', function (done) {
+      //Prepare
+      helperReset();
+      let data_line = '';
+
+      let processRef = main._.Cmd.get('node main --startweb');
+      let _done = false;
+      processRef.stdout.on(
+        'data',
+        function(data) {
+          data_line += data;
+          if (data_line[data_line.length-1] == '\n') {
+            console.log(data_line);
             if (data_line.indexOf("No config file seems to exist, to run without a config run with --defaultConfig option;") > 0){
               if(_done) return;
               _done = true;

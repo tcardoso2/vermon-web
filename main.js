@@ -4,6 +4,7 @@ let md = require('t-motion-detector');
 var log = md.Log;
 let ent = require('./Entities');
 let eventEmitter = require("events");
+let fs = require("fs");
 let readline = require('readline');
  
 let rl = readline.createInterface({
@@ -64,7 +65,22 @@ function Reset(){
   this.emit("reset");
 }
 
-mainEnv = new ent.ExpressEnvironment(port, undefined, undefined, 200000, 10);
+/**
+ * Checks if there is an admin user saved in the system.
+ * An admin is set in the .tmotion file with a special entry admin=XXXX
+ * @return {string} the username .
+ */
+function AdminExists(){
+  let lineReader = require('readline').createInterface({
+    input: require('fs').createReadStream('.tmotion')
+  });
+
+  lineReader.on('line', function (line) {
+    throw new Error("READ MAN!!!");
+  });
+}
+
+mainEnv = new ent.ExpressEnvironment(port, undefined, undefined, 200000, 10, false);
 
 let app = mainEnv.getWebApp();
 /*
@@ -123,6 +139,8 @@ function PostRemovePlugin()
 {
 }
 
+eventEmitter.call(this);
+
 module.exports = app;
 app.Log = log;
 app.Start = Start;
@@ -142,8 +160,12 @@ if (md.Cli.startweb) {
   if (md.Cli.defaultConfig) {
     log.info('  No config declared, proceeding...;');
   } else {
-    log.info('  No config file seems to exist, to run without a config run with --defaultConfig option;');;
+    log.error('  No config file seems to exist, to run without a config.js file run with --defaultConfig option;');;
   }
+  /*if (!AdminExists()){
+    log.error('ERROR no admin user seems to be created, please use "--admin SomeAdminUser" to add an admin user for the first use.');;    
+  }*/
+  mainEnv.listen();
 }
 else {
   if (require.main === module) {
@@ -151,6 +173,7 @@ else {
     log.error('Module called directly, please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application.');
     process.exit(1);
   }
+  else {
+    log.error('No command was issued see --help for details');
+  }
 }
-
-eventEmitter.call(this);
