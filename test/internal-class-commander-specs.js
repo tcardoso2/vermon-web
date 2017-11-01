@@ -46,7 +46,8 @@ describe('Before the test...', () => {
 
   describe("There should be a Commander class which", function() {
     it('should exist in the Commander.js file', function (done) {
-      let c = new Commander();
+      let c = consider.a.command();
+      //User consider instead!
       done();
     });
     it('should allow creating CLI commands', function (done) {
@@ -70,6 +71,13 @@ describe('Before the test...', () => {
           then.finalize();
         });
       })
+      should.fail();
+    });
+    it('should be able to set a precondition for which the command should be successful', function (done) {
+      let c = new Commander();
+      c.check("someCommand").precondition(()=>{
+        return false;
+      });
       should.fail();
     });    
   });

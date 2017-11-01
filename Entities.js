@@ -144,6 +144,56 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     }
   }
 }
+
+/**
+ * Max number of nodes on the Decision Tree
+ */
+const MAX_NODES = 100;
+/**
+ * A Decision Tree environment which keeps a decision tree internally and sends changes when state changes
+ */
+class DecisionTreeEnvironment extends ent.Environment{
+  
+  constructor(numberNodes){
+    super();
+    if(!numberNodes){
+      throw new Error("ERROR: Number of nodes is mandatory and cannot equal 0.");
+    }
+    if(isNaN(numberNodes)){
+      throw new Error("ERROR: Number of nodes must be a number.");
+    }
+    if((numberNodes < 1) || (numberNodes > 100) ){
+      throw new Error(`ERROR: Number must be between 1-${MAX_NODES}`);
+    }
+
+    this.nodes = [];
+    
+    while(numberNodes > 0){
+      numberNodes--;
+      this.addNode(1);
+    }
+  }
+
+/**
+ * Adds a node if is less than the limit.
+ * @returns true if the node was successfully added.
+ */
+  addNode(node){
+    if(this.nodes.length < MAX_NODES){
+      this.nodes.push(1);
+      return true;
+    }
+    return false;
+  }
+/**
+ * Gets the number of nodes.
+ * @returns {Int} the number of nodes of the decision tree.
+ */
+  countNodes(){
+    return this.nodes.length;
+  }
+}
+
 /**
  * A Detector which takes a line command and will send a change if detects the pattern given on stdout
  * @param {String} name is a friendly name for reference for this route, will be the detector name.
@@ -263,4 +313,5 @@ new ent.EntitiesFactory().extend(classes);
 
 exports.CommandStdoutDetector = CommandStdoutDetector;
 exports.ExpressEnvironment = ExpressEnvironment;
+exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
 exports.RequestDetector = RequestDetector;
