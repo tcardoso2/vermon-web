@@ -82,7 +82,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.maxAttempts--;
     if(this.maxAttempts > 0){
       log.info(`Attempting to listen to port ${this.port}`);
-      this.server = app.listen(this.port).on('error', this.__listen);
+      this.server = app.listen(this.port).on('error', this.listen);
       log.info("Listening to port successful.");
     }
   }

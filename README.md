@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.3.7 :Started working on DecisionTreeEnvironment class, and BotFullfillmentDetector  
 * v 0.3.6 :Needed a better way to create/design commands so started creating Commander class (WIP)  
 * v 0.3.5 :Implemented CommandStdoutDetector. Added mocha unit tests badge.  
 * v 0.3.4 :Working on CommandStdoutDetector (WIP), small fixes. Minor improvements on documentation.  

@@ -343,7 +343,6 @@ describe('Before the test...', () => {
         });
     });
 
-
     it('should be able to access system info via GET request', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
