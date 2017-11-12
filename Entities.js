@@ -6,6 +6,7 @@ let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
 let path = require("path");
+let DecisionNode = require("./DecisionNode").DecisionNode;
 
 const defaultPort = 8080;
 
@@ -170,7 +171,7 @@ class DecisionTreeEnvironment extends ent.Environment{
     
     while(numberNodes > 0){
       numberNodes--;
-      this.addNode(1);
+      this.addNode(new DecisionNode("Default Node", ()=>{}));
     }
   }
 
@@ -179,11 +180,15 @@ class DecisionTreeEnvironment extends ent.Environment{
  * @returns true if the node was successfully added.
  */
   addNode(node){
-    if(this.nodes.length < MAX_NODES){
-      this.nodes.push(1);
-      return true;
+    if(node && (node instanceof DecisionNode)){
+      if(this.nodes.length < MAX_NODES){
+        this.nodes.push(node);
+        return true;
+      }
+      return false;
+    } else{
+      throw new Error("ERROR: Parameter of 'addNode' method must be of instance DecisionNode.");
     }
-    return false;
   }
 /**
  * Gets the number of nodes.

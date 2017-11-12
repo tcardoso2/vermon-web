@@ -17,7 +17,7 @@ let t = require('t-motion-detector');
 let ent = require('../Entities');
 let main = require('../main.js');
 let events = require('events');
-let Node = require("../DecisionNode").DecisionNode;
+let DecisionNode = require("../DecisionNode").DecisionNode;
 
 //Chai will use promises for async events
 chai.use(chaiAsPromised);
@@ -90,9 +90,51 @@ describe("When a Decision Tree environment is created", function() {
     }
     should.fail();
   });
-  it('Nodes must be of Node instance', function () {
+  it('Nodes must be of DecisionNode instance', function () {
     let e = new ent.DecisionTreeEnvironment(1);
-    (e.nodes[0] instanceof Node).should.equal(true);
+    (e.nodes[0] instanceof DecisionNode).should.equal(true);
+  });
+  it('function addNode must take a DecisionNode instance as first parameter', function () {
+    let e = new ent.DecisionTreeEnvironment(1);
+    try{
+      e.addNode();
+    }catch(e){
+      e.message.should.equal("ERROR: Parameter of 'addNode' method must be of instance DecisionNode.");
+      return;
+    }
+    should.fail();
+  });
+  it('DecisionNodes must have a statement describing what will be tested.', function () {
+    try{
+      let e = new ent.DecisionTreeEnvironment(1);
+      let n = new DecisionNode();
+    }catch(e){
+      e.message.should.equal("ERROR: First parameter of DecisionNode should describe the assertion as a string.");
+      return;
+    }
+    should.fail();
+  });
+  it('DecisionNodes must have a function for asserting the condition passed as second parameter.', function () {
+    let e = new ent.DecisionTreeEnvironment(1);
+    try{
+      let n = new DecisionNode("Some assertion");
+    }catch(e){
+      e.message.should.equal("ERROR: Second parameter of DecisionNode should be a function which executes the assertion.");
+      return;
+    }
+    should.fail();
+  });
+  it('DecisionNodes take a method to define which node to link to in case the assertion is true', function () {
+    let e = new ent.DecisionTreeEnvironment(1);
+    let n = new DecisionNode("Some assertion", ()=>{ return true });
+    n.goToIfTrue(); // Use promises instead?
+    should.fail();
+  });
+  it('DecisionNodes take a method to define which node to link to in case the assertion is false', function () {
+    let e = new ent.DecisionTreeEnvironment(1);
+    let n = new DecisionNode("Some assertion", ()=>{ return true });
+    n.goToIfFalse(); // Use promises instead?
+    should.fail();
   });
 });
 
