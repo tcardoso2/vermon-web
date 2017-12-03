@@ -6,7 +6,6 @@ let express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
 let path = require("path");
-let DecisionNode = require("./DecisionNode").DecisionNode;
 
 const defaultPort = 8080;
 
@@ -171,7 +170,8 @@ class DecisionTreeEnvironment extends ent.Environment{
     
     while(numberNodes > 0){
       numberNodes--;
-      this.addNode(new DecisionNode("Default Node", ()=>{}));
+      //Adds a default truthy node
+      this.addNode(new DecisionNodeDetector("Default Node", ()=>{ return true }));
     }
   }
 
@@ -179,23 +179,56 @@ class DecisionTreeEnvironment extends ent.Environment{
  * Adds a node if is less than the limit.
  * @returns true if the node was successfully added.
  */
-  addNode(node){
-    if(node && (node instanceof DecisionNode)){
+  addNode(node, truthy = true){
+    if(node && (node instanceof DecisionNodeDetector)){
       if(this.nodes.length < MAX_NODES){
+        //If a node already exists will add it as left/right
+        if (this.nodes.length > 0){
+          if(truthy){
+            this.getLastNode().goToIfTrue(node);
+          } else {
+            this.getLastNode().goToIfFalse(node);
+          }
+        } 
         this.nodes.push(node);
         return true;
       }
       return false;
     } else{
-      throw new Error("ERROR: Parameter of 'addNode' method must be of instance DecisionNode.");
+      throw new Error("ERROR: Parameter of 'addNode' method must be of instance DecisionNodeDetector.");
     }
+    //Also adds as Detector
+    super.bindDetector(node);
   }
+  getLastNode(){
+    return this.nodes[this.nodes.length-1];
+  }
+
 /**
  * Gets the number of nodes.
  * @returns {Int} the number of nodes of the decision tree.
  */
   countNodes(){
     return this.nodes.length;
+  }
+
+  processTree(){
+    //Starts with the first node;
+    let first_node = this.nodes[0];
+    let next = first_node;
+    let path = [];
+    let result = { value: {} };
+    log.info("Starting to process tree...");
+    while(!next.isLast())
+    {
+      log.info(`  '${next.descriptor}' has child nodes. Processing node...`); 
+      result = next.process();
+      log.info(`  result is ${result}'.`); 
+      next = result.next;
+      path.push(result.step);
+    }
+    log.info(`Finished processing tree. Emiting decision node '${next.descriptor}', ${result.value}`);
+    this.emit("decision", result.value, next, path);
   }
 }
 
@@ -295,6 +328,55 @@ class RequestDetector extends ent.MotionDetector{
   }
 }
 
+/**
+ * DecisionNode is a Node inside the DecisionTreeEnvironment class. It is a special type of Detector with
+ * Additional functions to support decisions.
+ */
+class DecisionNodeDetector extends ent.MotionDetector{
+  
+  constructor(descriptor, fn){
+    if(!descriptor){
+      throw new Error("ERROR: First parameter of DecisionNode should describe the assertion as a string.");
+    }
+    super(descriptor);
+    if(typeof(fn) != "function"){
+      throw new Error("ERROR: Second parameter of DecisionNode should be a function which executes the assertion.");
+    }
+    this.fn = fn;
+    this.descriptor = descriptor;
+    //Next node
+    this.nextLeft; //Truthy node
+    this.nextRight; //Falsy node
+  }
+
+  goToIfTrue(node){
+    this.nextLeft = node;
+  }
+
+  goToIfFalse(node){
+    this.nextRight = node;
+  }
+
+/**
+ * Processes the decision based on the goToIf<True><False> Functions provided
+ */
+  process(){
+    let result = {
+      next: this.fn() ? this.nextLeft : this.nextRight,
+      value: this.fn(),
+      step: this.fn() ? `(TRUE) -> ${this.nextLeft.descriptor}` :  "(FALSE) -> ${this.nextRight.descriptor}"
+    }
+    if (result.value === undefined) throw new Error(`No node was defined as result, please add a decision node: Left: ${this.nextLeft}, Right: ${this.nextRight}`);
+    return result;
+  }
+/**
+ * Returns true if there are no left not right Next nodes
+ */
+  isLast(){
+    return !(this.nextLeft || this.nextRight);
+  }
+}
+
 //Given the configuration handler portion, separates into the function and arguments name and verifies if
 //the function really exists
 function _GetFuncParts(fn_name){
@@ -317,6 +399,7 @@ const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector };
 new ent.EntitiesFactory().extend(classes);
 
 exports.CommandStdoutDetector = CommandStdoutDetector;
+exports.DecisionNodeDetector = DecisionNodeDetector;
 exports.ExpressEnvironment = ExpressEnvironment;
 exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
 exports.RequestDetector = RequestDetector;
