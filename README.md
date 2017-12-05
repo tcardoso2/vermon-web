@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.3.10:Update of dependency to fix bug.  
 * v 0.3.9 :Changed DecisionTreeNode to DecisionTreeDetector, added functionality to process nodes, and to add truthy and falsy children nodes.  
 * v 0.3.8 :Continued working on DecisionTreeEnvironment class adding DecisionNodes  
 * v 0.3.7 :Started working on DecisionTreeEnvironment class, and BotFullfillmentDetector  
