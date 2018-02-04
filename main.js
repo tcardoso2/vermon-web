@@ -33,25 +33,31 @@ md.Cli
  * Adds default detector routes needed for the t-motion-detector-cli web-app
  * @return {boolean} True the plugin was successfully added.
  */
-function Start(){
+function Start(e,m,n){
   _.Start({
-    environment: mainEnv
+    environment: e ? e : mainEnv
   });
-  _.AddDetector(routeAddDetector);
-  _.AddDetector(routeAddNotifier);
-  _.AddDetector(routeRemoveNotifier);
-  _.AddDetector(routeGetDetectors);
-  _.AddDetector(routeGetNotifiers);
-  _.AddDetector(routeDeactivateDetector);
-  _.AddDetector(routeActivateDetector);
-  _.AddDetector(routeGetEnvironment);
+  if (m){
+    //Will add detectors only if passed as parameter
+    _.AddDetector(m);    
+  } else {
+    _.AddDetector(routeAddDetector);
+    _.AddDetector(routeAddNotifier);
+    _.AddDetector(routeRemoveNotifier);
+    _.AddDetector(routeGetDetectors);
+    _.AddDetector(routeGetNotifiers);
+    _.AddDetector(routeDeactivateDetector);
+    _.AddDetector(routeActivateDetector);
+    _.AddDetector(routeGetEnvironment);
+  }
+
+  if (n) _.AddNotifier(n);
 
   log.info(`Listening on port ${port}`);
   //TO DELETE
   let key = new _.Config().slackHook();
-  let n = new _.Extensions.SlackNotifier("My slack notifier", key);
-  _.AddNotifier(n);
-
+  let sn = new _.Extensions.SlackNotifier("My slack notifier", key);
+  _.AddNotifier(sn);
 }
 
 /**

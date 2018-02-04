@@ -376,6 +376,94 @@ class DecisionNodeDetector extends ent.MotionDetector{
     return !(this.nextLeft || this.nextRight);
   }
 }
+/*
+ * Creates an API Environment which retrieves a local key/secret and endpoint
+ */
+class APIEnvironment extends ext.SystemEnvironment{
+  
+  constructor(key, secret, endpoint, isMockMode){
+    super("echo Starting APIEnvironment...");
+    this.setAPIKey(key);
+    this.setAPISecret(secret);
+    this.setEndPoint(endpoint);
+    this._isMockMode = isMockMode;
+    this._bulkResults = [];
+  }
+
+  setEndPoint(endpoint){
+    this._endpoint = endpoint;
+  }
+
+  setAPIKey(key){
+    this._key = key;
+  }
+
+  setAPISecret(secret){
+    this._secret = secret;
+  }
+ /**
+ * Sets mock mode, allowing offline testing
+ * @param {boolean} mode allows setting the mode to true or false - by default is false;
+ */
+  setMockMode(mode){
+    this._isMockMode = mode;
+  }
+
+ /**
+ * Returns the data
+ * @param {number} src is the file path
+ * @example 
+ * @returns the schema, should be overriden by the sub-classes
+ */
+  getData(data, callback, endpoint_fragment = "undefined"){
+    let _url = this._constructEndPoint(endpoint_fragment, data);
+    this._request(_url, (err, response, body) => {
+      callback(err, this._transformRawResponse(body), body);
+    });
+  }
+  /**
+  * Transforms the middleware raw response into the expected format
+  */
+  _transformRawResponse(raw){
+    throw new Error("'_transformRawResponse' function, must be implemented by child classes.");
+  }
+
+  _request(endpoint, callback){
+    //Checks if it is in mock mode
+    console.log(">>> Starting request, checking if it is in Mock Mode...");
+    if(this._isMockMode){
+      this._mockRequest(callback);
+    }
+    else{
+      request(`${endpoint}`, { json: true }, (err, response, body) => {
+      if (err) { return console.log(err); }
+      callback(err, response, body);
+      });
+    }
+  }
+
+  /**
+  * Generates a response via mock - used e.g. for offline testing
+  */
+  _mockRequest(callback){
+    throw new Error("_mockRequest should be implemented by child classes.");
+  }
+  /**
+  * Constructs an endpoint based on a given key - should be overriden by shild classes
+  * @param {String} key is some generic identifier which determines the format of the URL
+  * @param {Object} value must be an object. The function will inject into that object the 'api_key' attribute 
+  */
+  _constructEndPoint(key, value){
+    this._query = {
+      url: "/" + value.id,
+      key: key,
+      value: value
+    }
+    value.api_key = this._key;
+    return endpoints.format(this._endpoint, value);
+  }
+}
+
 
 //Given the configuration handler portion, separates into the function and arguments name and verifies if
 //the function really exists
@@ -394,7 +482,7 @@ function _GetFuncResult(fn_name, args){
 }
 
 //Extending Entities Factory
-const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector };
+const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector, APIEnvironment };
 
 new ent.EntitiesFactory().extend(classes);
 
@@ -402,4 +490,5 @@ exports.CommandStdoutDetector = CommandStdoutDetector;
 exports.DecisionNodeDetector = DecisionNodeDetector;
 exports.ExpressEnvironment = ExpressEnvironment;
 exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
+exports.APIEnvironment = APIEnvironment;
 exports.RequestDetector = RequestDetector;
