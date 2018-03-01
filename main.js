@@ -33,8 +33,10 @@ md.Cli
  * Adds default detector routes needed for the t-motion-detector-cli web-app
  * @return {boolean} True the plugin was successfully added.
  */
-function Start(e,m,n){
+function Start(e,m,n,f,config){
+  log.info("Running 'Start' function of Plugin. Config exists? `${config}`");
   _.Start({
+    //Config is missing!
     environment: e ? e : mainEnv
   });
   if (m){
@@ -164,6 +166,7 @@ if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-i
 if (md.Cli.startweb) {
   log.info('  Starting web server;');
   if (md.Cli.defaultConfig) {
+    //TODO: Add a way of including a custom config, which then should call StartWithConfig in the Plugin
     log.info('  No config declared, proceeding...;');
   } else {
     log.error('  No config file seems to exist, to run without a config.js file run with --defaultConfig option;');;

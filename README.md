@@ -11,7 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
-
+* v 0.3.14 :Dependency update, logger replaced with tracer module.  
 * v 0.3.13 :Minor update of dependency.  
 * v 0.3.12 :Update of dependency. Creation of first version of APIEnvironment, which retrieves locally stored key/secret pair;  
 * v 0.3.10 and 0.3.11:Update of dependency to fix bug.  
