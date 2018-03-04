@@ -104,9 +104,9 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   }
 
   //Only when Detector is binded, it is added to the app
-  bindDetector(md, notifiers){
+  bindDetector(md, notifiers, force = false){
 
-    super.bindDetector(md, notifiers);
+    super.bindDetector(md, notifiers, force);
     let e = this;
   	if(md instanceof RequestDetector) {
   	  log.info(`Adding route: ${md.route} with verb: ${md.verb}`);

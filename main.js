@@ -1,4 +1,14 @@
 #!/usr/bin/env node
+"use strict"
+
+/*******************************************************
+ * T-MOTION-DETECTOR-CLI
+ * There are 2 ways to use this tool:
+ * 1: Via "require" keyword: This Adds the module as a library and allows between others, 
+ *    running a server programatically with pre-configured elements via the StartWithConfig function;
+ * 2: Via running directly from command line with args: Starts the web-server directly on port 3300
+ * Regardless of the option, this modules is always added as a plugin of t-motion-detector
+ ******************************************************/
 
 let md = require('t-motion-detector');
 var log = md.Log;
@@ -6,7 +16,7 @@ let ent = require('./Entities');
 let eventEmitter = require("events");
 let fs = require("fs");
 let readline = require('readline');
- 
+let mainEnv = {};
 let rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -26,6 +36,7 @@ log.info("Registering new commands...");
 md.Cli
   .option('-sw, --startweb', 'Starts the Web server')
   .option('-nc, --defaultConfig', "Ignore any config file (won't prompt to create a new one)")
+  .option('-c, --config', "Use existing config file (WIP) - defaults to config/local")
   .parse(process.argv);
 
 /**
@@ -34,15 +45,21 @@ md.Cli
  * @return {boolean} True the plugin was successfully added.
  */
 function Start(e,m,n,f,config){
-  log.info("Running 'Start' function of Plugin. Config exists? `${config}`");
+  console.log("#############################");
+  console.log("##  STARTING WEB SERVER... ##");
+  console.log("#############################");
+
   _.Start({
     //Config is missing!
     environment: e ? e : mainEnv
   });
+  log.info("PLUGIN: Checkin if any motion detector was passed via config...");
   if (m){
     //Will add detectors only if passed as parameter
+    log.info(`PLUGIN: Yes, found ${m.length}, first is ${m[0].constructor.name}:${m[0].name}. Adding...`);
     _.AddDetector(m);    
   } else {
+    log.info("PLUGIN: No. Adding default detectors and notifiers.");
     _.AddDetector(routeAddDetector);
     _.AddDetector(routeAddNotifier);
     _.AddDetector(routeRemoveNotifier);
@@ -60,6 +77,7 @@ function Start(e,m,n,f,config){
   let key = new _.Config().slackHook();
   let sn = new _.Extensions.SlackNotifier("My slack notifier", key);
   _.AddNotifier(sn);
+  _.GetEnvironment().listen();
 }
 
 /**
@@ -169,20 +187,22 @@ if (md.Cli.startweb) {
     //TODO: Add a way of including a custom config, which then should call StartWithConfig in the Plugin
     log.info('  No config declared, proceeding...;');
   } else {
+    //TODO: Check if there is a config on ./, where the command is being run
     log.error('  No config file seems to exist, to run without a config.js file run with --defaultConfig option;');;
   }
   /*if (!AdminExists()){
     log.error('ERROR no admin user seems to be created, please use "--admin SomeAdminUser" to add an admin user for the first use.');;    
   }*/
-  mainEnv.listen();
+  Start();
 }
 else {
   if (require.main === module) {
-    //Module was called directly instead of using commands
-    log.error('Module called directly, please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application.');
+    log.error('Module was called directly from the console without any arguments, this is not allowed.');
+    log.error(' Please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application instead.');
     process.exit(1);
   }
   else {
-    log.error('No command was issued see --help for details');
+    //
+    log.info('Module was added as library.');
   }
 }
