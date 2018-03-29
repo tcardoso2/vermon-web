@@ -61,11 +61,12 @@ describe('Before the test...', () => {
   */
 
   describe("After starting express from main", function() {
-    it('If ran directly from command line should return not proceed without a proper command.', (done) => {
+    it('If ran directly from command line should not proceed without a proper command.', (done) => {
+      this.timeout(5000);
       main._.Cmd.get('node main',(err, data, stderr) => {
         err.message.should.not.equal(null);
-        stderr.should.equal('');
-        data.indexOf('ERROR Module called directly, please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application.').should.be.gt(0);
+        stderr.should.not.equal('');
+        stderr.indexOf('Module was called directly from the console without any arguments, this is not allowed.').should.be.gt(0);
         done();
       });
     });
@@ -94,18 +95,25 @@ describe('Before the test...', () => {
       });
     });
 
-    it('When adding a plugin, a start method callback should be provided and called after motion._.StartWithConfig', function (done) {
+    it('When including a plugin, GetPlugins should return that plugin', function () {
+      helperReset();
+      main._.GetPlugins().should.not.eql({});
+    });
+
+    it('To add the t-motion-detector-cli plugin the program should be started with a config file, and a Start method callback should be provided to be called after motion._.StartWithConfig, adding only the detectors in the config file.', function (done) {
       //Prepare
-      let alternativeConfig = new motion.Config("/test/config_express_test.js");
+      helperReset(); //Plugin t-motion-detector-cli added here
+      let alternativeConfig = new main._.Config("/test/config_express_test.js");
       motion.StartWithConfig(alternativeConfig, (e,d,n,f) =>{
-        d.length.should.equal(18); //2 from the config file,  +8 from the main.js file, +8 again from the main.js file
+        //It is expected that the "Start" function of the plugin cli is called
+        d.length.should.equal(2); //2 from the config file
         done();
       });
     });
 
     it('After Reseting the environment, if I try to get the environment without initializing after Reset, I should get an error that Environment does not exist.', function () {
       //Prepare
-      motion.Reset();
+      helperReset();
       try{
         let myEnv = motion.GetEnvironment();
       } catch(e) {
@@ -117,10 +125,7 @@ describe('Before the test...', () => {
 
     it('Plugins should also implement the "Reset" method which is run when the main.Reset() method is called, via event handler', function (done) {
       //Prepare
-      //For the test to be done properly I need to require the file again, so that AddPlugin is run.
-      delete require.cache[require.resolve('../main')];
-      main = require('../main');
-      motion = main._;
+      helperReset();
       let _done = false;
       main.on("reset", ()=>{
         if (_done) return;
@@ -131,16 +136,15 @@ describe('Before the test...', () => {
       motion.Reset();
     });
 
-    it('When running that motion._.StartWithConfig, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
+    it('When running motion._.StartWithConfig with a config file with only the ExpressEnvironment, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
       //Prepare
-      //For the test to be done properly I need to require the file again, so that AddPlugin is run.
-      delete require.cache[require.resolve('../main')];
-      main = require('../main');
-      motion = main._;
+      helperReset();
+      main._.GetPlugins().should.not.eql({});
 
-      let emptyConfig = new main._.Config("/test/config_empty_test.js");
+      let emptyConfig = new main._.Config("/test/config_express_only_test.js");
       main._.StartWithConfig(emptyConfig, (e,d,n,f) =>{
-      chai.request(main)
+        (e instanceof ent.ExpressEnvironment).should.equal(true);
+        chai.request(main)
         .get('/config/detectors')
         .end((err, res) => {
           res.should.have.status(200);
@@ -150,6 +154,23 @@ describe('Before the test...', () => {
         });
       });
     });
+
+    it('When running motion._.StartWithConfig with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
+      //Prepare
+      helperReset();
+
+      let emptyConfig = new main._.Config("/test/config_empty_test.js");
+      main._.StartWithConfig(emptyConfig, (e,d,n,f) =>{
+      chai.request(main)
+        .get('/')
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.eql({});
+          done();
+        });
+      });
+    });
+
   });
 
   describe("When starting t-motion with an ExpressEnvironment programatically", function(){

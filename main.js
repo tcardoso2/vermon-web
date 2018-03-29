@@ -42,7 +42,18 @@ md.Cli
 /**
  * Called when t-motion-detector is started. Called when StartWithConfig is called.
  * Adds default detector routes needed for the t-motion-detector-cli web-app
- * @return {boolean} True the plugin was successfully added.
+ * @return {boolean} True the plugin should be started.
+ */
+function ShouldStart(e,m,n,f,config){
+  let result = e instanceof ent.ExpressEnvironment;
+  log.info(`PLUGIN: Checking if plugin should start... ${result}`);
+  return result;
+}
+
+/**
+ * Called when t-motion-detector is started. Called when StartWithConfig is called.
+ * Adds default detector routes needed for the t-motion-detector-cli web-app
+ * @return {boolean} True the plugin was successfully started.
  */
 function Start(e,m,n,f,config){
   console.log("#############################");
@@ -53,13 +64,14 @@ function Start(e,m,n,f,config){
     //Config is missing!
     environment: e ? e : mainEnv
   });
-  log.info("PLUGIN: Checkin if any motion detector was passed via config...");
-  if (m){
+  log.info("PLUGIN: Checking if any motion detector was passed via config...");
+  if (m && m.length > 0){
     //Will add detectors only if passed as parameter
-    log.info(`PLUGIN: Yes, found ${m.length}, first is ${m[0].constructor.name}:${m[0].name}. Adding...`);
+    log.info(`PLUGIN: Yes, found ${m.length} plugins`);
+    log.info(`First plugin is ${m[0].constructor.name}:${m[0].name}. Adding...`);
     _.AddDetector(m);    
   } else {
-    log.info("PLUGIN: No. Adding default detectors and notifiers.");
+    log.info("PLUGIN: No config found. Falling back to adding default detectors and notifiers...");
     _.AddDetector(routeAddDetector);
     _.AddDetector(routeAddNotifier);
     _.AddDetector(routeRemoveNotifier);
@@ -170,6 +182,7 @@ eventEmitter.call(this);
 module.exports = app;
 app.Log = log;
 app.Start = Start;
+app.ShouldStart = ShouldStart;
 app.Reset = Reset;
 app.PreAddPlugin = PreAddPlugin;
 app.PostAddPlugin = PostAddPlugin;
