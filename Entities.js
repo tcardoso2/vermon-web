@@ -3,10 +3,9 @@ let ent = m.Entities;
 var log = m.Log;
 let ext = m.Extensions;
 let express = require('express');
-let app = express();
 let bodyParser = require('body-parser');
 let path = require("path");
-
+let app;
 const defaultPort = 8080;
 
 /**
@@ -62,7 +61,28 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     super(command, interval);
     this.port = port ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
+    this.maxAttempts = maxAttempts;
+    app = express();
+    //Handle errors
+    if(listen) this.listen();
+  }
 
+  setBodyParser(){
+    //parse application/json and look for raw text
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.use(bodyParser.text());   
+    app.use(bodyParser.json({ type: 'application/json'}));
+  }
+
+  listenNext(){
+    log.error(`Some error happened while attempting to listen to port ${this.port}, attempting next port...`);
+    this.port++;
+    this.listen();
+  }
+
+  listen()
+  {
     log.info(`Setting static address to ${this.static_addr}...`);
     app.use(express.static(this.static_addr));
     
@@ -71,18 +91,11 @@ class ExpressEnvironment extends ext.SystemEnvironment{
       e.addChange(req.url);
       res.json({message: "Welcome to T-Motion-CLI Web server!"});
     });
-    this.maxAttempts = maxAttempts;
-    this.port--;
-    if(listen) this.listen();
-  }
-
-  listen()
-  {
-    this.port++;
+    this.setBodyParser();
     this.maxAttempts--;
     if(this.maxAttempts > 0){
       log.info(`Attempting to listen to port ${this.port}`);
-      this.server = app.listen(this.port).on('error', this.listen);
+      this.server = app.listen(this.port).on('error', this.listenNext);
       log.info("Listening to port successful.");
     }
   }
@@ -139,9 +152,17 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   stop()
   {
   	//Do some closing steps here.
+    log.info("Server will stop listening...");
     if(this.server){
   	  this.server.close();
+      log.info("Server closed.");
     }
+  }
+
+  kill()
+  {
+    this.stop();
+    app = {};
   }
 }
 
@@ -298,9 +319,12 @@ class RequestDetector extends ent.MotionDetector{
   	super(name);
   	this.route = route;
     this.verb = verb;
+    this.setHandler(handler);
+  }
+  setHandler(handler){
     if (typeof handler == "string"){
       let parts = _GetFuncParts(handler);
-  	  this.handler = (req, res)=> {
+      this.handler = (req, res)=> {
         log.info(`Request body: ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
@@ -324,7 +348,7 @@ class RequestDetector extends ent.MotionDetector{
       };
     } else {
       this.handler = handler;
-    }
+    }    
   }
 }
 
@@ -488,6 +512,7 @@ new ent.EntitiesFactory().extend(classes);
 
 exports.CommandStdoutDetector = CommandStdoutDetector;
 exports.DecisionNodeDetector = DecisionNodeDetector;
+exports.defaultPort = defaultPort;
 exports.ExpressEnvironment = ExpressEnvironment;
 exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
 exports.APIEnvironment = APIEnvironment;

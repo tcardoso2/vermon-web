@@ -26,13 +26,13 @@ let rl = readline.createInterface({
 //let app = express();
 /*let mongoose = require('mongoose');
 let morgan = require('morgan');*/
-let bodyParser = require('body-parser');
-let port = 3300;
+let port = ent.defaultPort;
 let _;
 
 log.info("Starting t-motion-detector-cli web app...");
 
 log.info("Registering new commands...");
+
 md.Cli
   .option('-sw, --startweb', 'Starts the Web server')
   .option('-nc, --defaultConfig', "Ignore any config file (won't prompt to create a new one)")
@@ -64,14 +64,22 @@ function Start(e,m,n,f,config){
     //Config is missing!
     environment: e ? e : mainEnv
   });
-  log.info("PLUGIN: Checking if any motion detector was passed via config...");
+  log.info("PLUGIN: Checking if any motion detector/notifier was passed via config...");
   if (m && m.length > 0){
     //Will add detectors only if passed as parameter
-    log.info(`PLUGIN: Yes, found ${m.length} plugins`);
-    log.info(`First plugin is ${m[0].constructor.name}:${m[0].name}. Adding...`);
-    _.AddDetector(m);    
+    log.info(`PLUGIN: Yes, found ${m.length} detectors and ${n.length} notifiers...`);
+    log.info(`First detector is ${m[0].constructor.name}:${m[0].name}...`);
   } else {
     log.info("PLUGIN: No config found. Falling back to adding default detectors and notifiers...");
+    let routeAddDetector = new ent.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
+    let routeAddNotifier = new ent.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
+    let routeRemoveNotifier = new ent.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
+    let routeGetDetectors = new ent.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectors");
+    let routeGetNotifiers = new ent.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
+    let routeDeactivateDetector = new ent.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
+    let routeActivateDetector = new ent.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
+    let routeGetEnvironment = new ent.RequestDetector("Get Environment route", "/config/environment", "GetEnvironment");
+
     _.AddDetector(routeAddDetector);
     _.AddDetector(routeAddNotifier);
     _.AddDetector(routeRemoveNotifier);
@@ -84,7 +92,7 @@ function Start(e,m,n,f,config){
 
   if (n) _.AddNotifier(n);
 
-  log.info(`Listening on port ${port}`);
+  log.info(`Listening on port ${_.GetEnvironment().getPort()}`);
   //TO DELETE
   let key = new _.Config().slackHook();
   let sn = new _.Extensions.SlackNotifier("My slack notifier", key);
@@ -99,6 +107,8 @@ function Start(e,m,n,f,config){
  */
 function Reset(){
   log.info("Calling plugin Reset method...");
+  mainEnv.stop();
+  mainEnv.kill();
   //Do some reset stuff here
   this.emit("reset");
 }
@@ -118,6 +128,11 @@ function AdminExists(){
   });
 }
 
+function Listen(){
+  mainEnv.listen();
+}
+
+log.info("Instanciating new ExpressEnvironment in the background with (listen = false)");
 mainEnv = new ent.ExpressEnvironment(port, undefined, undefined, 200000, 10, false);
 
 let app = mainEnv.getWebApp();
@@ -143,25 +158,6 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
     app.use(morgan('combined')); //'combined' outputs the Apache style LOGs
 }*/
 
-//parse application/json and look for raw text
-app.use(bodyParser.json());                                     
-app.use(bodyParser.urlencoded({extended: true}));               
-app.use(bodyParser.text());                                    
-app.use(bodyParser.json({ type: 'application/json'}));  
-
-
-let routeAddDetector = new ent.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
-let routeAddNotifier = new ent.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
-let routeRemoveNotifier = new ent.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
-
-let routeGetDetectors = new ent.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectors");
-let routeGetNotifiers = new ent.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
-
-let routeDeactivateDetector = new ent.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
-let routeActivateDetector = new ent.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
-
-let routeGetEnvironment = new ent.RequestDetector("Get Environment route", "/config/environment", "GetEnvironment");
-
 //Plugin exports
 function PreAddPlugin()
 {
@@ -181,6 +177,7 @@ eventEmitter.call(this);
 
 module.exports = app;
 app.Log = log;
+app.Listen = Listen;
 app.Start = Start;
 app.ShouldStart = ShouldStart;
 app.Reset = Reset;
@@ -195,7 +192,7 @@ log.info("Adding this module as plugin...");
 if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
 
 if (md.Cli.startweb) {
-  log.info('  Starting web server;');
+  log.info('  Starting web server from the command line...');
   if (md.Cli.defaultConfig) {
     //TODO: Add a way of including a custom config, which then should call StartWithConfig in the Plugin
     log.info('  No config declared, proceeding...;');

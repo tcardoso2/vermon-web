@@ -5,7 +5,7 @@ profiles = {
     },
     RequestDetector: {
       name: "My Detectors Route",
-      route: "/config/detectors3",
+      route: "/config/detectors",
       callback: "GetMotionDetectors"
     },
 	  SlackNotifier: {
