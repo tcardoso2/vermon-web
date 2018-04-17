@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.3.17 :Updated dependency to t-motion-detector@0.5.30, to include Multi-Environments;  
 * v 0.3.16 :Updated dependency to t-motion-detector@0.5.25. Bug fixing on express tests...  
 * v 0.3.15 :Working on simplifications of the module. (WIP) There are 2 ways to use it, as a plugin (via require keyword) and calling it from the StartWithConfig function and directly in the console (via calling node t-motion-detector-cli); bug fixes (WIP on force = true).  
 * v 0.3.14 :Dependency update, logger replaced with tracer module.  

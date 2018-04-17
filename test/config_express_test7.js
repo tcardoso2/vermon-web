@@ -1,28 +1,38 @@
 profiles = {
   default: {
-    MultiEnvironnment: {
+    MultiEnvironment: {
       params: {
-        currentState: [
-          ExpressEnvironment: {
-          port: 8378,
-          static_addr: undefined,
-          command: "ping -c 1 localhost",
-          interval: 200000,
-          killAfter: 2
+        name: "My MultiEnvironment",
+        state: [
+          {
+            $new$ExpressEnvironment: {
+              port: 8378,
+              static_addr: undefined,
+              command: "ping -c 1 localhost",
+              interval: 200000,
+              killAfter: 0
+            }
+          },
+          {
+            $new$Environment: {
+              params: {
+                name: "Environment 2",
+                state: 3
+              }
+            }
+          }
         ]
       }
-    },
-
     },
     RequestDetector: {
       name: "My Detectors Route",
       route: "/config/detectors",
       callback: "GetMotionDetectors"
     },
-	  SlackNotifier: {
-	    name: "My Slack channel",
-	    key: "https://hooks.slack.com/services/<MySlackURL>"
-	  },
+    SlackNotifier: {
+      name: "My Slack channel",
+      key: "https://hooks.slack.com/services/<MySlackURL>"
+    },
     SystemEnvironmentFilter: [
     {
       freeMemBelow: 300000,

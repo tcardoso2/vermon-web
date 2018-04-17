@@ -24,6 +24,7 @@ let chaiHttp = require('chai-http');
 let expect = chai.expect;
 let motion = main._; //Assesses parent's export functions. Another short assessor is '$' which is only binded later
 let Entities = motion.Entities;
+let Extentions = motion.Extensions;
 
 
 //Chai will use promises for async events
@@ -564,6 +565,7 @@ describe('Before the test...', () => {
       motion.StartWithConfig(alternativeConfig);
 
       let myEnv = motion.GetEnvironment();
+      (myEnv instanceof Extensions.MultiEnvironment).should.equal(true);
 
       let app2 = myEnv.getWebApp();
       chai.request(app2)
@@ -573,7 +575,7 @@ describe('Before the test...', () => {
             myEnv.stop();
             res.should.have.status(200);
             done();
-        } catch(e){console.log(e);}
+          } catch(e){console.log(e);}
         });
     });
   });
