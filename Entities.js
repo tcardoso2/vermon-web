@@ -7,6 +7,7 @@ let bodyParser = require('body-parser');
 let path = require("path");
 let app;
 const defaultPort = 8080;
+let ko = require("knockout");
 
 /**
  * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
@@ -62,6 +63,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.port = port && Number.isInteger(port) ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
     this.maxAttempts = maxAttempts;
+    this.name = "Express Environment";
     app = express();
     //Handle errors
     if(listen) this.listen();
@@ -165,6 +167,21 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     app = {};
   }
 }
+
+//This controls the Json output of the BaseNotifier class, not printing
+//unecessary members
+ExpressEnvironment.prototype.toJSON = function() {
+  let copy = ko.toJS(this); //easy way to get a clean copy
+  let props = Object.getOwnPropertyNames(copy);
+  for (let i in props){
+    if (props[i].startsWith("_"))
+    {
+      delete copy[props[i]];
+    }
+  }
+  delete copy.domain; //remove an extra property
+  return copy; //return the copy to be serialized
+};
 
 /**
  * Max number of nodes on the Decision Tree
