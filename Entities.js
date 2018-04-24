@@ -85,7 +85,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
 
   listen()
   {
-    log.info(`Setting static address to ${this.static_addr}...`);
+    log.info(`Setting static address to ${this.static_addr} and preparing to listen on port ${this.port}...`);
     app.use(express.static(this.static_addr));
     
     let e = this;
@@ -95,8 +95,8 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     });
     this.setBodyParser();
     this.maxAttempts--;
+    log.info(`Attempting to listen to port ${this.port}, there should be a successful confirmation message after this. Number of remaining attempts ${this.maxAttempts}...`);
     if(this.maxAttempts > 0){
-      log.info(`Attempting to listen to port ${this.port}`);
       this.server = app.listen(this.port).on('error', this.listenNext);
       log.info("Listening to port successful.");
     }

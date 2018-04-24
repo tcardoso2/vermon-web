@@ -557,28 +557,34 @@ describe('Before the test...', () => {
 
   describe("When starting t-motion with an MultiEnvironment with an ExpressEnvironment via a config file", function(){
     
-    it('The URL route should be valid', function (done) {
+    it('should be possible to GET the http response', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      motion.Reset();
+      helperReset();
       let alternativeConfig = new motion.Config("test/config_express_test7.js");
-      motion.StartWithConfig(alternativeConfig);
+      motion.StartWithConfig(alternativeConfig, (e1, d, n, f)=>{
+        let myEnv = motion.GetEnvironment();
+        (myEnv instanceof Extensions.MultiEnvironment).should.equal(true);
+     
+        let myExpressEnv = myEnv.getCurrentState()["Express Environment"];
 
-      let myEnv = motion.GetEnvironment();
-      (myEnv instanceof Extensions.MultiEnvironment).should.equal(true);
-      
-      let myExpressEnv = myEnv.getCurrentState()["Express Environment"];
-
-      let app2 = myExpressEnv.getWebApp();
-      chai.request(app2)
-        .get('/config/detectors10')
-        .end((err, res) => {
-          try{
-            myExpressEnv.stop();
-            res.should.have.status(200);
-            done();
-          } catch(e){console.log(e);}
-        });
+        let app2 = myExpressEnv.getWebApp();
+        let url = "/config/detectors";
+        console.log(`Requesting URL ${url}...`);
+        d.length.should.equal(1);
+        console.log(d);
+        (d[0] instanceof ent.RequestDetector).should.equal(true);
+        d[0].route.should.equal(url);
+        chai.request(app2)
+          .get(url)
+          .end((err, res) => {
+            try{
+              myExpressEnv.stop();
+              res.should.have.status(200);
+              done();
+            } catch(e){console.log(e);}
+          });
+      });
     });
   });
 });

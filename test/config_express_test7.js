@@ -9,8 +9,7 @@ profiles = {
               port: 8378,
               static_addr: undefined,
               command: "ping -c 1 localhost",
-              interval: 200000,
-              killAfter: 0
+              interval: 200000
             }
           },
           {
@@ -26,7 +25,7 @@ profiles = {
     },
     RequestDetector: {
       name: "My Detectors Route",
-      route: "/config/detectors10",
+      route: "/config/detectors",
       callback: "GetMotionDetectors"
     },
     SlackNotifier: {
