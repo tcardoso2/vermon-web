@@ -58,8 +58,8 @@ exports.default = profiles.default;
  */
 class ExpressEnvironment extends ext.SystemEnvironment{
   
-  constructor(port, static_addr, command = "pwd", interval = 10000, maxAttempts = 10, listen = true){
-    super(command, interval);
+  constructor(port, static_addr, command = "pwd", interval = 10000, maxAttempts = 10, listen = true, killAfter = 1){
+    super(command, interval, killAfter);
     this.port = port && Number.isInteger(port) ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
     this.maxAttempts = maxAttempts;
