@@ -18,8 +18,8 @@ let fs = require("fs");
 let readline = require('readline');
 let mainEnv = {};
 let rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
+  input: process.stdin,
+  output: process.stdout
 });
 
 //let express = require('express');
@@ -44,7 +44,7 @@ md.Cli
  * Adds default detector routes needed for the t-motion-detector-cli web-app
  * @return {boolean} True the plugin should be started.
  */
-function ShouldStart(e,m,n,f,config){
+function ShouldStart(e, m, n, f, config) {
   let result = e instanceof ent.ExpressEnvironment;
   log.info(`PLUGIN: Checking if plugin should start... ${result}`);
   return result;
@@ -55,7 +55,7 @@ function ShouldStart(e,m,n,f,config){
  * Adds default detector routes needed for the t-motion-detector-cli web-app
  * @return {boolean} True the plugin was successfully started.
  */
-function Start(e,m,n,f,config){
+function Start(e, m, n, f, config) {
   console.log("#############################");
   console.log("##  STARTING WEB SERVER... ##");
   console.log("#############################");
@@ -65,7 +65,7 @@ function Start(e,m,n,f,config){
     environment: e ? e : mainEnv
   });
   log.info("PLUGIN: Checking if any motion detector/notifier was passed via config...");
-  if (m && m.length > 0){
+  if (m && m.length > 0) {
     //Will add detectors only if passed as parameter
     log.info(`PLUGIN: Yes, found ${m.length} detectors and ${n.length} notifiers...`);
     log.info(`First detector is ${m[0].constructor.name}:${m[0].name}...`);
@@ -105,7 +105,7 @@ function Start(e,m,n,f,config){
  * Emits also a "reset" event which can be used for performing additional tasks
  * @return {boolean} True the plugin was successfully added.
  */
-function Reset(){
+function Reset() {
   log.info("Calling plugin Reset method...");
   mainEnv.stop();
   mainEnv.kill();
@@ -118,7 +118,7 @@ function Reset(){
  * An admin is set in the .tmotion file with a special entry admin=XXXX
  * @return {string} the username .
  */
-function AdminExists(){
+function AdminExists() {
   let lineReader = require('readline').createInterface({
     input: require('fs').createReadStream('.tmotion')
   });
@@ -128,7 +128,7 @@ function AdminExists(){
   });
 }
 
-function Listen(){
+function Listen() {
   mainEnv.listen();
 }
 
@@ -159,18 +159,14 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
 }*/
 
 //Plugin exports
-function PreAddPlugin()
-{
+function PreAddPlugin() {
 }
-function PostAddPlugin(plugin)
-{
+function PostAddPlugin(plugin) {
   _ = plugin._;
 }
-function PreRemovePlugin(plugin)
-{
+function PreRemovePlugin(plugin) {
 }
-function PostRemovePlugin()
-{
+function PostRemovePlugin() {
 }
 
 eventEmitter.call(this);
@@ -189,7 +185,7 @@ app.RL = rl;
 app._ = _;
 
 log.info("Adding this module as plugin...");
-if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
+if (!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
 
 if (md.Cli.startweb) {
   log.info('  Starting web server from the command line...');

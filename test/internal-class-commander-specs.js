@@ -45,15 +45,15 @@ describe('Before the test...', () => {
     });
 
   describe("There should be a Commander class which", function() {
-    it('should exist in the Commander.js file', function (done) {
+    xit('should exist in the Commander.js file', function (done) {
       let c = consider.a.command();
       //User consider instead!
       done();
     });
-    it('should allow creating CLI commands', function (done) {
+    xit('should allow creating CLI commands', function (done) {
       should.fail();
     });
-    it('should be allowed to check commands in sequence via .check(...).then(...)', function (done) {
+    xit('should be allowed to check commands in sequence via .check(...).then(...)', function (done) {
       let c = new Commander();
       c.check("someCommand", (error, then)=>{
         //continue from here!
@@ -63,7 +63,7 @@ describe('Before the test...', () => {
       })
       should.fail();
     });
-    it('in case a check fails should be possible to return a message to the user to say a command is required', function (done) {
+    xit('in case a check fails should be possible to return a message to the user to say a command is required', function (done) {
       let c = new Commander();
       c.check("someCommand", (error, then)=>{
         if(error) then.returnToUser(some_message);
@@ -73,7 +73,7 @@ describe('Before the test...', () => {
       })
       should.fail();
     });
-    it('should be able to set a precondition for which the command should be successful', function (done) {
+    xit('should be able to set a precondition for which the command should be successful', function (done) {
       let c = new Commander();
       c.check("someCommand").precondition(()=>{
         return false;

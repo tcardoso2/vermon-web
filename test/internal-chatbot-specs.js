@@ -31,7 +31,7 @@ after(function(done) {
 });
 
 describe("When integrating with a chatbot (DialogFlow)", function() {
-  it('BotFullfillmentDetector throws an error if no arguments are passed.', function () {
+  xit('BotFullfillmentDetector throws an error if no arguments are passed.', function () {
   	try{
   	  new ent.BotFullfillmentDetector();
   	} catch(e){

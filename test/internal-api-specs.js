@@ -80,26 +80,26 @@ describe("When an API environment is created, ", function() {
     });
   });
 
-  it("TODO: should be able to construct a proper endpoint based on key/secret/endpoint data", function (done) {
+  xit("TODO: should be able to construct a proper endpoint based on key/secret/endpoint data", function (done) {
     let e = new ent.APIEnvironment();
     should.fail();
   });
-  it("TODO: should be able to make a request to the endpoint and get somee response", function (done) {
-    let e = new ent.APIEnvironment();
-    should.fail();
-  });
-
-  it("TODO: should be able to have a method to transform the response from endpoint", function (done) {
+  xit("TODO: should be able to make a request to the endpoint and get somee response", function (done) {
     let e = new ent.APIEnvironment();
     should.fail();
   });
 
-  it("TODO: should be able to get data and transform it and send it through a callback function", function (done) {
+  xit("TODO: should be able to have a method to transform the response from endpoint", function (done) {
     let e = new ent.APIEnvironment();
     should.fail();
   });
 
-  it("TODO: should be able to have a means for mocking a response, if in mock mode", function (done) {
+  xit("TODO: should be able to get data and transform it and send it through a callback function", function (done) {
+    let e = new ent.APIEnvironment();
+    should.fail();
+  });
+
+  xit("TODO: should be able to have a means for mocking a response, if in mock mode", function (done) {
     let e = new ent.APIEnvironment();
     should.fail();
   });

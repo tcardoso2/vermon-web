@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.3.19 :Updated dependency to t-motion-detector@0.5.36, changing pending tests to "xit(xxx)" which marks them as pending    
 * v 0.3.18 :Updated dependency to t-motion-detector@0.5.30, to include fixes on dependency...  
 * v 0.3.17 :Updated dependency to t-motion-detector@0.5.30, to include Multi-Environments; Minor changes on serializing ExpressEnvironment to prevent circular reference errors  
 * v 0.3.16 :Updated dependency to t-motion-detector@0.5.25. Bug fixing on express tests...  
