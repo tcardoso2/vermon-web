@@ -41,3 +41,7 @@ jspm_packages
 examples
 local*
 main2*
+
+#DB files
+db
+.ldb
