@@ -39,6 +39,10 @@ md.Cli
   .option('-c, --config', "Use existing config file (WIP) - defaults to config/local")
   .parse(process.argv);
 
+function ShouldStart(e,m,n,f,config){
+  return true;
+}
+
 /**
  * Called when t-motion-detector is started. Called when StartWithConfig is called.
  * Adds default detector routes needed for the t-motion-detector-cli web-app
