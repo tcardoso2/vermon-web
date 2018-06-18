@@ -33,11 +33,15 @@ let _;
 log.info("Starting t-motion-detector-cli web app...");
 
 log.info("Registering new commands...");
-md.Cli
-  .option('-sw, --startweb', 'Starts the Web server')
-  .option('-nc, --defaultConfig', "Ignore any config file (won't prompt to create a new one)")
-  .option('-c, --config', "Use existing config file (WIP) - defaults to config/local")
-  .parse(process.argv);
+try{
+  md.Cli
+    .option('-sw, --startweb', 'Starts the Web server')
+    .option('-nc, --defaultConfig', "Ignore any config file (won't prompt to create a new one)")
+    .option('-c, --config', "Use existing config file (WIP) - defaults to config/local")
+    .parse(process.argv);
+}catch(e){
+  log.warn("Some error happened while parsing command, ignore if this module is imported, but if this is ran directly from command line via node t-motion-detector, then we could have a problem Houston...");
+};
 
 function ShouldStart(e,m,n,f,config){
   return true;
@@ -53,12 +57,11 @@ function Start(e,m,n,f,config){
     //Config is missing!
     environment: e ? e : mainEnv
   });
-  log.info("PLUGIN: Checking if any motion detector was passed via config...");
-  if (m){
+  log.info("PLUGIN: Checking if any motion detector was passed via config to this environment...");
+  if (m && m.length > 0){
     //Will add detectors only if passed as parameter
     log.info(`PLUGIN: Yes, found ${m.length} plugin(s)`);
-    if (m.length > 0)
-      log.info(`  first is ${m[0].constructor.name}:${m[0].name}. Adding...`);
+    log.info(`  first is ${m[0].constructor.name}:${m[0].name}. Adding...`);
     _.AddDetector(m);    
   } else {
     log.info("PLUGIN: No. Adding default detectors and notifiers.");
@@ -80,11 +83,32 @@ function Start(e,m,n,f,config){
   let key = new _.Config().slackHook();
   let sn = new _.Extensions.SlackNotifier("My slack notifier", key);
   _.AddNotifier(sn);
-  port = _.GetEnvironment().getPort();
+  log.info(`Attempting to verify which port is being used from ${GetExpressEnvironment().constructor.name}...`); 
+  port = GetExpressEnvironment().port ? GetExpressEnvironment().getPort() : port;
   console.log("##########################################");
   console.log(`##  STARTING WEB SERVER on port ${port}... ##`);
   console.log("##########################################");
 }
+
+//in case a MultiEnvironment exists, this module must be able to find the underlying ExpressEnvironment
+function GetExpressEnvironment()
+{
+  let _env = _.GetEnvironment();
+  //When checking for instances I'm using the constructor name since we've had wrong false instanceof;
+  if(_env.constructor.name == "MultiEnvironment") {
+    let _candidates = _env.getCurrentState();
+    for(let c in _candidates)
+    {
+      if(_candidates[c].constructor.name == "ExpressEnvironment"){
+        return _candidates[c]; 
+      }
+    }
+  }else{
+    //Assumes that the only environment is already an ExpressEnvironment
+    return _env; 
+  } 
+}
+
 
 /**
  * Called when t-motion-detector is reset. Called when Reset is called.
@@ -175,6 +199,7 @@ eventEmitter.call(this);
 
 module.exports = app;
 app.Log = log;
+app.GetExpressEnvironment = GetExpressEnvironment;
 app.Start = Start;
 app.ShouldStart = ShouldStart;
 app.Reset = Reset;
@@ -187,7 +212,6 @@ app._ = _;
 
 log.info("Adding this module as plugin...");
 if(!md.AddPlugin(module)) throw new Error('There was an error adding this plug-in');
-
 if (md.Cli.startweb) {
   log.info('  Starting web server;');
   if (md.Cli.defaultConfig) {

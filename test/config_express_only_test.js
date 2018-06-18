@@ -1,6 +1,8 @@
 profiles = {
   default: {
-    ExpressEnvironment: {}
+    ExpressEnvironment: {
+      port: 8080
+    }
   }
 }
 

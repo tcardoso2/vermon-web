@@ -80,7 +80,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   listenNext(){
     log.error(`Some error happened while attempting to listen to port ${this.port}, attempting next port...`);
     this.port++;
-    this.listen();
+    return this.listen();
   }
 
   listen()

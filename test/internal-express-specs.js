@@ -64,17 +64,16 @@ describe('Before the test...', () => {
 
   describe("After starting express from main", function() {
     it('If ran directly from command line should not proceed without a proper command.', (done) => {
-      this.timeout(5000);
       main._.Cmd.get('node main',(err, data, stderr) => {
         err.message.should.not.equal(null);
         stderr.should.not.equal('');
         stderr.indexOf('Module was called directly from the console without any arguments, this is not allowed.').should.be.gt(0);
         done();
       });
-    });
+    }).timeout(5000);
 
     it('I should GET a Welcome message, on the welcome path, when calling Listen()', (done) => {
-      main.Listen();
+      main.Start();
       chai.request(main)
         .get('/welcome')
         .end((err, res) => {
@@ -86,6 +85,7 @@ describe('Before the test...', () => {
 
     it('"/config/detectors" should return an array of 8 System Detectors', function (done) {
       //Prepare
+      helperReset();
       main.Start();
       main._.should.not.equal(undefined);
       main._.GetPlugins().should.not.eql({});
@@ -557,7 +557,7 @@ describe('Before the test...', () => {
 
   describe("When starting t-motion with an MultiEnvironment with an ExpressEnvironment via a config file", function(){
     
-    it('should be possible to GET the http response', function (done) {
+    it('should be possible to GET an http response', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
       helperReset();
@@ -567,7 +567,10 @@ describe('Before the test...', () => {
         (myEnv instanceof Extensions.MultiEnvironment).should.equal(true);
      
         let myExpressEnv = myEnv.getCurrentState()["Express Environment"];
+        //Another alternative way to get the Express Environment is via the function on the main module, why don't I test that as well...
+        (main.GetExpressEnvironment() instanceof ent.ExpressEnvironment).should.equal(true); 
 
+        myExpressEnv.getPort().should.equal(8378);
         let app2 = myExpressEnv.getWebApp();
         let url = "/config/detectors";
         console.log(`Requesting URL ${url}...`);
@@ -576,15 +579,26 @@ describe('Before the test...', () => {
         (d[0] instanceof ent.RequestDetector).should.equal(true);
         d[0].route.should.equal(url);
         chai.request(app2)
-          .get(url)
+          .get('/')
           .end((err, res) => {
             try{
-              myExpressEnv.stop();
+              //myExpressEnv.stop();
               res.should.have.status(200);
               done();
             } catch(e){console.log(e);}
           });
       });
-    });
+    }).timeout(5000);
+
+    it('it should be able to bind the Request Detector to the express environment and able to GET an HTTP response from that URL', function (done) {
+      let url = "/config/detectors/";
+      //TODO: Need to implement by default the Detectors get added to all Environments 
+      chai.request(main.getExpressEnvironment().getWebApp())
+        .get(url)
+        .end((err, res) => {
+          res.should.have.status(200);
+          done(); 
+        }); 
+    }).timeout(5000);
   });
 });
