@@ -1,11 +1,11 @@
 profiles = {
   default: {
-  	ExpressEnvironment: {
+      ExpressEnvironment: {
       port: 8378,
       static_addr: undefined,
       command: "ping -c 1 localhost",
       interval: 200000,
-      killAfter: 2
+      maxAttempts: 2
     },
     RequestDetector: {
       name: "My Detectors Route",
