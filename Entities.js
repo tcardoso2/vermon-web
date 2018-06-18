@@ -99,12 +99,14 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     if(this.maxAttempts > 0){
       this.server = app.listen(this.port).on('error', this.listenNext);
       log.info("Listening to port successful.");
+      return true;
     }
+    return false;
   }
   
   setStatic(path)
   {
-  	app.use(express.static(path));
+    app.use(express.static(path));
   }
 
   getStaticAddr()
@@ -123,11 +125,11 @@ class ExpressEnvironment extends ext.SystemEnvironment{
 
     super.bindDetector(md, notifiers, force);
     let e = this;
-  	if(md instanceof RequestDetector) {
-  	  log.info(`Adding route: ${md.route} with verb: ${md.verb}`);
+      if(md instanceof RequestDetector) {
+      log.info(`Adding route: ${md.route} with verb: ${md.verb}`);
       switch (md.verb)
       {
-  	    case "GET": 
+  	case "GET": 
           app.get(md.route, (req, res) => {
     	  	  md.send(req.url, e);;
     	  	  md.handler(req, res);
@@ -143,20 +145,20 @@ class ExpressEnvironment extends ext.SystemEnvironment{
           throw new Error (`Verb ${md.verb} is not implemented.`)
           break;
       }
-  	}
+    }
   }
 
   getPort()
   {
-  	return this.port;
+    return this.port;
   }
 
   stop()
   {
-  	//Do some closing steps here.
+    //Do some closing steps here.
     log.info("Server will stop listening...");
     if(this.server){
-  	  this.server.close();
+      this.server.close();
       log.info("Server closed.");
     }
   }

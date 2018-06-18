@@ -3,7 +3,7 @@ let log = main.Log;
 
 console.log(log);
 
-let config = new main._.Config("test/config_express_test7.js", true, false); //force=false
+let config = new main._.Config("test/config_express_test6.js", true, false); //force=false
 //WARNING: force = true does not work if filters are added into the environment.
 
 main._.StartWithConfig(config,  (e,d,n,f) => {

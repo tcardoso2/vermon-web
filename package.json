@@ -24,8 +24,9 @@
   "name": "t-motion-detector-cli",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.3.21",
+  "version": "0.3.22",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "testserver" : "node test"
   }
 }

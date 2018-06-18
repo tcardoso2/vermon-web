@@ -49,15 +49,11 @@ function ShouldStart(e,m,n,f,config){
  * @return {boolean} True the plugin was successfully added.
  */
 function Start(e,m,n,f,config){
-  console.log("##########################################");
-  console.log(`##  STARTING WEB SERVER on port ${port}... ##`);
-  console.log("##########################################");
-
   _.Start({
     //Config is missing!
     environment: e ? e : mainEnv
   });
-  log.info("PLUGIN: Checkin if any motion detector was passed via config...");
+  log.info("PLUGIN: Checking if any motion detector was passed via config...");
   if (m){
     //Will add detectors only if passed as parameter
     log.info(`PLUGIN: Yes, found ${m.length} plugin(s)`);
@@ -74,16 +70,20 @@ function Start(e,m,n,f,config){
     _.AddDetector(routeDeactivateDetector);
     _.AddDetector(routeActivateDetector);
     _.AddDetector(routeGetEnvironment);
+    //Assumes no constructor was added so forces listen
+    _.GetEnvironment().listen();
   }
 
   if (n) _.AddNotifier(n);
 
-  log.info(`Listening on port ${port}`);
   //TO DELETE
   let key = new _.Config().slackHook();
   let sn = new _.Extensions.SlackNotifier("My slack notifier", key);
   _.AddNotifier(sn);
-  _.GetEnvironment().listen();
+  port = _.GetEnvironment().getPort();
+  console.log("##########################################");
+  console.log(`##  STARTING WEB SERVER on port ${port}... ##`);
+  console.log("##########################################");
 }
 
 /**
@@ -176,6 +176,7 @@ eventEmitter.call(this);
 module.exports = app;
 app.Log = log;
 app.Start = Start;
+app.ShouldStart = ShouldStart;
 app.Reset = Reset;
 app.PreAddPlugin = PreAddPlugin;
 app.PostAddPlugin = PostAddPlugin;

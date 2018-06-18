@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.3.22 :Added script to test web-server, fixing bugs;  
 * v 0.3.21 :Small fix on logs which were causeing crash;  
 * v 0.3.20 :Starting offline app creation (react);  
 * v 0.3.19 :Updated dependency to t-motion-detector@0.5.36, changing pending tests to "xit(xxx)" which marks them as pending    
