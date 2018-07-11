@@ -29,6 +29,8 @@ app.run(function($transform) {
 //
 app.config(function($routeProvider) {
   $routeProvider.when('/', {templateUrl: 'home.html', reloadOnSearch: false});
+  $routeProvider.when('/detectors', {templateUrl: 'detectors.html', reloadOnSearch: false});
+  $routeProvider.when('/notifiers', {templateUrl: 'notifiers.html', reloadOnSearch: false});
   $routeProvider.when('/scroll', {templateUrl: 'scroll.html', reloadOnSearch: false});
   $routeProvider.when('/toggle', {templateUrl: 'toggle.html', reloadOnSearch: false});
   $routeProvider.when('/tabs', {templateUrl: 'tabs.html', reloadOnSearch: false});
@@ -255,7 +257,7 @@ app.directive('dragMe', ['$drag', function($drag) {
 // For this trivial demo we have just a unique MainController
 // for everything
 //
-app.controller('MainController', function($rootScope, $scope) {
+app.controller('MainController', function($rootScope, $scope, $http) {
 
   $scope.swiped = function(direction) {
     alert('Swiped ' + direction);
@@ -292,6 +294,39 @@ app.controller('MainController', function($rootScope, $scope) {
   $scope.bottomReached = function() {
     alert('Congrats you scrolled to the end of the list!');
   };
+
+  //
+  // 'Detectors' and 'Notifiers' screens
+  //
+
+  $scope.getValues = function(){
+    $http.get('/config/detectors').then(function(response) {
+      $scope.detectors = response.data;
+    });
+  }
+
+  $scope.isToggled = function(detector) {
+    return detector._isActive;
+  }
+
+  $scope.toggle = function(detector){
+  	let req = {
+  	  method: 'POST',
+  	  url: '/config/detectors/' + (detector._isActive ? 'deactivate' : 'activate'),
+  	  data: { name: detector.name }
+    }
+    //changes toggle right away for user experience
+    detector._isActive = !detector._isActive;
+    $http(req).then(function(response) {
+      console.log("Received response:", response);
+      $scope.getValues();
+    });
+  }
+  $scope.getValues();
+
+  $http.get('/config/notifiers').then(function(response) {
+    $scope.notifiers = response.data;
+  });
 
   //
   // Right Sidebar

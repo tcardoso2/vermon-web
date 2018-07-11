@@ -11,6 +11,7 @@
  ******************************************************/
 
 let md = require('t-motion-detector');
+md.SetTraceLevel('error');
 var log = md.Log;
 let ent = require('./Entities');
 let eventEmitter = require("events");
@@ -219,7 +220,7 @@ if (md.Cli.startweb) {
     log.info('  No config declared, proceeding...;');
   } else {
     //TODO: Check if there is a config on ./, where the command is being run
-    log.error('  No config file seems to exist, to run without a config.js file run with --defaultConfig option;');;
+    log.warn('  No config file seems to exist, to run without a config.js file run with --defaultConfig option;');;
   }
   /*if (!AdminExists()){
     log.error('ERROR no admin user seems to be created, please use "--admin SomeAdminUser" to add an admin user for the first use.');;    

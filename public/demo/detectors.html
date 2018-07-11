@@ -1,0 +1,17 @@
+<div ui-content-for="title">
+  <span>Detectors</span>
+</div>
+
+<div class="scrollable">
+  <div class="scrollable-content" ui-scroll-bottom="bottomReached()">
+    <div class="list-group">
+      <a ng-repeat="detector in detectors" href="" class="list-group-item">
+        {{detector.name}} <i class="fa fa-chevron-right pull-right" ng-hide="{{detector.filters}}"></i>
+        <ui-switch ng-click="toggle(detector)"
+          ng-model="isToggled(detector)"></ui-switch>
+      </a>
+    </div>
+    <div id="alert_msg">Did not find the services directory service! Please implement this!</div>
+    </div>
+  </div>
+</div>

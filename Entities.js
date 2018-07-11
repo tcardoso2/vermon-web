@@ -348,20 +348,24 @@ class RequestDetector extends ent.MotionDetector{
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
           let cache = []; //This is a method of avoiding circular reference error in JSON
+          let limit = 100; //Limit which stops recursive depth otherwise a stack error might happen
           res.json(JSON.parse(JSON.stringify(result ? result : {}, function(key, value) {
+            if (cache.length > limit) return; //Exceeded limit;
+            //limit--;
             if (typeof value === 'object' && value !== null) {
-                if (cache.indexOf(value) !== -1) {
-                    // Circular reference found, discard key
-                    return;
-                }
-                // Store value in our collection
-                cache.push(value);
+              if (cache.indexOf(value) !== -1) {
+                // Circular reference found, discard key
+                return;
+              }
+              log.debug(`JSON parse cache depth: ${cache.length}`);
+              // Store value in our collection
+              cache.push(value);
             }
             return value;
           })));
           cache = null; // Enable garbage collection
         }catch(e){
-          log.error(`Error: ${e.message}`);
+          log.error(`Error: ${e}`);
           res.json(e.message);
         }
       };

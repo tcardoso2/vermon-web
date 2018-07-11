@@ -6,7 +6,7 @@
     "local-network-scanner": "^0.1.1",
     "readline": "^1.3.0",
     "request": "^2.81.0",
-    "t-motion-detector": "^0.5.36"
+    "t-motion-detector": "^0.5.38"
   },
   "devDependencies": {
     "chai": "*",
@@ -27,6 +27,6 @@
   "version": "0.3.23",
   "scripts": {
     "test": "mocha",
-    "testserver" : "node test"
+    "testserver": "node test"
   }
 }
