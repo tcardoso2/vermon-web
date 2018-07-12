@@ -11,8 +11,7 @@
  ******************************************************/
 
 let md = require('t-motion-detector');
-md.SetTraceLevel('error');
-var log = md.Log;
+var log = md.SetTraceLevel('info');
 let ent = require('./Entities');
 let eventEmitter = require("events");
 let fs = require("fs");
