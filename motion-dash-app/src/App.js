@@ -18,7 +18,7 @@ QueryChangeDetector.enableDebugging();
 RxDB.plugin(require('pouchdb-adapter-idb'));
 RxDB.plugin(require('pouchdb-adapter-http'));
 
-const syncURL = 'http://localhost:5984/';
+const syncURL = 'http://localhost:5985/';
 const dbName = 'chatdb';
 
 class App extends Component {

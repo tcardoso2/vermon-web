@@ -22,8 +22,14 @@ let rl = readline.createInterface({
     output: process.stdout
 });
 
-//let express = require('express');
-//let app = express();
+//TODO: Separate into different code
+var PouchDB = require('pouchdb');
+var db = new PouchDB('http://localhost:5984/tmotion');
+db.info().then(function (info) {
+  log.info(info);
+})
+
+
 /*let mongoose = require('mongoose');
 let morgan = require('morgan');*/
 let bodyParser = require('body-parser');

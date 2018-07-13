@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+log.txt
 
 # Runtime data
 pids
@@ -45,3 +46,7 @@ main2*
 #DB files
 db
 .ldb
+db*
+#Couchdb
+config.json
+.config.json

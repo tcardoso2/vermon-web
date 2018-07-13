@@ -7,7 +7,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "server": "pouchdb-server -d ./db",
+    "server": "pouchdb-server -d ./db -p 5985",
     "http": "serve -p 3000 -s build",
     "offline": "concurrently \"npm run server\" \"npm run http\""
   },
