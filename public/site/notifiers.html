@@ -4,11 +4,15 @@
 
 <div class="scrollable">
   <div class="scrollable-content" ui-scroll-bottom="bottomReached()">
-    <div class="list-group">
-      <a ng-repeat="notifier in notifiers" href="" class="list-group-item">
-        {{notifier.name + " (Last message: " + notifier.lastMessage + ")"}} <i class="fa fa-chevron-right pull-right"></i>
-      </a>
-    </div>
+    <div class="panel panel-default" ng-repeat="notifier in notifiers" ui-shared-state= "myNotifier_{{notifier.name}}"
+      ui-outer-click="Ui.turnOff('myNotifier_' + notifier.name)" ng-click="Ui.turnOn('myNotifier_' + notifier.name)">
+      <div class="panel-heading">  
+        <h3 class="panel-title">{{notifier.name }} <i class="fa fa-chevron-right pull-right"></i>
+        </h3>
+      </div>
+      <div class="panel-body" 
+        ng-show="Ui.active('myNotifier_' + notifier.name)">{{ "Last message: " + notifier.lastMessage }}
+      </div>
     </div>
   </div>
 </div>

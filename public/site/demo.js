@@ -31,6 +31,7 @@ app.config(function($routeProvider) {
   $routeProvider.when('/', {templateUrl: 'home.html', reloadOnSearch: false});
   $routeProvider.when('/detectors', {templateUrl: 'detectors.html', reloadOnSearch: false});
   $routeProvider.when('/notifiers', {templateUrl: 'notifiers.html', reloadOnSearch: false});
+  $routeProvider.when('/notifier', {templateUrl: 'notifier.html', reloadOnSearch: false});
   $routeProvider.when('/scroll', {templateUrl: 'scroll.html', reloadOnSearch: false});
   $routeProvider.when('/toggle', {templateUrl: 'toggle.html', reloadOnSearch: false});
   $routeProvider.when('/tabs', {templateUrl: 'tabs.html', reloadOnSearch: false});
@@ -257,7 +258,7 @@ app.directive('dragMe', ['$drag', function($drag) {
 // For this trivial demo we have just a unique MainController
 // for everything
 //
-app.controller('MainController', function($rootScope, $scope, $http) {
+app.controller('MainController', function($rootScope, $scope, $http, SharedState) {
 
   $scope.swiped = function(direction) {
     alert('Swiped ' + direction);
