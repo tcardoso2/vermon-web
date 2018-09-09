@@ -1,0 +1,22 @@
+{
+
+  "title": "t-motion-detector-cli",
+  "titleVisible": true,
+
+  "description": "t-motion-detector-cli",
+
+  "layout": {
+      "gridSize" : { "columns" : 20, "rows" : 12 },
+      "customJS" : [],
+      "widgets" : [
+        {"row" : 1, "col" : 1, "width" : 30, "height" : 20, "widget" : "detectors", "job" : "detectors", "config": "detectors"}
+      ]
+  },
+
+  "config": {
+      "quotes" : {
+        "interval" : 10000,
+        "someotherconfig" :  "here"
+      }
+  }
+}

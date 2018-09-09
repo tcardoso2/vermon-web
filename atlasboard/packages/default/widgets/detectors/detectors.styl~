@@ -1,0 +1,13 @@
+.content
+  font-size 3em
+  color $gray-light
+  
+  .label
+  	font-size 1em
+  	color $white
+  	width 190px
+  	height 92px
+  	text-align right
+  	position absolute
+  	background url('images/temp.png') no-repeat
+  	background-size 92px

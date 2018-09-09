@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.3.26 :(WIP) First version of atlasboard which makes use of iobroker (static calls for now, in later versions shoould be changed to proper detectors)  
 * v 0.3.25 :(WIP) Working on Angular JS demo clean up. Testing (WIP) also Nativescript [https://www.nativescript.org/nativescript-is-how-you-build-native-mobile-apps-with-angular] and playground on [https://play.nativescript.org/], on tns-site (run with "tns run <platform>");  
 * v 0.3.24 :(WIP) trial testing using CouchDB / PouchDB database;  
 * v 0.3.23 :(WIP) added demo code of Angular Mobile (+bootstrap) with examples to start gradually working on the new UI;  
