@@ -51,7 +51,7 @@
                 }
                 states[id] = state;
                 let el = $('#widgets-container > ul > li[data-widget-id="detectors"] .content');
-                $('#s_data_batcave_closet', el).html(states["mihome.0.devices.magnet_158d00022d2f5d.state"] ? states["mihome.0.devices.magnet_158d00022d2f5d.state"].val : "...");
+                $('#s_data_batcave_closet', el).html(states["mihome.0.devices.magnet_158d00022d2f5d.state"] ? (states["mihome.0.devices.magnet_158d00022d2f5d.state"].val ? "open" : "closed") : "closed");
             }, 0);
         },
         onError: function (err) {
