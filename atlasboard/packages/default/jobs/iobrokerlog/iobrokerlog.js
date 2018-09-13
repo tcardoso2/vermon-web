@@ -1,5 +1,5 @@
 /**
- * Job: detectors
+ * Job: iobrokerlog
  *
  * Expected configuration:
  *
@@ -10,13 +10,6 @@
  *   ]
  * }
  */
-let cmd = require("node-cmd");
-
-let batcaveTempSensorId = "sensor_ht_158d00020db386";
-let salaTempSensorId = "sensor_ht_158d0001f54051";
-let bedroomTempSensorId = "sensor_ht_158d000208fc30";
-
-var returnData = {};
 
 module.exports = {
 
@@ -66,7 +59,7 @@ module.exports = {
      2. CONFIGURATION CHECK
 
      You probably want to check that the right configuration has been passed to the job.
-     It is a good idea to cover this with unit tests as well (see test/detectors file)
+     It is a good idea to cover this with unit tests as well (see test/iobrokerlog file)
 
      Checking for the right configuration could be something like this:
 
@@ -90,33 +83,11 @@ module.exports = {
 
      This is an example of how to make an HTTP call to google using the easyRequest dependency,
      and send the result to the registered widgets.
-     Have a look at test/detectors for an example of how to unit tests this easily by mocking easyRequest call
+     Have a look at test/iobrokerlog for an example of how to unit tests this easily by mocking easyRequest calls
+
      */
+
     
-    populateData("sala_data", salaTempSensorId);
-    populateData("bedroom_data", bedroomTempSensorId);
-    populateData("batcave_data", batcaveTempSensorId);
-    //First time will return empty, but i prefer this over making 3 sinchronous calls and only then returning the result
-    jobCallback(false, {title: config.widgetTitle, data: returnData});
-    /*
-    dependencies.easyRequest.HTML('http://google.com', function (err, html) {
-      // logger.trace(html);
-      jobCallback(err, {title: config.widgetTitle, html: html});
-    });*/
+    jobCallback(null, {title: config.widgetTitle, html: "dummy"});
   }
 };
-
-function populateData(key, sensorId){
-	console.log(`fetching ${key} data...`);
-	cmd.get(
-    `iobroker state get mihome.0.devices.${sensorId}.temperature`,
-    function(err, data, stderr){
-      if (!err && data.indexOf("Error") == -1){
-        console.log('the sensor data is : ',data);
-        returnData[key] = JSON.parse(data);
-      }
-      else {
-        console.error(err);
-      }
-    });
-}

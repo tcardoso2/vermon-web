@@ -1,0 +1,63 @@
+<h2 class="widget-title">iobrokerlog</h2>
+<!doctype html>
+<html>
+<head>
+    <!-- Replace "localhost" with real IP address of controller, if default port changed, correct it too -->
+    <script type="text/javascript" src="http://192.168.0.195:8084/socket.io/socket.io.js"></script>
+    <!--script type="text/javascript" src="conn.js"></script-->
+</head>
+<body>
+
+<!--
+    Check the browser console!
+-->
+
+<script type="text/javascript">
+    servConn.namespace   = 'mobile.0';
+    servConn._useStorage = false;
+    var lineNr = 0;
+
+    var states = [];
+    servConn.init({
+        name:          'mobile.0',  // optional - default 'vis.0'
+        connLink:      'http://192.168.0.195:8084',  // optional URL of the socket.io adapter
+        socketSession: ''           // optional - used by authentication
+    }, {
+        onConnChange: function (isConnected) {
+            if (isConnected) {
+                console.log('connected');
+                servConn.getStates(function (err, _states) {
+                    var count = 0;
+                    for (var id in _states) {
+                        count++;
+                    }
+                    console.log('Received ' + count + ' states.');
+                    states = _states;
+                });
+            } else {
+                console.log('disconnected');
+            }
+        },
+        onRefresh: function () {
+            window.location.reload();
+        },
+        onUpdate: function (id, state) {
+            setTimeout(function () {
+                if(id.indexOf("mihome") >= 0){
+                    let result = JSON.stringify(state);
+                    console.log('NEW VALUE of ' + id + ': ' + result);
+                    $(".content_iobroker").prepend(`<div>[${lineNr++}] ${id}: ${result}</div>`)
+                    //ioValues[id] = result;
+                }
+                states[id] = state;
+                let el = $('#widgets-container > ul > li[data-widget-id="detectors"] .content');
+                $('#s_data_batcave_closet', el).html(states["mihome.0.devices.magnet_158d00022d2f5d.state"] ? states["mihome.0.devices.magnet_158d00022d2f5d.state"].val : "...");
+            }, 0);
+        },
+        onError: function (err) {
+            window.alert(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);
+        }
+    });
+</script>
+    <div class="content_iobroker"></div>
+</body>

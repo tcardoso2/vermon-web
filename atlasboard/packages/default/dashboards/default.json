@@ -7,15 +7,20 @@
 
   "layout": {
       "gridSize" : { "columns" : 20, "rows" : 12 },
-      "customJS" : [],
+      "customJS" : [ "conn.js" ],
       "widgets" : [
-        {"row" : 1, "col" : 1, "width" : 15, "height" : 10, "widget" : "detectors", "job" : "detectors", "config": "detectors"}
+        {"row" : 1, "col" : 1, "width" : 15, "height" : 10, "widget" : "detectors", "job" : "detectors", "config": "detectors"},
+        {"row" : 1, "col" : 2, "width" : 4, "height" : 10, "widget" : "iobrokerlog", "job" : "iobrokerlog", "config": "iobrokerlog"}
       ]
   },
 
   "config": {
-      "quotes" : {
+      "detectors" : {
         "interval" : 10000,
+        "someotherconfig" :  "here"
+      },
+      "iobrokerlog" : {
+        "interval" : 100000,
         "someotherconfig" :  "here"
       }
   }
