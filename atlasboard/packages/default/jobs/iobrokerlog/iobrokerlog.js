@@ -88,6 +88,6 @@ module.exports = {
      */
 
     
-    jobCallback(null, {title: config.widgetTitle, html: "dummy"});
+    jobCallback(null, {title: config.widgetTitle, url: config.socketio});
   }
 };

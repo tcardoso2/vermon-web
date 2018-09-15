@@ -20,8 +20,8 @@
         "someotherconfig" :  "here"
       },
       "iobrokerlog" : {
-        "interval" : 100000,
-        "someotherconfig" :  "here"
+        "interval" : 10000,
+        "socketio" :  "http://7975aa05.ap.ngrok.io"
       }
   }
 }
