@@ -51,10 +51,16 @@
             },
             onUpdate: function (id, state) {
                 setTimeout(function () {
-                    if(id.indexOf("mihome") >= 0){
+                    let fvalue = $("#info_filter").html();
+                    let exclude_sa = $("#filter_sa").is(':checked');
+                    if(id.indexOf(fvalue) >= 0){
                         let result = JSON.stringify(state);
                         console.log('NEW VALUE of ' + id + ': ' + result);
-                        $(".content_iobroker").prepend(`<div>[${lineNr++}] ${id}: ${result}</div>`)
+                        if (exclude_sa && id.indexOf("system.adapter") >= 0) {
+                            $(".content_iobroker").prepend(`.`);
+                        } else {                                                        
+                            $(".content_iobroker").prepend(`<div>[${lineNr++}] ${id}: ${result}</div>`)
+                        }
                     }
                     states[id] = state;
                     //Will update other elements in the window
@@ -68,6 +74,20 @@
             }
         });
     }
+
+    function filter(el) {
+        if(event.key === 'Enter') {
+            if(confirm(`Are you sure you want to filter for "${el.value}"?`)){
+                $("#info_filter").html(el.value);
+            }        
+        }
+    }
 </script>
-    <div class="content_iobroker"></div>
+    <input id="filter_s" type="text" value="mihome" onkeydown="filter(this)" />
+    <a href="#" onclick="$('#filter_s').blur();$('.content_iobroker').empty()">clear</a><br>
+    <input id="filter_sa" type="checkbox" />exclude system.adapter
+    <div>Filtering for <span id="info_filter">mihome</span></div>
+    <div class="content_iobroker">
+
+    </div>
 </body>

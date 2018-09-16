@@ -24,8 +24,19 @@ widget = {
 
   onSocketUpdate: function(el, data){
     let i1 = data["mihome.0.devices.magnet_158d00022d2f5d.state"];
-    $('#s_data_batcave_closet', el).html(i1 ? (i1.val ? "open" : "closed") : "closed");
+    if (i1){
+      $('#s_data_batcave_closet', el).removeClass("open closed");
+      $('#s_data_batcave_closet', el).addClass(i1.val ? "open" : "closed");
+    }
     let i2 = data["mihome.0.devices.sensor_motion_aq2_158d000237aa80.state"];
-    $('#s_data_batcave_person', el).html(i2 ? i2.val : "...");
+    if (i2){
+      $('#s_data_batcave_person', el).removeClass("person");
+      $('#s_data_batcave_person', el).addClass(i2.val ? "person" : "");
+    }
+    let i3 = data["yeelight-2.0.yeelight-2.0.yeelight-2.0.stripe-Light_strip"];
+    if (i2){
+      $('#s_data_batcave_person', el).removeClass("person");
+      $('#s_data_batcave_person', el).addClass(i2.val ? "person" : "");
+    }
   }
 };

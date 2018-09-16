@@ -11,7 +11,7 @@
   fill-rule evenodd
 
 .content
-  font-size 3em
+  font-size 2em
   color $gray-light
 
   .label
@@ -26,10 +26,22 @@
     background url('images/temp.png') no-repeat
     background-size 92px
   
-  .door
-    background url('images/door-icon.png') no-repeat 10px 0px
+  .door.closed
+    background url('images/closed-filled-door.png') no-repeat 10px 0px
+    background-size 30%
+
+  .door.open
+    background url('images/opened-filled-door.png') no-repeat 10px 0px
     background-size 30%
 
   .person
-    background url('images/running.png') no-repeat 10px 0px
+    background url('images/man.png') no-repeat 10px 0px
     background-size 30%
+
+  .lamp
+    background url('images/light-bulb.png') no-repeat 10px 0px
+    background-size 30%
+
+#credits
+  position absolute
+  bottom 0px
