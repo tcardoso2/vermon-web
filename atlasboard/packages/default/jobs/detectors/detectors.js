@@ -92,12 +92,15 @@ module.exports = {
      and send the result to the registered widgets.
      Have a look at test/detectors for an example of how to unit tests this easily by mocking easyRequest call
      */
-    
-    populateData("sala_data", salaTempSensorId);
-    populateData("bedroom_data", bedroomTempSensorId);
-    populateData("batcave_data", batcaveTempSensorId);
+    if(config.useSockets){
+      console.log("Will not fetch data from server but use sockets instead.");
+    } else {
+      populateData("sala_data", salaTempSensorId);
+      populateData("bedroom_data", bedroomTempSensorId);
+      populateData("batcave_data", batcaveTempSensorId);  
+    }
     //First time will return empty, but i prefer this over making 3 sinchronous calls and only then returning the result
-    jobCallback(false, {title: config.widgetTitle, data: returnData});
+    jobCallback(false, {title: config.widgetTitle, data: returnData, config: config});
     /*
     dependencies.easyRequest.HTML('http://google.com', function (err, html) {
       // logger.trace(html);

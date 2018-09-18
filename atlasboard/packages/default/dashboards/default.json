@@ -17,7 +17,7 @@
   "config": {
       "detectors" : {
         "interval" : 10000,
-        "someotherconfig" :  "here"
+        "useSocket" :  true
       },
       "iobrokerlog" : {
         "interval" : 10000,

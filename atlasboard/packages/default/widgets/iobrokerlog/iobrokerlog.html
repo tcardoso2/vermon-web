@@ -17,7 +17,7 @@
     servConn._useStorage = false;
     var lineNr = 0;
     var socketInitiated = false;
-    var states = [];
+    states = [];
     setInterval(()=>{
         if (window.socketio && !socketInitiated){
             socketInitiated = true;
@@ -66,7 +66,9 @@
                     //Will update other elements in the window
                     let caller = window.stateUpdate;
                     let el = caller[1];
-                    if (caller) caller[0](el, states);
+                    if (caller) {
+                        caller[0](el, states, caller[3]);
+                    }
                 }, 0);
             },
             onError: function (err) {
