@@ -13,7 +13,7 @@ provide, via the npm run-script command. Provides also an Express web-applicatio
 
 * v 0.3.28 :(WIP) Atlasboard, added configuration to take temperature from socket instead of backend detector (for remote clients);  
 * v 0.3.27 :(WIP) Atlasboard updates, to include socket.io values from iobroker, still static stuff, pretty much PoC level only;  
-* v 0.3.26 :(WIP) First version of atlasboard which makes use of iobroker (static calls for now, in later versions shoould be changed to proper detectors)  
+* v 0.3.26 :(WIP) First version of Atlasboard which makes use of iobroker (static calls for now, in later versions shoould be changed to proper detectors)  
 * v 0.3.25 :(WIP) Working on Angular JS demo clean up. Testing (WIP) also Nativescript [https://www.nativescript.org/nativescript-is-how-you-build-native-mobile-apps-with-angular] and playground on [https://play.nativescript.org/], on tns-site (run with "tns run <platform>");  
 * v 0.3.24 :(WIP) trial testing using CouchDB / PouchDB database;  
 * v 0.3.23 :(WIP) added demo code of Angular Mobile (+bootstrap) with examples to start gradually working on the new UI;  

@@ -13,8 +13,8 @@
 let cmd = require("node-cmd");
 
 let batcaveTempSensorId = "sensor_ht_158d00020db386";
-let salaTempSensorId = "sensor_ht_158d0001f54051";
-let bedroomTempSensorId = "sensor_ht_158d000208fc30";
+let salaTempSensorId = "sensor_ht_158d000208fc30";
+let bedroomTempSensorId = "sensor_ht_158d0001f54051";
 
 var returnData = {};
 
@@ -92,7 +92,7 @@ module.exports = {
      and send the result to the registered widgets.
      Have a look at test/detectors for an example of how to unit tests this easily by mocking easyRequest call
      */
-    if(config.useSockets){
+    if(config.useSocket){
       console.log("Will not fetch data from server but use sockets instead.");
     } else {
       populateData("sala_data", salaTempSensorId);
@@ -100,7 +100,7 @@ module.exports = {
       populateData("batcave_data", batcaveTempSensorId);  
     }
     //First time will return empty, but i prefer this over making 3 sinchronous calls and only then returning the result
-    jobCallback(false, {title: config.widgetTitle, data: returnData, config: config});
+    jobCallback(false, {title: config.widgetTitle, data: returnData, useSocket: config.useSocket});
     /*
     dependencies.easyRequest.HTML('http://google.com', function (err, html) {
       // logger.trace(html);
