@@ -86,7 +86,6 @@ module.exports = {
      Have a look at test/iobrokerlog for an example of how to unit tests this easily by mocking easyRequest calls
 
      */
-
     
     jobCallback(null, {title: config.widgetTitle, url: config.socketio});
   }

@@ -10,7 +10,8 @@
       "customJS" : [ "conn.js" ],
       "widgets" : [
         {"row" : 1, "col" : 1, "width" : 15, "height" : 10, "widget" : "detectors", "job" : "detectors", "config": "detectors"},
-        {"row" : 1, "col" : 2, "width" : 4, "height" : 10, "widget" : "iobrokerlog", "job" : "iobrokerlog", "config": "iobrokerlog"}
+        {"row" : 1, "col" : 2, "width" : 4, "height" : 6, "widget" : "iobrokerlog", "job" : "iobrokerlog", "config": "iobrokerlog"},
+        {"row" : 2, "col" : 2, "width" : 4, "height" : 4, "widget" : "imgnlz", "job" : "imgnlz", "config": "imgnlz"}
       ]
   },
 
@@ -22,6 +23,12 @@
       "iobrokerlog" : {
         "interval" : 10000,
         "socketio" :  "http://7975aa05.ap.ngrok.io"
+      },
+      "imgnlz" : {
+        "interval" : 10000,
+        "baseURL" : "",
+        "filePreffix": "",
+        "fileSuffix": ""
       }
   }
 }
