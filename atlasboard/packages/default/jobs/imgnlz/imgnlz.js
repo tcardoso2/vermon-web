@@ -97,12 +97,8 @@ module.exports = {
     if(min % 5){
       logger.info(`Not the time to request (${dt}), local time is ${dependencies.moment().local()}...`);
       dt.subtract(min % 5, 'minutes');
-      //jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix});
-      //return;
     }
     let url = `${config.baseURL}${config.filePreffix}${dt.format('YYYYMMDDHHmm')}${config.fileSuffix}`;
-    //"http://www.weather.gov.sg/files/rainarea/50km/v2/dpsri_70km_2018091410100000dBR.dpsri.png";
-    //;
     
     logger.log(dependencies.requests);
     if (dependencies.requests[url]){ 
@@ -140,6 +136,7 @@ module.exports = {
    
       dependencies.detect.fromFile(fp, function(err, result) {
         dependencies.requests[url] = okType;
+        let overlay1;
         if (err) {
           logger.log(err);
         }
@@ -150,10 +147,14 @@ module.exports = {
           dependencies.requests[url] = true;
           logger.info("=========================================");
           logger.info("File is of correct type :D");
+          //convert into base64
+          var bitmap = fs.readFileSync(fp);
+          // convert binary data to base64 encoded string
+          overlay1 =  new Buffer(bitmap).toString('base64');
         }
         logger.info('Finished saving to file');
         //dependencies.requests[url] = true;
-        jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix});
+        jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix, overlay1: overlay1});
       });
     });
   }

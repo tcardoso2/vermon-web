@@ -10,7 +10,7 @@ widget = {
     $('#base', el).attr('src', 'images/sg.png');
     //Reload image
     $('#overlay1', el).removeAttr('src');
-    $('#overlay1', el).attr('src', 'images/latest.png');
+    $('#overlay1', el).attr('src', data.overlay1 ? `data:image/png;base64, ${data.overlay1}` : 'images/latest.png');
   }
 };
 
