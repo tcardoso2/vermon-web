@@ -11,7 +11,7 @@
  ******************************************************/
 
 let md = require('t-motion-detector');
-var log = md.SetTraceLevel('info');
+var log = md.SetTraceLevel('warn');
 let ent = require('./Entities');
 let eventEmitter = require("events");
 let fs = require("fs");
@@ -23,25 +23,27 @@ let rl = readline.createInterface({
 });
 
 //TODO: Separate into different code
+//Will check that a test is running and ignore puchDB
+var isInTest = typeof global.it === 'function';
+
 var PouchDB = require('pouchdb');
 var db;
-//Handle this differently, e.g. a PouchDB Notifier instead.
-try{
-  db = new PouchDB('http://localhost:5984/tmotion');
-  db.info().then(function (info) {
-    log.info(info);
-  });
-}
-catch(e){
-  log.error(e);
+if(isInTest){
+  //Handle this differently, e.g. a PouchDB Notifier instead. 
+  try{
+    db = new PouchDB('http://localhost:5984/tmotion');
+    db.info().then(function (info) {
+      log.info(info);
+    });
+  }
+  catch(e){
+    log.warn(e);
+  }
 }
 
 
-/*let mongoose = require('mongoose');
-let morgan = require('morgan');*/
-let bodyParser = require('body-parser');
-let port = 3300;
-let _;
+/*let mongoose = require('mongoose'); let morgan = require('morgan');*/ 
+let bodyParser = require('body-parser'); let port = 3300; let _;
 
 log.info("Starting t-motion-detector-cli web app...");
 

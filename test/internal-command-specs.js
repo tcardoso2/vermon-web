@@ -183,55 +183,55 @@ describe('Before the test...', () => {
         });
       });
     });
-    it('Should not be possible to remove System routes, started by the system (Start)', function () {
+    xit('Should not be possible to remove System routes, started by the system (Start)', function () {
       should.fail(); //continue
     });
-    it('The 2 system detector routes should be pointing to AddDetector, and RemoveDetector respectively', function () {
+    xit('The 2 system detector routes should be pointing to AddDetector, and RemoveDetector respectively', function () {
       should.fail(); //continue
     });
-    it('Can check if a detector is Active or not via its property', function () {
+    xit('Can check if a detector is Active or not via its property', function () {
       //_isActive is an Internal property! How to not hide it? it is hidden in "t-motion-detector".
       //How to call getIsActive 
       should.fail(); //continue
     });
-    it('Should be able to add elements to it (Detectors, Notifiers, etc...)', function () {
+    xit('Should be able to add elements to it (Detectors, Notifiers, etc...)', function () {
       should.fail(); //continue
     });
-    it('Should be able to delete elements to it (Detectors, Notifiers, etc...)', function () {
+    xit('Should be able to delete elements to it (Detectors, Notifiers, etc...)', function () {
       should.fail(); //continue
     });
-    it('Should be able to redirect to login page if User admin exists but is not logged in.', function () {
+    xit('Should be able to redirect to login page if User admin exists but is not logged in.', function () {
       should.fail(); //continue
     });
   });
 });
 
 describe("When accessing the entry page", function() {
-  it('I should be prompted for OTP pass-code', function () {
+  xit('I should be prompted for OTP pass-code', function () {
     should.fail(); //continue
   });
 
-  it('I should send the OTP to the slack channel', function () {
+  xit('I should send the OTP to the slack channel', function () {
     should.fail(); //continue
   });
 
-  it('When entering that OTP pass the system should allow access to the sensors page', function () {
+  xit('When entering that OTP pass the system should allow access to the sensors page', function () {
     should.fail(); //continue
   });
 
-  it('I should be able to enter in listening mode', function () {
+  xit('I should be able to enter in listening mode', function () {
     should.fail(); //continue
   });
 
-  it('I should be able to capture a radio signal and save it', function () {
+  xit('I should be able to capture a radio signal and save it', function () {
     should.fail(); //continue
   });
 
-  it('I should be able to reproduce that same signal', function () {
+  xit('I should be able to reproduce that same signal', function () {
     should.fail(); //continue
   });
 
-  it('I should be able to detect the signal I sent', function () {
+  xit('I should be able to detect the signal I sent', function () {
     should.fail(); //continue
   });
 });

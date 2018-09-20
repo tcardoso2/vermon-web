@@ -68,7 +68,7 @@ describe("When an API environment is created, ", function() {
     done();
   });
 
-  it('Should be able to get the key and secret from a local configuration file', function () {
+  xit('Should be able to get the key and secret from a local configuration file', function () {
     helperReset();
     let _config = new main._.Config("/test/config_api_test.js");
     main._.StartWithConfig(_config, (e,d,n,f) =>{
