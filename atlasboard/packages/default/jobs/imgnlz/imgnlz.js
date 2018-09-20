@@ -30,6 +30,7 @@ module.exports = {
         });
     */
     dependencies.mime = require('file-type');
+    dependencies.detect = require('detect-file-type');
     dependencies.moment = require('moment');
     dependencies.requests = {};
   },
@@ -91,11 +92,13 @@ module.exports = {
 
      */
     //Subtract one minute because can be ahead of time and the resource might not exist yet
-    let dt = dependencies.moment().local().subtract(2, 'minutes');
-    if(dt.format('mm') % 5){
+    let dt = dependencies.moment().local().subtract(1, 'minutes').add(8, 'hours'); //TODO: Fixme need realtime NTP independent
+    let min = dt.format('mm');
+    if(min % 5){
       logger.info(`Not the time to request (${dt}), local time is ${dependencies.moment().local()}...`);
-      jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix});
-      return;
+      dt.subtract(min % 5, 'minutes');
+      //jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix});
+      //return;
     }
     let url = `${config.baseURL}${config.filePreffix}${dt.format('YYYYMMDDHHmm')}${config.fileSuffix}`;
     //"http://www.weather.gov.sg/files/rainarea/50km/v2/dpsri_70km_2018091410100000dBR.dpsri.png";
@@ -122,21 +125,36 @@ module.exports = {
       
       if (t && t.ext == "png" && mime == "image/png"){
         okType = true;
-        file.write(chunk);
         logger.info("ok type :)");
       } else {
         okType = false;
-        logger.error("file type not ok :(, will be ovewriten next time...");
+        logger.warn("file type not ok?, will be ovewriten next time...");
       }
+      file.write(chunk);
+
       // instead of loading the file into memory
       // after the download, we can just pipe
       // the data as it's being downloaded
     });
     rem.on('end', function() {
-      dependencies.requests[url] = okType;
-      logger.info('Finished saving to file');
-      //dependencies.requests[url] = true;
-      jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix});
+   
+      dependencies.detect.fromFile(fp, function(err, result) {
+        dependencies.requests[url] = okType;
+        if (err) {
+          logger.log(err);
+        }
+        logger.log(result); // { ext: 'jpg', mime: 'image/jpeg' }
+        if(result && result.mime != 'image/png') {
+          logger.error("File is not of correct type");
+        }else{
+          dependencies.requests[url] = true;
+          logger.info("=========================================");
+          logger.info("File is of correct type :D");
+        }
+        logger.info('Finished saving to file');
+        //dependencies.requests[url] = true;
+        jobCallback(null, {title: config.widgetTitle, filePreffix: config.filePreffix, fileSuffix: config.fileSuffix});
+      });
     });
   }
 };
