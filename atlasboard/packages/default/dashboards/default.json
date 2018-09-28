@@ -22,13 +22,13 @@
       },
       "iobrokerlog" : {
         "interval" : 10000,
-        "socketio" :  "http://7975aa05.ap.ngrok.io"
+        "socketio" :  "https://19c7cad1.ap.ngrok.io"
       },
       "imgnlz" : {
-        "interval" : 10000,
-        "baseURL" : "",
-        "filePreffix": "",
-        "fileSuffix": ""
-      }
+        "interval" : 20000,
+        "baseURL" : "http://www.weather.gov.sg/files/rainarea/50km/v2/",
+        "filePreffix": "dpsri_70km_",
+        "fileSuffix": "0000dBR.dpsri.png"
+     }
   }
 }

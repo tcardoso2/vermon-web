@@ -4,7 +4,7 @@
   stroke-width 5
   fill-rule evenodd
 
-#batcave
+#batcave, #sala, #balcony
   fill #111111
   stroke gray
   stroke-width 5
@@ -25,7 +25,18 @@
   .temp
     background url('images/temp.png') no-repeat
     background-size 92px
+
+  .temp::after
+    content: "\00b0"
   
+  .humidity
+    background url('images/humidity.png') no-repeat
+    background-size 62px
+    font-size 0.8em
+  
+  .humidity::after
+    content: "%"
+
   .door.closed
     background url('images/closed-filled-door.png') no-repeat 10px 0px
     background-size 30%
@@ -33,6 +44,10 @@
   .door.open
     background url('images/opened-filled-door.png') no-repeat 10px 0px
     background-size 30%
+
+  .smoke
+    background url('images/smoke-detector.png') no-repeat 10px 0px
+    background-size 25%
 
   .person
     background url('images/man.png') no-repeat 10px 0px
@@ -45,6 +60,24 @@
   .gateway
     background url('images/mijia.jpg') no-repeat 10px 0px
     background-size 30%
+
+/*Balcony needs to have shrinked elements*/
+#data_balcony
+  background-size 60px
+  font-size 0.7em
+  width 140px
+#data_balcony_humidity
+  background-size 40px 
+  font-size 0.7em
+  width 140px
+#s_data_balcony_door
+  background-size 50px 
+  font-size 0.7em
+  width 140px
+#s_data_balcony_person
+  background-size 50px 
+  font-size 0.7em
+  width 140px
 
 #credits
   position absolute
