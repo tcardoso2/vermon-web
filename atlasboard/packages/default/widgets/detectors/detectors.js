@@ -48,10 +48,8 @@ widget = {
       data["mihome.0.devices.magnet_158d00020468a4.state"], "open", "closed");
     parent.onItemUpdate($('#s_data_batcave_closet', el), 
       data["mihome.0.devices.magnet_158d00022d2f5d.state"], "open", "closed");
-    parent.onItemUpdate($('s_data_balcony_door', el), 
+    parent.onItemUpdate($('#s_data_balcony_door', el), 
       data["mihome.0.devices.magnet_158d00022da804.state"], "open", "closed");
-    parent.onItemUpdate($('#s_data_balcony_person', el), 
-      data["mihome.0.devices.sensor_motion_aq2_158d000272bd25.state"], "person", "");
     parent.onItemUpdate($('#s_data_balcony_person', el), 
       data["mihome.0.devices.sensor_motion_aq2_158d000272bd25.state"], "person", "");
     parent.onItemUpdate($('#s_data_batcave_person', el), 
