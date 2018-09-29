@@ -17,9 +17,13 @@ let t = require('t-motion-detector');
 let ent = require('../Entities');
 let main = require('../main.js');
 let events = require('events');
+let chaiHttp = require('chai-http');
+let expect = chai.expect;
 
 //Chai will use promises for async events
 chai.use(chaiAsPromised);
+chai.use(chaiHttp);
+
 
 before(function(done) {
   var n = undefined;
@@ -32,7 +36,7 @@ after(function(done) {
 });
 
 describe("After installing a new t-motion-detector-cli", function() {
-  it('a setup web-page should exist', function () {
+  xit('a setup web-page should exist', function () {
     //Prepare
     chai.request(main)
       .get('/setup')

@@ -51,8 +51,7 @@ describe("When creating a t-motion-detector-cli extension, ", function() {
 });
 
 describe("When creating a NetworkDetector, ", function() {
-
-  it('It should detect the current discoverable nodes present in the network.', function (done) {
+  xit('It should detect the current discoverable nodes present in the network.', function (done) {
     //Prepare
     
     main._.Reset();

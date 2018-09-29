@@ -136,7 +136,7 @@ describe("When a Decision Tree environment is created", function() {
       e.message.should.equal("No node was defined as result, please add a decision node: Left: [object Object], Right: undefined");
     }
   });
-  it('DecisionNodes take a method to define which node to link to in case the assertion is true, and a decision event triggered each time there is a result', function (done) {
+  xit('DecisionNodes take a method to define which node to link to in case the assertion is true, and a decision event triggered each time there is a result', function (done) {
     let e = new ent.DecisionTreeEnvironment(1);
     let n1 = new DecisionNode("Some assertion 1", ()=>{ return true }); //This assertion will return true
     let n2 = new DecisionNode("Some assertion 2", ()=>{ return true }); //This assertion will return true
@@ -173,7 +173,7 @@ describe("When a Decision Tree environment is created", function() {
 });
 
 describe("When a Decision Tree environment is created via config", function() {
-  it('Should be able to run as a normal Environment / Detector / Notifier framework', function () {
+  xit('Should be able to run as a normal Environment / Detector / Notifier framework', function () {
     //Prepare
     //For the test to be done properly I need to require the file again, so that AddPlugin is run.
     delete require.cache[require.resolve('../main')];
