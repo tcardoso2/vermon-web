@@ -75,3 +75,4 @@ Added static directory, and added AngularJS, first test page;
   - [Documentation](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/DOCUMENTATION.md) 
   - [Code of Conduct](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/CODE_OF_CONDUCT.md)   
   - [Adding Plugins](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/ADDING_PLUGINS.md)   
+  - [Feature Status](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/test/README.md)  
