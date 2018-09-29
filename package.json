@@ -33,7 +33,7 @@
   "readmeFilename": "README.md",
   "version": "0.4.1",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --exit",
     "testserver": "node test",
     "start": "node main --startweb",
     "server": "pouchdb-server -p 5985 -d ./db"

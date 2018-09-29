@@ -37,6 +37,9 @@ function helperReset(){
   main = require('../main');
   motion = main._;
   mainEnv = {};
+  chaiHttp = require('chai-http');
+  chai.use(chaiAsPromised);
+  chai.use(chaiHttp);
 }
 
 before(function(done) {
@@ -138,7 +141,7 @@ describe('Before the test...', () => {
       });
       motion.Reset();
     });
-    it.skip('When running motion._.StartWithConfig with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
+    xit('When running motion._.StartWithConfig with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
       //Skipping for now, this works manually but via tests is failing...
       //Prepare
       helperReset();
@@ -207,7 +210,7 @@ describe('Before the test...', () => {
         });
     });
     
-    it.skip('it should be able to stop the web-server', function (done) {
+    xit('it should be able to stop the web-server', function (done) {
       //TODO: Not able for now to test this properly
       let e = new ent.ExpressEnvironment();
       e.stop();
@@ -543,7 +546,7 @@ describe('Before the test...', () => {
         });
     });
 
-    it.skip('When the port is already taken and if a set searchRange=True the server should try next ports in range until successfully started.', function (done) {
+    xit('When the port is already taken and if a set searchRange=True the server should try next ports in range until successfully started.', function (done) {
       //Skipping test as this functionality is not stable
       let alternativeConfig = new motion.Config("test/config_express_test3.js");
       motion.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
@@ -557,7 +560,7 @@ describe('Before the test...', () => {
 
   describe("When starting t-motion with an MultiEnvironment with an ExpressEnvironment via a config file", function(){
     //Failing because is reaching 11 event emiter limit
-    xit('should be possible to GET an http response', function (done) {
+    it('should be possible to GET an http response', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
       helperReset();
@@ -579,7 +582,7 @@ describe('Before the test...', () => {
         (d[0] instanceof ent.RequestDetector).should.equal(true);
         d[0].route.should.equal(url);
         chai.request("http://localhost:8380")
-          .get('/')
+          .get('/site')
           .end((err, res) => {
             try{
               myExpressEnv.stop();

@@ -12,7 +12,7 @@ const defaultPort = 8080;
 let ko = require("knockout");
 //Increases when a new socket connection is available 'connect' event
 let newSocketConnections = 0;
-
+let _this; //Used for convenience on Express environment, when scope this is lost inside express.
 /**
  * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
  * Notifiers in the system. See more in
@@ -69,7 +69,8 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.maxAttempts = maxAttempts;
     this.name = "Express Environment";
     app = express();
-    //Handle errors
+    //Handle errors. For scope reasons, a copy of this object will be created because it needs to be accesed inside Express
+    _this = this;
     if(listen) this.listen();
   }
 
@@ -82,7 +83,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   }
 
   listenNext(){
-    log.error(`Some error happened while attempting to listen to port ${this.port}, attempting next port...`);
+    log.warn(`Some error happened while attempting to listen to port ${_this.port}, attempting next port...`);
     this.port++;
     return this.listen();
   }
@@ -161,6 +162,8 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   {
     //Do some closing steps here.
     log.info("Server will stop listening...");
+    //Cleaning up on listeners...
+    app.removeListener('error', this.listenNext);
     if(this.server){
       this.server.close();
       log.info("Server closed.");
@@ -574,7 +577,7 @@ class APIEnvironment extends ext.SystemEnvironment{
 
   _request(endpoint, callback){
     //Checks if it is in mock mode
-    console.log(">>> Starting request, checking if it is in Mock Mode...");
+    log.info(">>> Starting request, checking if it is in Mock Mode...");
     if(this._isMockMode){
       this._mockRequest(callback);
     }
