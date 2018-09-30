@@ -11,7 +11,8 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
-* v 0.4.1 :Fixed Express breaking tests, root page is now under /site;  
+* v 0.4.2 :Updated CommandStdoutDetector tests (WIP);  
+* v 0.4.1 :Fixed Express breaking tests, root page is now under /site. npm test now uses mocha --exit to revert to pre v4.0.0 behaviour, that is, it exist after tests are done;    
 * v 0.4.0 :Minor version update; doing some clean up; Added README info on current features and skipped / failing tests, as well what is the current focus;   
 * v 0.3.32 :Removed some unecessary packages, skipping tests temporarily to focus on actual work;  
 * v 0.3.31 :(WIP) SocketIODetector testing with SocketIONotifier;  

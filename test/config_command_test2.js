@@ -6,7 +6,7 @@ profiles = {
       name: "My detector",
       command: "node main",
       args: ["startweb, defaultConfig"],
-      pattern: "INFO   Starting web server"
+      pattern: "##  STARTING WEB SERVER on port 3300... ##"
     },
 	  BaseNotifier: {
 	  }

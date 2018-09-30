@@ -310,7 +310,7 @@ class CommandStdoutDetector extends ent.MotionDetector{
     }
     let data_line = '';
     let line = 0;
-    log.info(`Executing command: "${this.command} ${this._args}"...`);
+    log.info(`Executing command: "${this.command} ${_args}"...`);
     this.processRef = m.Cmd.get(this.command + _args);
     let d = this;
     this.processRef.stdout.on(
