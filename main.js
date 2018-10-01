@@ -24,10 +24,17 @@ let rl = readline.createInterface({
 
 //TODO: Separate into different code
 var PouchDB = require('pouchdb');
-var db = new PouchDB('http://localhost:5984/tmotion');
-db.info().then(function (info) {
-  log.info(info);
-})
+var db;
+//Handle this differently, e.g. a PouchDB Notifier instead.
+try{
+  db = new PouchDB('http://localhost:5984/tmotion');
+  db.info().then(function (info) {
+    log.info(info);
+  });
+}
+catch(e){
+  log.error(e);
+}
 
 
 /*let mongoose = require('mongoose');

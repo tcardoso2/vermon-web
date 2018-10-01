@@ -3,6 +3,8 @@ let ent = m.Entities;
 var log = m.Log;
 let ext = m.Extensions;
 let express = require('express');
+let io = require('socket.io')();
+let clientIOFact = require('socket.io-client');
 let bodyParser = require('body-parser');
 let path = require("path");
 let app;
@@ -423,6 +425,78 @@ class DecisionNodeDetector extends ent.MotionDetector{
     return !(this.nextLeft || this.nextRight);
   }
 }
+
+/*
+Implemented as a Singleton.
+The SocketIO is in many ways very similar to the default Notifier, where binding detector
+can be seen as the same as connecting a socket, the difference being it uses TCP port
+for communication. In this case it makes this notifier possible to act both on
+- Detector changes
+- Socket incoming messages / events
+*/
+class SocketIONotifier extends ent.BaseNotifier{
+  
+  constructor(name, port=2999, callback){
+    super(name);
+
+    this.socketList = [];
+    let _this = this;
+    io.sockets.on('connection', function(socket) {
+      //Closes socket connections as soon as the server is stopped
+      log.info(`Server ${_this.name} received a new socket connection.`);
+      _this.socketList.push(socket);
+      _this.notify(`You are now connected to ${_this.name}!`, null, 'socket_is_connected');
+      socket.on('close', function () {
+        log.info('socket closing...');
+        _this.socketList.splice(_this.socketList.indexOf(socket), 1);
+      });
+    });
+    log.info(`New server ${this.name}is now listening on port ${port}.`);
+    io.listen(port);
+    if (callback) callback(this);
+  }
+
+  //Notifies to all connected sockets
+  notify(text, oldState, newState, environment, detector){
+    super.notify(text, oldState, newState, environment, detector);
+    log.info(`Server ${this.name} Will broadcast to connected sockets... ${this.socketList.length}...`);
+    for(let i in this.socketList){
+      log.info(`Emiting message to connected socket ${i}...`);
+      this.socketList[i].emit('broadcast', { 
+        text: text, 
+        oldState: oldState, 
+        newState: newState, 
+        environment: environment, 
+        detector: detector
+      });
+    }
+  }
+
+  stop()
+  {
+    super.stop();
+    io.close();
+  }
+}
+
+class SocketIODetector extends ent.MotionDetector{
+  
+  constructor(name, url = "http://localhost:2999"){
+    super(name);
+    log.info(`Creating new socket client named ${name} and connected to ${url}...`);
+    this.client = clientIOFact(url);
+  }
+
+  deactivate(){
+    super.deactivate();
+    this.client.close();
+  }
+
+  exit()
+  {
+    this.client.destroy();
+  }
+}
 /*
  * Creates an API Environment which retrieves a local key/secret and endpoint
  */
@@ -533,6 +607,8 @@ const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector, AP
 
 new ent.EntitiesFactory().extend(classes);
 
+exports.SocketIODetector = SocketIODetector;
+exports.SocketIONotifier = SocketIONotifier;
 exports.CommandStdoutDetector = CommandStdoutDetector;
 exports.DecisionNodeDetector = DecisionNodeDetector;
 exports.defaultPort = defaultPort;
