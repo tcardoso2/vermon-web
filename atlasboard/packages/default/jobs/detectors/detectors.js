@@ -100,7 +100,7 @@ module.exports = {
       populateData("batcave_data", batcaveTempSensorId);  
     }
     //First time will return empty, but i prefer this over making 3 sinchronous calls and only then returning the result
-    jobCallback(false, {title: config.widgetTitle, data: returnData, useSocket: config.useSocket});
+    jobCallback(false, {title: config.widgetTitle, data: returnData, useSocket: config.useSocket, divisions: config.divisions, sensors: config.sensors});
     /*
     dependencies.easyRequest.HTML('http://google.com', function (err, html) {
       // logger.trace(html);

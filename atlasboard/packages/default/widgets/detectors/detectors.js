@@ -14,20 +14,32 @@ widget = {
       $('#data_batcave', el).html(`${allData.batcave_data ? allData.batcave_data.val : "?"}&deg`);
       $('#data_bedroom', el).html(`${allData.bedroom_data ? allData.bedroom_data.val : "?"}&deg`);
     }
-
-    $('#house').attr('points', "10,10 900,10 900,120 1200,120 1200,700 400,700 400, 800 10,800");
-    $('#batcave').attr('points', "400,400 690,400 690,690 400,690");
-    $('#sala').attr('points', "20,20 250,20 250,140 390,140 390,690 20,690");
-    $('#balcony').attr('points', "20,700 390,700 390,790 20,790");
-
+    let d = data.divisions;
+    $("#plan", el).empty();
+    for (let i in d){
+      $("#plan", el).append(this.makeSVG("polygon", { id: i, points: d[i] })); //  `<polygon id="${i}" />`); // points="${d[i]}"/>`);
+    }
+    //alert($("#plan, el").children().length());
     //Registers the caller function in localStorage when socket is updated, 
     //TODO: Update in a common library instead;
     //Use events instead?
     window.stateUpdate = [ this.onSocketUpdate, el, data, this ];
   },
 
-  onSocketUpdate: function(el, data, parent){
+  onSocketUpdate: function(el, data, parent, widgetData){
     console.log(`>>>> Updating socket data...`);
+    let s = widgetData.sensors;
+    for(let i in s){
+      let value = s[i];
+      if(Array.isArray(value)){
+        parent.onItemUpdate($(`#${i}`, el), data[value[0]], value[1], value[2]);
+      } else {
+        parent.onItemUpdate($(`#${i}`, el), data[value]);
+      }
+    }
+    return;
+
+    //To remove after confirming it is ok
     parent.onItemUpdate($('#data_sala', el), 
       data["mihome.0.devices.sensor_ht_158d000208fc30.temperature"]);
     parent.onItemUpdate($('#data_batcave', el), 
@@ -64,6 +76,10 @@ widget = {
       data["mihome.0.devices.sensor_ht_158d000237950b.temperature"]);
     parent.onItemUpdate($('#data_balcony_humidity', el), 
       data["mihome.0.devices.sensor_ht_158d000237950b.humidity"]);
+    parent.onItemUpdate($('#data_kitchen', el), 
+      data["mihome.0.devices.sensor_ht_158d0002379581.temperature"]);
+    parent.onItemUpdate($('#data_kitchen_humidity', el), 
+      data["mihome.0.devices.sensor_ht_158d0002379581.humidity"]);
 
     console.log(">>>> Finished updating socket data...");
   },
@@ -75,9 +91,44 @@ widget = {
       if (typeof data.val === "boolean"){
         el.removeClass(`${classTrue} ${classFalse}`);
         el.addClass(data.val ? classTrue : classFalse);
+        //if (data.val)
+          //Experimental, will not use it
+          //this.addTimer(classTrue, el);
       } else {
         el.html(data.val);
       }
     }
+  },
+
+  addTimer(name_class, el){
+    switch(name_class){
+      //case "person":
+      case "open":
+        if(!el.children().length){
+          let t = $('<div class="timer">60<div/>');
+          el.append(t);
+          let _this = this;
+          setInterval(_this.decreaseTimer.bind(null, t), 1000);
+        }
+        break;
+      default:
+        break;
+    }
+  },
+
+  decreaseTimer(t){
+    let _t = parseInt(t.text());
+    if (_t == 0){
+      t.remove();
+      return;
+    }
+    t.text(_t-1);
+  },
+
+  makeSVG(tag, attrs) {
+    let el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs)
+      el.setAttribute(k, attrs[k]);
+    return el;
   }
 };

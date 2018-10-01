@@ -18,7 +18,42 @@
   "config": {
       "detectors" : {
         "interval" : 20000,
-        "useSocket" :  true
+        "useSocket" :  true,
+        "divisions" : {
+          "house": "10,10 900,10 900,180 1200,180 1200,700 400,700 400, 800 10,800",
+          "batcave": "400,440 660,440 660,690 400,690",
+          "baby_room": "670,440 920,440 920,690 670,690",
+          "suite": "930,350 1190,350 1190,690 930,690",
+          "sala": "20,20 250,20 250,190 390,190 390,690 20,690",
+          "balcony": "20,700 390,700 390,790 20,790",
+          "kitchen": "260,20 890,20 890,180 260,180",
+          "bunker": "400,190 590,190 590,340 400,340",
+          "wc1": "600,190 780,190 780,340 600,340",
+          "small_room": "790,190 1010,190 1010,340 790,340",
+          "wc2": "1020,190 1190,190 1190,340 1020,340"
+        },
+        "sensors": {
+          "data_sala": "mihome.0.devices.sensor_ht_158d000208fc30.temperature",
+          "data_batcave": "mihome.0.devices.sensor_ht_158d00020db386.temperature",
+          "data_bedroom": "mihome.0.devices.sensor_ht_158d0001f54051.temperature",
+          "data_sala_humidity": "mihome.0.devices.sensor_ht_158d000208fc30.humidity",
+          "data_batcave_humidity": "mihome.0.devices.sensor_ht_158d00020db386.humidity",
+          "data_bedroom_humidity": "mihome.0.devices.sensor_ht_158d0001f54051.humidity",
+          "s_mijia_connected": ["system.adapter.mihome.0.connected", "gateway", ""],
+          "s_data_street_door": ["mihome.0.devices.magnet_158d00016c1eea.state", "open", "closed"],
+          "s_data_kitchen_freezer": ["mihome.0.devices.magnet_158d00020468a4.state", "open", "closed"],
+          "s_data_batcave_closet": ["mihome.0.devices.magnet_158d00022d2f5d.state", "open", "closed"],
+          "s_data_balcony_door": ["mihome.0.devices.magnet_158d00022da804.state", "open", "closed"],
+          "s_data_balcony_person": ["mihome.0.devices.sensor_motion_aq2_158d000272bd25.state", "person", ""],
+          "s_data_batcave_person": ["mihome.0.devices.sensor_motion_aq2_158d000237aa80.state", "person", ""],
+          "s_data_batcave_smoke": ["mihome.0.devices.smoke_158d0001db94c4.state", "smoke", ""],
+          "s_data_bedroom_person": ["mihome.0.devices.sensor_motion_aq2_158d000276d3fa.state", "person", ""],
+          "s_data_batcave_lamp": ["yeelight-2.0.yeelight-2.0.yeelight-2.0.stripe-Light_strip", "lamp", ""],
+          "data_balcony": "mihome.0.devices.sensor_ht_158d000237950b.temperature",
+          "data_balcony_humidity": "mihome.0.devices.sensor_ht_158d000237950b.humidity",
+          "data_kitchen": "mihome.0.devices.sensor_ht_158d0002379581.temperature",
+          "data_kitchen_humidity": "mihome.0.devices.sensor_ht_158d0002379581.humidity"
+        }
       },
       "iobrokerlog" : {
         "interval" : 10000,
@@ -26,7 +61,7 @@
       },
       "imgnlz" : {
         "interval" : 20000,
-        "baseURL" : "http://www.weather.gov.sg/files/rainarea/50km/v2/",
+        "baseURL" : "",
         "filePreffix": "dpsri_70km_",
         "fileSuffix": "0000dBR.dpsri.png"
      }

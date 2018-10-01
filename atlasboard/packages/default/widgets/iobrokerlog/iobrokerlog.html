@@ -50,6 +50,7 @@
                 window.location.reload();
             },
             onUpdate: function (id, state) {
+                let _this = this;
                 setTimeout(function () {
                     let fvalue = $("#info_filter").html();
                     let exclude_sa = $("#filter_sa").is(':checked');
@@ -57,9 +58,11 @@
                         let result = JSON.stringify(state);
                         console.log('NEW VALUE of ' + id + ': ' + result);
                         if (exclude_sa && id.indexOf("system.adapter") >= 0) {
-                            $(".content_iobroker").prepend(`.`);
+                            _this.addOrUpdate("system.adapter", ".");
+                            //$(".content_iobroker").prepend(`.`);
                         } else {                                                        
-                            $(".content_iobroker").prepend(`<div>[${lineNr++}] ${id}: ${result}</div>`)
+                            _this.addOrUpdate(id, result);
+                            //$(".content_iobroker").prepend(`<div>[${lineNr++}] ${id}: ${result}</div>`)
                         }
                     }
                     states[id] = state;
@@ -67,9 +70,21 @@
                     let caller = window.stateUpdate;
                     let el = caller[1];
                     if (caller) {
-                        caller[0](el, states, caller[3]);
+                        caller[0](el, states, caller[3], caller[2]);
                     }
                 }, 0);
+            },
+            addOrUpdate: function(key, val){
+                key = key.replace(/\./g, "_");
+                if($(`.content_iobroker > #${key}`).length) {
+                    $(`.content_iobroker > #${key}`).text(`[${key}]: ${val}`);
+                }
+                else {
+                    $(".content_iobroker").prepend(`<div id="${key}">[${key}]: ${val}</div>`);
+                }
+                //} else {
+                //    $(`.content_iobroker #${key}`).text(val); 
+                //}
             },
             onError: function (err) {
                 window.alert(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);
