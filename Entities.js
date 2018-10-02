@@ -10,6 +10,8 @@ let path = require("path");
 let app;
 const defaultPort = 8080;
 let ko = require("knockout");
+//Increases when a new socket connection is available 'connect' event
+let newSocketConnections = 0;
 
 /**
  * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
@@ -441,17 +443,22 @@ class SocketIONotifier extends ent.BaseNotifier{
 
     this.socketList = [];
     let _this = this;
-    io.sockets.on('connection', function(socket) {
+  
+    this.onSocketConnection = (socket)=> {
       //Closes socket connections as soon as the server is stopped
-      log.info(`Server ${_this.name} received a new socket connection.`);
+      newSocketConnections++;
+      log.info(`Server ${_this.name} received a new socket connection. Overall nr. of historical connections is ${newSocketConnections}.`);
       _this.socketList.push(socket);
       _this.notify(`You are now connected to ${_this.name}!`, null, 'socket_is_connected');
       socket.on('close', function () {
         log.info('socket closing...');
         _this.socketList.splice(_this.socketList.indexOf(socket), 1);
       });
-    });
-    log.info(`New server ${this.name}is now listening on port ${port}.`);
+    }
+
+    //TODO: Is there a better way than to declare an inner function?
+    io.sockets.on('connection', this.onSocketConnection);
+    log.info(`New server ${this.name} will now listen to port ${port}...`);
     io.listen(port);
     if (callback) callback(this);
   }
@@ -475,6 +482,7 @@ class SocketIONotifier extends ent.BaseNotifier{
   stop()
   {
     super.stop();
+    io.sockets.removeListener('connection', this.onSocketConnection);
     io.close();
   }
 }
@@ -485,6 +493,21 @@ class SocketIODetector extends ent.MotionDetector{
     super(name);
     log.info(`Creating new socket client named ${name} and connected to ${url}...`);
     this.client = clientIOFact(url);
+  }
+
+  startMonitoring(){
+    super.startMonitoring();
+    let _this = this;
+    this.client.on('connection', (data)=>{
+      _this.send(data)
+    });
+    this.client.on('close', (data)=>{
+      _this.send(data)
+    });
+    this.client.on('broadcast', (data)=>{
+      _this.send(data);
+    });
+    log.info("Socket started monitoring.");
   }
 
   deactivate(){
@@ -607,6 +630,7 @@ const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector, AP
 
 new ent.EntitiesFactory().extend(classes);
 
+exports.GetHistoricalSocketConnections = () => newSocketConnections;
 exports.SocketIODetector = SocketIODetector;
 exports.SocketIONotifier = SocketIONotifier;
 exports.CommandStdoutDetector = CommandStdoutDetector;

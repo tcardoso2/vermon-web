@@ -11,7 +11,8 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
-* v 0.3.30 :(WIP) Starting work on SoketIODetector, a socket.io wrapper;  
+* v 0.3.31 :(WIP) SocketIODetector testing with SocketIONotifier;  
+* v 0.3.30 :(WIP) Starting work on SocketIODetector and SocketIONotifier, a socket.io wrapper for client and server respectively;  
 * v 0.3.29 :(WIP) Atlasboard, added more sensor data (still customized, to be configured instead);  
 * v 0.3.28 :(WIP) Atlasboard, added configuration to take temperature from socket instead of backend detector (for remote clients);  
 * v 0.3.27 :(WIP) Atlasboard updates, to include socket.io values from iobroker, still static stuff, pretty much PoC level only;  
