@@ -10,6 +10,7 @@
  *   ]
  * }
  */
+const ngrok = require('ngrok');
 
 module.exports = {
 
@@ -29,6 +30,13 @@ module.exports = {
           res.end('So something useful here');
         });
     */
+    (async function() {
+      dependencies.ngrokURL = await ngrok.connect();
+      console.log(`Ngrok url is ${dependencies.ngrokURL}`);
+      const api = ngrok.getApi();
+      const tunnels = await api.get('api/tunnels');
+      console.log(tunnels);
+    })();
   },
 
   /**
@@ -86,7 +94,8 @@ module.exports = {
      Have a look at test/iobrokerlog for an example of how to unit tests this easily by mocking easyRequest calls
 
      */
-    
-    jobCallback(null, {title: config.widgetTitle, url: config.socketio});
+    logger.log(`Tunnel URL is ${dependencies.ngrokURL}`);
+    logger.log(dependencies.tunnels);
+    jobCallback(null, {title: config.widgetTitle, url: dependencies.ngrokURL});
   }
 };
