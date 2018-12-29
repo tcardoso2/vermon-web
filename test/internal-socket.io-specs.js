@@ -52,6 +52,7 @@ describe("When a SocketIONotifier is created, ", function() {
   });
 
   it('Should be able to stop an existing Socket Notifier - Part 1 check that the socket disconnect event runs', function (done) {
+    this.timeout(5000);
     socket.on('connect', function(){
       //This should run because an existing socket is open
       console.log("Connected!");  //TODO: Substitute by the tmd logger
