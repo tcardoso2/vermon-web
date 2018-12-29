@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.5.0 :Changed package name to vermon-web;  
 * v 0.4.3 :Atlasboard app now invokes ngrok via api and gets url directly, no longer statically configured in default.json;  
 * v 0.4.2 :Updated CommandStdoutDetector tests (WIP);  
 * v 0.4.1 :Fixed Express breaking tests, root page is now under /site. npm test now uses mocha --exit to revert to pre v4.0.0 behaviour, that is, it exist after tests are done;    
