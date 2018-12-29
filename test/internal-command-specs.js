@@ -6,7 +6,7 @@
  * for tests which are NOT using the npm tarball pack
  * For all others, the test should obviously include
  * something like:
- * var md = require('t-motion-detector');
+ * var vermon = require('vermon');
  *****************************************************/
 
 //During the test the env variable is set to test
@@ -22,19 +22,17 @@ let events = require('events');
 let express = require('express');
 let chaiHttp = require('chai-http');
 let expect = chai.expect;
-let motion = main._; //Assesses parent's export functions. Another short assessor is '$' which is only binded later
-let Entities = motion.Entities;
-
+let vermon = main._; //Assesses parent's export functions. 
 
 //Chai will use promises for async events
 chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
 function helperReset(){
-  motion.Reset();
+  vermon.Reset();
   delete require.cache[require.resolve('../main')];
   main = require('../main');
-  motion = main._;
+  vermon = main._;
 }
 
 before(function(done) {
@@ -52,7 +50,7 @@ var mainEnv;
 describe('Before the test...', () => {
     beforeEach((done) => { //Before each test we empty the database
       //Do something
-      //motion.Reset();
+      //vermon.Reset();
       done();
     });
 
@@ -182,7 +180,7 @@ describe('Before the test...', () => {
       should.fail(); //continue
     });
     xit('Can check if a detector is Active or not via its property', function () {
-      //_isActive is an Internal property! How to not hide it? it is hidden in "t-motion-detector".
+      //_isActive is an Internal property! How to not hide it? it is hidden in "vermon".
       //How to call getIsActive 
       should.fail(); //continue
     });

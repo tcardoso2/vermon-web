@@ -6,7 +6,7 @@
  * for tests which are NOT using the npm tarball pack
  * For all others, the test should obviously include
  * something like:
- * var md = require('t-motion-detector');
+ * var vermon = require('vermon');
  *****************************************************/
 
 //During the test the env variable is set to test
@@ -22,9 +22,7 @@ let events = require('events');
 let express = require('express');
 let chaiHttp = require('chai-http');
 let expect = chai.expect;
-let motion = main._; //Assesses parent's export functions. Another short assessor is '$' which is only binded later
-let Entities = motion.Entities;
-let Extensions = motion.Extensions;
+let vermon = require('vermon');
 
 
 //Chai will use promises for async events
@@ -32,10 +30,10 @@ chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
 function helperReset(){
-  motion.Reset();
+  vermon.Reset();
   delete require.cache[require.resolve('../main')];
   main = require('../main');
-  motion = main._;
+  vermon = main._;
   mainEnv = {};
   chaiHttp = require('chai-http');
   chai.use(chaiAsPromised);
@@ -57,7 +55,7 @@ var mainEnv;
 describe('Before the test...', () => {
     beforeEach((done) => { //Before each test we empty the database
       //Do something
-      //motion.Reset();
+      //vermon.Reset();
       done();
     });
 
@@ -84,7 +82,7 @@ describe('Before the test...', () => {
         .get('/welcome')
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.eql({message: 'Welcome to T-Motion-CLI Web server!'});
+          res.body.should.be.eql({message: 'Welcome to Vermon Web server!'});
           done();
       });
     });
@@ -109,11 +107,11 @@ describe('Before the test...', () => {
       main._.GetPlugins().should.not.eql({});
     });
 
-    it('To add the t-motion-detector-cli plugin the program should be started with a config file, and a Start method callback should be provided to be called after motion._.StartWithConfig, adding only the detectors in the config file.', function (done) {
+    it('To add the vermon-web plugin the program should be started with a config file, and a Start method callback should be provided to be called after vermon._.StartWithConfig, adding only the detectors in the config file.', function (done) {
       //Prepare
-      helperReset(); //Plugin t-motion-detector-cli added here
+      helperReset(); //Plugin vermon-web added here
       let alternativeConfig = new main._.Config("/test/config_express_test.js");
-      motion.StartWithConfig(alternativeConfig, (e,d,n,f) =>{
+      vermon.StartWithConfig(alternativeConfig, (e,d,n,f) =>{
         //It is expected that the "Start" function of the plugin cli is called
         d.length.should.equal(2); //2 from the config file
         done();
@@ -124,7 +122,7 @@ describe('Before the test...', () => {
       //Prepare
       helperReset();
       try{
-        let myEnv = motion.GetEnvironment();
+        let myEnv = vermon.GetEnvironment();
       } catch(e) {
         e.message.should.equal("Environment does not exist. Please run the Start() function first or one of its overrides.");
         return;
@@ -142,9 +140,9 @@ describe('Before the test...', () => {
         console.log("Test: Called done");
         done();
       });
-      motion.Reset();
+      vermon.Reset();
     });
-    xit('When running motion._.StartWithConfig with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
+    xit('When running vermon._.StartWithConfig with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
       //Skipping for now, this works manually but via tests is failing...
       //Prepare
       helperReset();
@@ -160,7 +158,7 @@ describe('Before the test...', () => {
       });
     });
 
-    it('When running motion._.StartWithConfig with a config file with only the ExpressEnvironment, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
+    it('When running vermon._.StartWithConfig with a config file with only the ExpressEnvironment, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
       //Prepare
       helperReset();
       main._.GetPlugins().should.not.eql({});
@@ -183,24 +181,24 @@ describe('Before the test...', () => {
     });
   });
 
-  describe("When starting t-motion with an ExpressEnvironment programatically", function(){
+  describe("When starting vermon with an ExpressEnvironment programatically", function(){
     
     it('when I pass a custom config file, the app should know whats my current working directory.', function () {
       //Prepare
-      let alternativeConfig = new motion.Config("/test/config_express_test.js");
+      let alternativeConfig = new vermon.Config("/test/config_express_test.js");
       alternativeConfig.isFallback().should.equal(false);
       alternativeConfig.cwd().should.equal(process.cwd() + "/");
     });
 
     it('ExpressEnvironment should inherit Environment class', function () {
       mainEnv = new ent.ExpressEnvironment();
-      (mainEnv instanceof motion.Entities.Environment).should.equal(true);
+      (mainEnv instanceof vermon.Entities.Environment).should.equal(true);
     });
 
     it('it should start a web-server at default port 8123', function (done) {
       helperReset();
       mainEnv = new ent.ExpressEnvironment(8123, "public"); 
-      motion.Start({ environment: mainEnv});
+      vermon.Start({ environment: mainEnv});
       let app = mainEnv.getWebApp();
       chai.request(app)
         .get('/site')
@@ -222,7 +220,7 @@ describe('Before the test...', () => {
 
     it('should be able to take the first parameter in the constructor as being the port', function (done) {
       let e2 = new ent.ExpressEnvironment(8030) 
-      motion.Start({ environment: e2});
+      vermon.Start({ environment: e2});
       let app2 = e2.getWebApp();
       chai.request(app2)
         .get('/site')
@@ -292,26 +290,26 @@ describe('Before the test...', () => {
     });
   });
 
-  describe("When starting t-motion with an ExpressEnvironment and RequestDetector", function(){
+  describe("When starting vermon with an ExpressEnvironment and RequestDetector", function(){
     it('It should be possible to configure a route.', function (done) {
       //Prepare
       helperReset();
       mainEnv = new ent.ExpressEnvironment(8123, "public"); 
       let md = new ent.RequestDetector("My route detector", "/config/mylink", (req, res) => {
         try{
-          res.json(motion.GetMotionDetectors());
+          res.json(vermon.GetMotionDetectors());
         } catch(e) {
           console.error(e);
         }
       });
       md.name = "My Route detector";
 
-      motion.Start({
+      vermon.Start({
         environment: mainEnv,
         initialMotionDetector: md,
       });
 
-      let detectors = motion.GetMotionDetectors();
+      let detectors = vermon.GetMotionDetectors();
       let pirDetector = detectors[0];
       let app = mainEnv.getWebApp();
       //Assert
@@ -330,16 +328,16 @@ describe('Before the test...', () => {
     });
   });
 
-  describe("When starting t-motion with an ExpressEnvironment via a config file", function(){
+  describe("When starting vermon with an ExpressEnvironment via a config file", function(){
     
     it('The URL route should be valid', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      motion.Reset();
-      let alternativeConfig = new motion.Config("test/config_express_test.js");
-      motion.StartWithConfig(alternativeConfig);
+      vermon.Reset();
+      let alternativeConfig = new vermon.Config("test/config_express_test.js");
+      vermon.StartWithConfig(alternativeConfig);
 
-      let myEnv = motion.GetEnvironment();
+      let myEnv = vermon.GetEnvironment();
 
       let app2 = myEnv.getWebApp();
       chai.request(app2)
@@ -356,12 +354,12 @@ describe('Before the test...', () => {
     it('when responding via handler, I should be able to access the Detectors info', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      motion.Reset();
-      let alternativeConfig = new motion.Config("test/config_express_test2.js");
-      motion.StartWithConfig(alternativeConfig);
+      vermon.Reset();
+      let alternativeConfig = new vermon.Config("test/config_express_test2.js");
+      vermon.StartWithConfig(alternativeConfig);
 
-      let d = motion.GetMotionDetectors();
-      let myEnv = motion.GetEnvironment();
+      let d = vermon.GetMotionDetectors();
+      let myEnv = vermon.GetEnvironment();
 
       (myEnv instanceof ent.ExpressEnvironment).should.equal(true);
       d.length.should.equal(2);
@@ -379,9 +377,9 @@ describe('Before the test...', () => {
     it('should be able to access system info via GET request', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      motion.Reset();
-      let alternativeConfig = new motion.Config("test/config_express_test5.js");
-      motion.StartWithConfig(alternativeConfig, (myEnv, d, n, f)=>{
+      vermon.Reset();
+      let alternativeConfig = new vermon.Config("test/config_express_test5.js");
+      vermon.StartWithConfig(alternativeConfig, (myEnv, d, n, f)=>{
 
         (myEnv instanceof ent.ExpressEnvironment).should.equal(true);
         let app2 = myEnv.getWebApp();
@@ -411,12 +409,12 @@ describe('Before the test...', () => {
     let fail_helper = true;
     it('I should be able to deactivate an existing active MD by name', function (done) {
       //Prepare
-      motion.Reset();
+      vermon.Reset();
 
-      let alternativeConfig = new motion.Config("test/config_express_test3.js");
-      motion.StartWithConfig(alternativeConfig, ()=>{
-        let myEnv = motion.GetEnvironment();
-        let n = motion.GetNotifiers();
+      let alternativeConfig = new vermon.Config("test/config_express_test3.js");
+      vermon.StartWithConfig(alternativeConfig, ()=>{
+        let myEnv = vermon.GetEnvironment();
+        let n = vermon.GetNotifiers();
         n[0].on('pushedNotification', function(message, text, data){
           fail_helper.should.equal(false);
         });
@@ -427,7 +425,7 @@ describe('Before the test...', () => {
             res.should.have.status(200);
             res.body.length.should.equal(1);
             res.body[0]._isActive.should.equal(true);
-            motion.DeactivateDetector("My Detectors Route");
+            vermon.DeactivateDetector("My Detectors Route");
             chai.request(app2)
               .get('/config/detectors')
               .end((err, res) => {
@@ -441,7 +439,7 @@ describe('Before the test...', () => {
     it('I should fail if the MD name Being deactivated does not exist', function () {
       //Prepare
       try{
-        motion.DeactivateDetector("MD unexisting");
+        vermon.DeactivateDetector("MD unexisting");
       } catch(e){
         e.message.should.equal("Error: cannot find Detector with name 'MD unexisting'.")
         return;
@@ -450,9 +448,9 @@ describe('Before the test...', () => {
     });
     it('I should be able to reactivate a previously deactivated MD by name', function (done) {
       //Prepare
-      motion.ActivateDetector("My Detectors Route");
+      vermon.ActivateDetector("My Detectors Route");
       fail_helper = false;
-      chai.request(motion.GetEnvironment().getWebApp())
+      chai.request(vermon.GetEnvironment().getWebApp())
         .get('/config/detectors')
         .end((err, res) => {
           res.should.have.status(200);
@@ -462,7 +460,7 @@ describe('Before the test...', () => {
     it('I should fail if the MD name Being activated does not exist', function () {
       //Prepare
       try{
-        motion.ActivateDetector("MD unexisting");
+        vermon.ActivateDetector("MD unexisting");
       } catch(e){
         e.message.should.equal("'MD unexisting' does not exist.")
         return;
@@ -471,8 +469,8 @@ describe('Before the test...', () => {
     });
     it('I should be able to POST messages', function (done) {
       //Prepare
-      let myEnv = motion.GetEnvironment();
-      motion.AddDetector(new ent.RequestDetector("My_Route", "/config/detector4",
+      let myEnv = vermon.GetEnvironment();
+      vermon.AddDetector(new ent.RequestDetector("My_Route", "/config/detector4",
         (req, res) => {
           res.json({ "req": req.body });
         }, "POST"));
@@ -489,7 +487,7 @@ describe('Before the test...', () => {
     it('I should throw and Error if a HTTP verb is not implemented', function () {
       //Prepare
       try{
-        motion.AddDetector(new ent.RequestDetector("My Detectors Route with some weird verb", "/config/detector4",
+        vermon.AddDetector(new ent.RequestDetector("My Detectors Route with some weird verb", "/config/detector4",
           (req, res) => {
             res.json({});
           }, "SOME_VERB"));
@@ -501,23 +499,23 @@ describe('Before the test...', () => {
     });
     it('I should throw an error if the handler function is not implemented', function () {
       //Prepare
-      let myEnv = motion.GetEnvironment();
+      let myEnv = vermon.GetEnvironment();
       try{
-        motion.AddDetector(new ent.RequestDetector("Deactivate Route", 
+        vermon.AddDetector(new ent.RequestDetector("Deactivate Route", 
           "/config/detector/function1",
           "SomeUnknownFunction", 
           "POST"));
       }
       catch(e){
-        e.message.should.equal('Error: function "SomeUnknownFunction" is not defined in t-motion-detector.');
+        e.message.should.equal('Error: function "SomeUnknownFunction" is not defined in vermon.');
         return;
       }
       should.fail();
     });
     it('I should be able to Deactivate a MD via POST message', function (done) {
       //Prepare
-      let myEnv = motion.GetEnvironment();
-      motion.AddDetector(new ent.RequestDetector("Deactivate Route", 
+      let myEnv = vermon.GetEnvironment();
+      vermon.AddDetector(new ent.RequestDetector("Deactivate Route", 
         "/config/detector/deactivate",
         "DeactivateDetector;name", 
         "POST"));
@@ -527,14 +525,14 @@ describe('Before the test...', () => {
         .send({name: "My_Route"})
         .end((err, res) => {
           res.should.have.status(200);
-          motion.GetMotionDetector("My_Route")._isActive.should.equal(false);
+          vermon.GetMotionDetector("My_Route")._isActive.should.equal(false);
           done();
         });
     });
     it('I should be able to Activate a MD via POST message', function (done) {
       //Prepare
-      let myEnv = motion.GetEnvironment();
-      motion.AddDetector(new ent.RequestDetector("Activate Route", 
+      let myEnv = vermon.GetEnvironment();
+      vermon.AddDetector(new ent.RequestDetector("Activate Route", 
         "/config/detector/activate",
         "ActivateDetector;name", 
         "POST"));
@@ -544,16 +542,16 @@ describe('Before the test...', () => {
         .send({name: "My_Route"})
         .end((err, res) => {
           res.should.have.status(200);
-          motion.GetMotionDetector("My_Route")._isActive.should.equal(true);
+          vermon.GetMotionDetector("My_Route")._isActive.should.equal(true);
           done();
         });
     });
 
     xit('When the port is already taken and if a set searchRange=True the server should try next ports in range until successfully started.', function (done) {
       //Skipping test as this functionality is not stable
-      let alternativeConfig = new motion.Config("test/config_express_test3.js");
-      motion.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
-        motion.StartWithConfig(alternativeConfig, (e1, d, n, f)=>{
+      let alternativeConfig = new vermon.Config("test/config_express_test3.js");
+      vermon.StartWithConfig(alternativeConfig, (e, d, n, f)=>{
+        vermon.StartWithConfig(alternativeConfig, (e1, d, n, f)=>{
           e1.port.should.equal(8379);
           done();
         });
@@ -561,15 +559,15 @@ describe('Before the test...', () => {
     });
   });
 
-  describe("When starting t-motion with an MultiEnvironment with an ExpressEnvironment via a config file", function(){
+  describe("When starting vermon with an MultiEnvironment with an ExpressEnvironment via a config file", function(){
     //Failing because is reaching 11 event emiter limit
     it('should be possible to GET an http response', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
       helperReset();
-      let alternativeConfig = new motion.Config("test/config_express_test7.js");
-      motion.StartWithConfig(alternativeConfig, (e1, d, n, f)=>{
-        let myEnv = motion.GetEnvironment();
+      let alternativeConfig = new vermon.Config("test/config_express_test7.js");
+      vermon.StartWithConfig(alternativeConfig, (e1, d, n, f)=>{
+        let myEnv = vermon.GetEnvironment();
         (myEnv instanceof Extensions.MultiEnvironment).should.equal(true);
      
         let myExpressEnv = myEnv.getCurrentState()["Express Environment"];

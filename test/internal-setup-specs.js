@@ -6,14 +6,14 @@
  * for tests which are NOT using the npm tarball pack
  * For all others, the test should obviously include
  * something like:
- * var md = require('t-motion-detector');
+ * var md = require('vermon');
  *****************************************************/
 
 let chai = require('chai');
 let chaiAsPromised = require("chai-as-promised");
 let should = chai.should();
 let fs = require('fs');
-let t = require('t-motion-detector');
+let vermon = require('vermon');
 let ent = require('../Entities');
 let main = require('../main.js');
 let events = require('events');
@@ -35,7 +35,7 @@ after(function(done) {
   done();
 });
 
-describe("After installing a new t-motion-detector-cli", function() {
+describe("After installing a new vermon-web package", function() {
   xit('a setup web-page should exist', function () {
     //Prepare
     chai.request(main)

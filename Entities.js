@@ -1,4 +1,4 @@
-let m = require('t-motion-detector');
+let m = require('vermon');
 let ent = m.Entities;
 var log = m.Log;
 let ext = m.Extensions;

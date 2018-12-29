@@ -13,7 +13,7 @@
     "readline": "^1.3.0",
     "request": "^2.81.0",
     "socket.io": "^2.1.1",
-    "t-motion-detector": "^0.5.43"
+    "vermon": "^0.6.15"
   },
   "devDependencies": {
     "chai": "*",

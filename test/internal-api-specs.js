@@ -6,7 +6,7 @@
  * for tests which are NOT using the npm tarball pack
  * For all others, the test should obviously include
  * something like:
- * var md = require('t-motion-detector');
+ * var vermon = require('vermon');
  *****************************************************/
 
 let chai = require('chai');
@@ -16,7 +16,7 @@ let fs = require('fs');
 let ent = require('../Entities.js');
 let main = require('../main.js');
 let chaiHttp = require('chai-http');
-let motion = main._;
+let vermon = require('vermon');
 
 //Chai will use promises for async events
 chai.use(chaiAsPromised);
@@ -24,10 +24,10 @@ chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
 function helperReset(){
-  motion.Reset();
+  vermon.Reset();
   delete require.cache[require.resolve('../main')];
   main = require('../main');
-  motion = main._;
+  vermon = main._;
 }
 before(function(done) {
   done();
@@ -42,7 +42,7 @@ after(function(done) {
 describe("When an API environment is created, ", function() {
   it('Should inherit the Environment class', function () {
     let e = new ent.APIEnvironment();
-    (e instanceof motion.Entities.Environment).should.equal(true);
+    (e instanceof vermon.Entities.Environment).should.equal(true);
   });
 
   it("should be able to set an endpoint API which the broker should call", function (done) {

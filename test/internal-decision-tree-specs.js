@@ -13,7 +13,7 @@ let chai = require('chai');
 let chaiAsPromised = require("chai-as-promised");
 let should = chai.should();
 let fs = require('fs');
-let t = require('t-motion-detector');
+let vermon = require('vermon');
 let ent = require('../Entities');
 let main = require('../main.js');
 let events = require('events');
@@ -34,7 +34,7 @@ after(function(done) {
 describe("When a Decision Tree environment is created", function() {
   it('Should inherit the Environment class', function () {
     let e = new ent.DecisionTreeEnvironment(2);
-    (e instanceof t.Entities.Environment).should.equal(true);
+    (e instanceof vermon.Entities.Environment).should.equal(true);
   });
 
   it('Should take the initial number of nodes as parameter', function () {

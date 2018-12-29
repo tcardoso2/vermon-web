@@ -6,7 +6,7 @@
  * for tests which are NOT using the npm tarball pack
  * For all others, the test should obviously include
  * something like:
- * var md = require('t-motion-detector');
+ * var vermon = require('vermon');
  *****************************************************/
 
 process.env.NODE_ENV = 'test';
@@ -30,9 +30,9 @@ after(function(done) {
   done();
 });
 
-describe("When creating a t-motion-detector-cli extension, ", function() {
+describe("When creating a vermon-web extension, ", function() {
 
-  it('It should be able to access the t-motion-detector Entities via the "_" accessor.', function (done) {
+  it('It should be able to access the vermon Entities via "_" accessor.', function (done) {
      //Prepare
     let Entities = main._.Entities;
     Entities.should.not.equal(undefined);
