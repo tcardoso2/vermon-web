@@ -1,12 +1,12 @@
-[![NPM info](https://nodei.co/npm/t-motion-detector-cli.png?downloads=true)](https://www.npmjs.com/package/t-motion-detector-cli)
+[![NPM info](https://nodei.co/npm/vermon-web.png?downloads=true)](https://www.npmjs.com/package/vermon-web)
 
-[![Travis build status](https://travis-ci.org/tcardoso2/t-motion-detector-cli.png?branch=master)](https://travis-ci.org/tcardoso2/t-motion-detector-cli)
-[![dependencies](https://david-dm.org/tcardoso2/t-motion-detector-cli.svg)](https://david-dm.org/tcardoso2/t-motion-detector-cli.svg)
+[![Travis build status](https://travis-ci.org/tcardoso2/vermon-web.png?branch=master)](https://travis-ci.org/tcardoso2/t-motion-detector-cli)
+[![dependencies](https://david-dm.org/tcardoso2/vermon-web.svg)](https://david-dm.org/tcardoso2/vermon-web.svg)
 
-[![Unit tests](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/badge.svg)](https://github.com/tcardoso2/t-motion-detector-cli/blob/master/badge.svg) 
+[![Unit tests](https://github.com/tcardoso2/vermon-web/blob/master/badge.svg)](https://github.com/tcardoso2/vermon-web/blob/master/badge.svg) 
 
-# t-motion-detector-cli
-A t-motion-detector Plugin CLI/API tool (dashboard) to monitor your Environment, Motion sensors and Notifiers.
+# Vermon Web
+A vermon Plugin CLI/API tool (dashboard) to monitor your Environment, Motion sensors and Notifiers.
 It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  

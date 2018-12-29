@@ -27,11 +27,11 @@
     "url": "git://github.com/tcardoso2/t-motion-detector-cli.git"
   },
   "license": "BSD-2-Clause",
-  "description": "A cli tool to respond to user-typed commands / text, based on t-motion-detector.",
-  "name": "t-motion-detector-cli",
+  "description": "A cli tool to respond to user-typed commands / text, based on 'vermon' npm package.",
+  "name": "vermon-web",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.4.2",
+  "version": "0.4.0",
   "scripts": {
     "test": "mocha --exit",
     "testserver": "node test",
