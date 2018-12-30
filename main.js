@@ -22,7 +22,7 @@ let entities = require('./Entities')
 //Private properties
 let port = process.env.VERMON_PORT || 3300
 let mainEnv = {}
-let webApp = {};
+let webApp = {}
 
 //Public functions
 function reset() {
@@ -37,9 +37,9 @@ function start(e,m,n,f,config) {
 
 function getWebApp() {
   if(!webApp) {
-    setupWebServer();
+    setupWebServer()
   }
-  return webApp;
+  return webApp
 }
 
 //Private functions
@@ -64,8 +64,8 @@ function initCLI() {
 }
 
 function setupWebServer() {
-  mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, false);
-  webApp = mainEnv.getWebApp();
+  mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, false)
+  webApp = mainEnv.getWebApp()
 }
 
 //in case a MultiEnvironment exists, this module must be able to find the underlying ExpressEnvironment
