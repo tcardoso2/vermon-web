@@ -24,7 +24,7 @@ chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
 function helperReset(){
-  vermon.Reset();
+  vermon.reset();
   delete require.cache[require.resolve('../main')];
   main = require('../main');
   vermon = main._;
@@ -35,7 +35,7 @@ before(function(done) {
 
 after(function(done) {
   // here you can clear fixtures, etc.
-  main.Reset();
+  main.reset();
   done();
 });
 

@@ -22,17 +22,18 @@ let events = require('events');
 let express = require('express');
 let chaiHttp = require('chai-http');
 let expect = chai.expect;
-let vermon = main._; //Assesses parent's export functions. 
+let vermon = require('vermon');
 
 //Chai will use promises for async events
 chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 
 function helperReset(){
-  vermon.Reset();
+  vermon.reset();
   delete require.cache[require.resolve('../main')];
+  delete require.cache[require.resolve('vermon')];
   main = require('../main');
-  vermon = main._;
+  vermon = require('vermon')
 }
 
 before(function(done) {
@@ -100,11 +101,9 @@ describe('Before the test...', () => {
       let data_line = '';
   
       let processRef = main._.Cmd.get('node main.js');
-      console.log("$$$$$$ executing...")
       processRef.stdout.on(
         'data',
         function(data) {
-          console.log("$$$$$$ got data!", data)
           data_line += data;
           if (data_line[data_line.length-1] == '\n') {
             console.log(data_line);
@@ -120,7 +119,7 @@ describe('Before the test...', () => {
       helperReset();
       let data_line = '';
 
-      let processRef = main._.Cmd.get('node main --startweb');
+      let processRef = vermon.Cmd.get('node main --startweb');
       let _done = false;
       processRef.stdout.on(
         'data',
