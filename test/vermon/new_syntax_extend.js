@@ -61,4 +61,20 @@ describe('Basic new syntax, ', function () {
       })
     })
   })
+
+  //Additional vermon methods once the vermon-web plugin is added
+  describe('getWebApp ', function () {
+    xit('Returns the web Server', function (done) {
+    })
+  })
+
+  describe('start ', function () {
+    xit('Starts the web server (plugin method)', function (done) {
+    })
+  })
+
+  describe('reset ', function () {
+    xit('Resets the web server (plugin method)', function (done) {
+    })
+  })
 })

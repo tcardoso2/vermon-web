@@ -11,7 +11,9 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
-% v 0.5.1 :WIP on fixing tests; changed main.Reset to main.reset (lowercase); vermon-web plugin no longer has the
+* v 0.5.2 :WIP on fixing Express tests: Added Entities, refactored code, main module is no longer an express
+           app, the express server can be assessed via getWebApp instead; added vermon tests for new vermon methods, start, reset and getWebApp added when vermon-web plugin is added;  
+* v 0.5.1 :WIP on fixing tests; changed main.Reset to main.reset (lowercase); vermon-web plugin no longer has the
            _ accessor. To access vermon, you should import it instead (removed redundancies); fixed existing api and commander tests, next ones to fix are express server tests; added eslint settings (WIP), applied to the new main.js file; added server.js (as the old main.js);  
 * v 0.5.0 :Changed package name to vermon-web, made some naming changes, WIP on fixing tests;   
 * v 0.4.3 :Atlasboard app now invokes ngrok via api and gets url directly, no longer statically configured in default.json;  

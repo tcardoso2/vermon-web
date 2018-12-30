@@ -16,14 +16,31 @@
 
 let vermon = require('vermon')
 let log = vermon.SetTraceLevel('debug')
+let entities = require('./Entities')
 
+
+//Private properties
+let port = process.env.VERMON_PORT || 3300
+let mainEnv = {}
+let webApp = {};
+
+//Public functions
 function reset() {
   log.info('Calling vermon-web plugin reset method...')
   //Do some reset stuff here
 }
 
-//Private properties
-let port = process.env.VERMON_PORT || 3300
+function start(e,m,n,f,config) {
+  log.info('Calling vermon-web plugin start method...')
+  startWebServer()
+}
+
+function getWebApp() {
+  if(!webApp) {
+    setupWebServer();
+  }
+  return webApp;
+}
 
 //Private functions
 function startWebServer() {
@@ -46,6 +63,11 @@ function initCLI() {
     .parse(process.argv)
 }
 
+function setupWebServer() {
+  mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, false);
+  webApp = mainEnv.getWebApp();
+}
+
 //in case a MultiEnvironment exists, this module must be able to find the underlying ExpressEnvironment
 function getExpressEnvironment()
 {
@@ -66,5 +88,8 @@ function getExpressEnvironment()
 }
 
 initCLI()
+setupWebServer()
 
+exports.getWebApp = getWebApp
 exports.reset = reset
+exports.start = start
