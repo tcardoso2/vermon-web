@@ -75,6 +75,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   }
 
   setBodyParser(){
+    log.info("Adding middleware to allow body to be parsed as json...");
     //parse application/json and look for raw text
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
@@ -354,6 +355,8 @@ class RequestDetector extends ent.MotionDetector{
         log.info(`Request body: ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
+          log.info(`Got result`);
+          //log.debug(result);
           let cache = []; //This is a method of avoiding circular reference error in JSON
           let limit = 100; //Limit which stops recursive depth otherwise a stack error might happen
           res.json(JSON.parse(JSON.stringify(result ? result : {}, function(key, value) {
@@ -625,7 +628,12 @@ function _GetFuncParts(fn_name){
 //Executes a function with name fn_name in the main t-motion-detector module and passes its args
 function _GetFuncResult(fn_name, args){
   log.info(`Calling function ${fn_name}(${args})...`)
-  return m[fn_name](args);
+  if (m[fn_name]) {
+    log.info('Function exists, will run it now...');
+    return m[fn_name](args);
+  } else {
+    log.error(`Function ${fn_name} does not exist in ${m}!`);
+  }
 }
 
 //Extending Entities Factory

@@ -33,13 +33,13 @@ function helperReset(){
   vermon.reset();
   delete require.cache[require.resolve('../main')];
   delete require.cache[require.resolve('vermon')];
-  delete require.cache[require.resolve('chai-http')];
+  //delete require.cache[require.resolve('chai-http')];
   main = require('../main');
   vermon = require('vermon');
   mainEnv = {};
-  chaiHttp = require('chai-http');
-  chai.use(chaiAsPromised);
-  chai.use(chaiHttp);
+  //chaiHttp = require('chai-http');
+  //chai.use(chaiAsPromised);
+  //chai.use(chaiHttp);
 }
 
 before(function(done) {
@@ -79,6 +79,7 @@ describe('Before the test...', () => {
     it('I should GET a Welcome message, on the welcome path, when calling Listen()', (done) => {
       //Works when the module is called individually but seems not to work when called in bulk
       helperReset();
+      //This is just a basic test, so all i need to do is start.
       main.start();
       chai.request(main.getWebApp())
         .get('/welcome')
@@ -89,24 +90,49 @@ describe('Before the test...', () => {
       });
     });
 
+    it('vermon-web plugin should have an Id', function (done) {
+      //Prepare
+      helperReset();
+      main.id.should.equal("VERMON_WEB")
+      done();
+    });
+
+    it('vermon-web plugin should be added with the vermon.use function', function (done) {
+      //Prepare
+      helperReset();
+      vermon.use(main);
+      vermon.should.not.equal(undefined);
+      vermon.PluginManager.GetPlugins().should.not.eql({});
+      done();
+    });
+
     it('"/config/detectors" should return an array of 8 System Detectors', function (done) {
       //Prepare
       helperReset();
-      main.start();
-      vermon.should.not.equal(undefined);
-      vermon.GetPlugins().should.not.eql({});
-      chai.request(main)
-        .get('/config/detectors')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.length.should.equal(8);
-          done();
+      //This is the proper wat to start the web server
+      vermon.use(main);
+      vermon.configure('test/config_express_only_test.js');
+      vermon.watch().then((environment) => {;
+        vermon.should.not.equal(undefined);
+        chai.request(main.getWebApp())
+          .get('/config/detectors')
+          .end((err, res) => {
+            console.log(res)
+            res.should.have.status(200);
+            res.ok.should.equal(true);
+            vermon.GetMotionDetectors().length.should.equal(8);
+            res.body.length.should.equal(8);
+            done();
+        });
+      }).catch((e) => {
+        should.fail();
       });
     });
 
     it('When including a plugin, GetPlugins should return that plugin', function () {
       helperReset();
-      vermon.GetPlugins().should.not.eql({});
+      vermon.use(main);
+      vermon.PluginManager.GetPlugins().should.not.eql({});
     });
 
     it('To add the vermon-web plugin the program should be started with a config file, and a Start method callback should be provided to be called after vermon._.startWithConfig, adding only the detectors in the config file.', function (done) {
@@ -124,7 +150,7 @@ describe('Before the test...', () => {
       //Prepare
       helperReset();
       try{
-        let myEnv = vermon.getEnvironment();
+        let myEnv = vermon.GetEnvironment();
       } catch(e) {
         e.message.should.equal("Environment does not exist. Please run the Start() function first or one of its overrides.");
         return;
@@ -160,13 +186,14 @@ describe('Before the test...', () => {
       });
     });
 
-    it('When running vermon._.startWithConfig with a config file with only the ExpressEnvironment, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
+    it('When running vermon with a config file with only the ExpressEnvironment, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
       //Prepare
       helperReset();
-      vermon.GetPlugins().should.not.eql({});
+      vermon.PluginManager.GetPlugins().should.not.eql({});
 
       let emptyConfig = new vermon.Config("/test/config_express_only_test.js");
-      vermon.startWithConfig(emptyConfig, (e,d,n,f) =>{
+      vermon.configure(emptyConfig);
+      vermon.watch.then(emptyConfig, (e,d,n,f) =>{
         (e instanceof ent.ExpressEnvironment).should.equal(true);
         e.port.should.equal(8088);
         //listen needs to be called explicitely before taking any request
@@ -415,7 +442,7 @@ describe('Before the test...', () => {
 
       let alternativeConfig = new vermon.Config("test/config_express_test3.js");
       vermon.startWithConfig(alternativeConfig, ()=>{
-        let myEnv = vermon.getEnvironment();
+        let myEnv = vermon.GetEnvironment();
         let n = vermon.GetNotifiers();
         n[0].on('pushedNotification', function(message, text, data){
           fail_helper.should.equal(false);
@@ -452,7 +479,7 @@ describe('Before the test...', () => {
       //Prepare
       vermon.ActivateDetector("My Detectors Route");
       fail_helper = false;
-      chai.request(vermon.getEnvironment().getWebApp())
+      chai.request(vermon.GetEnvironment().getWebApp())
         .get('/config/detectors')
         .end((err, res) => {
           res.should.have.status(200);
@@ -471,7 +498,7 @@ describe('Before the test...', () => {
     });
     it('I should be able to POST messages', function (done) {
       //Prepare
-      let myEnv = vermon.getEnvironment();
+      let myEnv = vermon.GetEnvironment();
       vermon.AddDetector(new ent.RequestDetector("My_Route", "/config/detector4",
         (req, res) => {
           res.json({ "req": req.body });
@@ -501,7 +528,7 @@ describe('Before the test...', () => {
     });
     it('I should throw an error if the handler function is not implemented', function () {
       //Prepare
-      let myEnv = vermon.getEnvironment();
+      let myEnv = vermon.GetEnvironment();
       try{
         vermon.AddDetector(new ent.RequestDetector("Deactivate Route", 
           "/config/detector/function1",
@@ -516,7 +543,7 @@ describe('Before the test...', () => {
     });
     it('I should be able to Deactivate a MD via POST message', function (done) {
       //Prepare
-      let myEnv = vermon.getEnvironment();
+      let myEnv = vermon.GetEnvironment();
       vermon.AddDetector(new ent.RequestDetector("Deactivate Route", 
         "/config/detector/deactivate",
         "DeactivateDetector;name", 
@@ -533,7 +560,7 @@ describe('Before the test...', () => {
     });
     it('I should be able to Activate a MD via POST message', function (done) {
       //Prepare
-      let myEnv = vermon.getEnvironment();
+      let myEnv = vermon.GetEnvironment();
       vermon.AddDetector(new ent.RequestDetector("Activate Route", 
         "/config/detector/activate",
         "ActivateDetector;name", 
@@ -569,7 +596,7 @@ describe('Before the test...', () => {
       helperReset();
       let alternativeConfig = new vermon.Config("test/config_express_test7.js");
       vermon.startWithConfig(alternativeConfig, (e1, d, n, f)=>{
-        let myEnv = vermon.getEnvironment();
+        let myEnv = vermon.GetEnvironment();
         (myEnv instanceof Extensions.MultiEnvironment).should.equal(true);
      
         let myExpressEnv = myEnv.getCurrentState()["Express Environment"];

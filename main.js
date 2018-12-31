@@ -14,18 +14,29 @@
  ******************************************************/
 
 let vermon = require('vermon')
-let log = vermon.SetTraceLevel('debug')
+let log = vermon.SetTraceLevel('info')
 let entities = require('./Entities')
+let bodyParser = require('body-parser')
 
-
-  //  ╔═╗     ╔═╗         ╔═╗
-  //  ╠═╝     ║╣          ╚═╗
-  //  ╩  rivat╚═╝Propertie╚═╝
+  //  ╔═╗╦═╗╦╦ ╦╔═╗╔╦╗╔═╗  ╔═╗╦═╗╔═╗╔═╗╔═╗╦═╗╔╦╗╦╔═╗╔═╗
+  //  ╠═╝╠╦╝║╚╗║╠═╣ ║ ║╣   ╠═╝╠╦╝║ ║╠═╝║╣ ╠╦╝ ║ ║║╣ ╚═╗
+  //  ╩  ╩╚═╩ ╚╝╩ ╩ ╩ ╚═╝  ╩  ╩╚═╚═╝╩  ╚═╝╩╚═ ╩ ╩╚═╝╚═╝
 let port = process.env.VERMON_PORT || 3300
 let mainEnv = {}
 let webApp = {}
+  //Default routes
+let routeAddDetector =        new entities.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
+let routeAddNotifier =        new entities.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
+let routeRemoveNotifier =     new entities.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
+let routeGetDetectors =       new entities.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectors");
+let routeGetNotifiers =       new entities.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
+let routeDeactivateDetector = new entities.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
+let routeActivateDetector =   new entities.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
+let routeGetEnvironment =     new entities.RequestDetector("Get Environment route", "/config/environment", "GetEnvironment");
 
-//Public functions
+  //  ╔═╗╦ ╦╔╗ ╦  ╦╔═╗  ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
+  //  ╠═╝║ ║╠╩╗║  ║║    ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
+  //  ╩  ╚═╝╚═╝╩═╝╩╚═╝  ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
 function reset() {
   log.info('Calling vermon-web plugin reset method...')
   //Do some reset stuff here
@@ -33,19 +44,56 @@ function reset() {
 
 function start(e,m,n,f,config) {
   log.info('Calling vermon-web plugin start method...')
-  setupWebServer()
+  createMainEnvironment()
   setupEnvironment(e)
+  setupWebServer()
+  setupRoutes(m)
   environmentListen()
 }
 
 function getWebApp() {
-  if(!webApp) {
+  log.info('Running getWebApp...')
+  if(!(webApp && webApp.request)) {
     setupWebServer()
   }
   return webApp
 }
 
-//Private functions
+  //  ╔═╗╦═╗╦╦ ╦╔═╗╔╦╗╔═╗  ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
+  //  ╠═╝╠╦╝║╚╗║╠═╣ ║ ║╣   ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
+  //  ╩  ╩╚═╩ ╚╝╩ ╩ ╩ ╚═╝  ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
+function setupRoutes(routes) {
+  log.info('Setting up routes...')
+  if (parametersExist(routes)) {
+    addRoutes(routes)
+  } else {
+    fallbackRoutes()
+  }
+}
+
+function parametersExist(parameters) {
+  log.info("PLUGIN: Checking if any parameter was passed via config to this environment...");
+  return parameters && parameters.length > 0;
+}
+
+function fallbackRoutes() {
+  log.info("PLUGIN: No. Adding default detectors and notifiers.");
+  vermon.AddDetector(routeAddDetector);
+  vermon.AddDetector(routeAddNotifier);
+  vermon.AddDetector(routeRemoveNotifier);
+  vermon.AddDetector(routeGetDetectors);
+  vermon.AddDetector(routeGetNotifiers);
+  vermon.AddDetector(routeDeactivateDetector);
+  vermon.AddDetector(routeActivateDetector);
+  vermon.AddDetector(routeGetEnvironment);
+}
+
+function addRoutes(detectors) {
+  log.info(`PLUGIN: Yes, found ${detectors.length} plugin(s)`);
+  log.info(`  first is ${detectors[0].constructor.name}:${detectors[0].name}. Adding...`);
+  vermon.AddDetector(detectors); 
+}
+
 function setupWebServer() {
   log.info('Setting up web-server...')
   try {
@@ -78,7 +126,8 @@ function initCLI() {
     .parse(process.argv)
 }
 
-function setupWebServer() {
+function createMainEnvironment() {
+  log.info('Creating express environment...')
   mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, false)
   webApp = mainEnv.getWebApp()
 }
@@ -102,9 +151,27 @@ function getExpressEnvironment()
   } 
 }
 
-initCLI()
-setupWebServer()
 
+  //  ╔═╗╦  ╦ ╦╔═╗╦╔╗╔   ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
+  //  ╠═╝║  ║ ║║ ╦║║║║   ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
+  //  ╩  ╚═╝╚═╝╚═╝╩╝╚╝   ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
+function PreAddPlugin() {}
+function PostAddPlugin() {}
+function ShouldStart() { return true }
+
+  //Main
+initCLI()
+
+  //Exports
 exports.getWebApp = getWebApp
 exports.reset = reset
 exports.start = start
+exports.PreAddPlugin = PreAddPlugin
+exports.PostAddPlugin = PostAddPlugin
+exports.Start = start //Plugin calls "Start" with uppercase (S)
+exports.ShouldStart = ShouldStart
+
+  //  ╔═╗╦ ╦╔╗ ╦  ╦╔═╗  ╔═╗╦═╗╔═╗╔═╗╔═╗╦═╗╔╦╗╦╔═╗╔═╗
+  //  ╠═╝║ ║╠╩╗║  ║║    ╠═╝╠╦╝║ ║╠═╝║╣ ╠╦╝ ║ ║║╣ ╚═╗
+  //  ╩  ╚═╝╚═╝╩═╝╩╚═╝  ╩  ╩╚═╚═╝╩  ╚═╝╩╚═ ╩ ╩╚═╝╚═╝
+exports.id = "VERMON_WEB"
