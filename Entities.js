@@ -96,7 +96,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     let e = this;
     app.get("/welcome", (req, res) => {
       e.addChange(req.url);
-      res.json({message: "Welcome to T-Motion-CLI Web server!"});
+      res.json({message: "Welcome to Vermon Web server!"});
     });
     this.setBodyParser();
     this.maxAttempts--;

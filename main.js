@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+"use strict"
 
 /*******************************************************
  * VERMON-WEB
@@ -9,9 +9,8 @@
  *    server programatically with pre-configured elements
  *    via the StartWithConfig function;
  * 2: Via running directly from command line with args: 
+ *    "> vermon --startweb"
  *    Starts the web-server directly on port 3300
- *    Regardless of the option, this modules is always 
- *    added as a plugin of t-motion-detector
  ******************************************************/
 
 let vermon = require('vermon')
@@ -19,7 +18,9 @@ let log = vermon.SetTraceLevel('debug')
 let entities = require('./Entities')
 
 
-//Private properties
+  //  ╔═╗     ╔═╗         ╔═╗
+  //  ╠═╝     ║╣          ╚═╗
+  //  ╩  rivat╚═╝Propertie╚═╝
 let port = process.env.VERMON_PORT || 3300
 let mainEnv = {}
 let webApp = {}
@@ -32,7 +33,9 @@ function reset() {
 
 function start(e,m,n,f,config) {
   log.info('Calling vermon-web plugin start method...')
-  startWebServer()
+  setupWebServer()
+  setupEnvironment(e)
+  environmentListen()
 }
 
 function getWebApp() {
@@ -43,23 +46,35 @@ function getWebApp() {
 }
 
 //Private functions
-function startWebServer() {
-  log.info('Starting web-server...')
+function setupWebServer() {
+  log.info('Setting up web-server...')
   try {
     port = getExpressEnvironment().port ? getExpressEnvironment().getPort() : port
   } catch(e) {
     log.error('Error getting environment, ignoring...')
     log.error(e)
   }
-  console.log('##########################################')
-  console.log(`##  STARTING WEB SERVER on port ${port}... ##`)
-  console.log('##########################################')  
+  console.log('###############################################')
+  console.log(`##  Setting up WEB SERVER on port ${port}... ##`)
+  console.log('###############################################')  
+}
+
+function setupEnvironment(e) {
+  log.info('Calling setupEnvironment method...')
+  vermon.Start({
+    environment: e ? e : mainEnv
+  });
+}
+
+function environmentListen() {
+  log.info('Calling environmentListen method...')
+  getExpressEnvironment().listen();
 }
 
 function initCLI() {
   log.info('Initializing CLI commands...')
   vermon.Cli
-    .option('-sw, --startweb', 'Starts the Web server', startWebServer)
+    .option('-sw, --startweb', 'Starts the Web server', start)
     .parse(process.argv)
 }
 

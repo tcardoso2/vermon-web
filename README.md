@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.5.3 :Web server can start with "> vermon --startweb";  
 * v 0.5.2 :WIP on fixing Express tests: Added Entities, refactored code, main module is no longer an express
            app, the express server can be assessed via getWebApp instead; added vermon tests for new vermon methods, start, reset and getWebApp added when vermon-web plugin is added;  
 * v 0.5.1 :WIP on fixing tests; changed main.Reset to main.reset (lowercase); vermon-web plugin no longer has the
