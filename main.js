@@ -14,7 +14,7 @@
  ******************************************************/
 
 let vermon = require('vermon')
-let log = vermon.SetTraceLevel('info')
+let log = vermon.SetTraceLevel('debug')
 let entities = require('./Entities')
 let bodyParser = require('body-parser')
 

@@ -360,7 +360,7 @@ class RequestDetector extends ent.MotionDetector{
     if (typeof handler == "string"){
       let parts = _GetFuncParts(handler);
       this.handler = (req, res)=> {
-        log.info(`Request body: ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
+        log.info(`Request body on route ${this.route}(${this.verb}): ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
           log.info(`Got result`);
@@ -629,7 +629,7 @@ function _GetFuncParts(fn_name){
   let funcParts = fn_name.split(";");
   log.info(`Checking if function ${funcParts} exists...`)
   let func = m[funcParts[0]];
-  if (!func) throw new Error(`Error: function "${fn_name}" is not defined in t-motion-detector.`);
+  if (!func) throw new Error(`Error: function "${fn_name}" is not defined in vermon.`);
   return funcParts;
 }
 

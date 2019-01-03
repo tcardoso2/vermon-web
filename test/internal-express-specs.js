@@ -136,13 +136,14 @@ describe('Before the test...', () => {
       })
       vermon.reset()
     })
-    xit('When running vermon._.startWithConfig with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
+    xit('When running vermon.watch with a config file without an ExpressEnvironment, the system should not Start the Web Server.', function (done) {
       //Skipping for now, this works manually but via tests is failing...
       //Prepare
       helperReset()
-
+      vermon.use(main)
       let emptyConfig = new vermon.Config('/test/config_empty_test.js')
-      vermon.startWithConfig(emptyConfig, (e,d,n,f) =>{
+      vermon.use(emptyConfig)
+      vermon.watch().then(emptyConfig, (e,d,n,f) =>{
         chai.request('localhost:8088')
           .get('/config/detectors')
           .end((err, res) => {
@@ -230,8 +231,9 @@ describe('Before the test...', () => {
 
     it('it should start a web-server at default port 8123', function (done) {
       helperReset()
+      //Old syntax - Still possible
       mainEnv = new ent.ExpressEnvironment(8123, 'public') 
-      vermon.start({ environment: mainEnv})
+      vermon.Start({ environment: mainEnv})
       let app = mainEnv.getWebApp()
       chai.request(app)
         .get('/site')
@@ -253,7 +255,8 @@ describe('Before the test...', () => {
 
     it('should be able to take the first parameter in the constructor as being the port', function (done) {
       let e2 = new ent.ExpressEnvironment(8030) 
-      vermon.start({ environment: e2})
+      //Old syntax - Still possible
+      vermon.Start({ environment: e2})
       let app2 = e2.getWebApp()
       chai.request(app2)
         .get('/site')
@@ -336,8 +339,8 @@ describe('Before the test...', () => {
         }
       })
       md.name = 'My Route detector'
-
-      vermon.start({
+      //Old syntax - Still possible
+      vermon.Start({
         environment: mainEnv,
         initialMotionDetector: md,
       })
@@ -366,53 +369,60 @@ describe('Before the test...', () => {
     it('The URL route should be valid', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      vermon.reset()
+      helperReset();
+      vermon.use(main)
       let alternativeConfig = new vermon.Config('test/config_express_test.js')
-      vermon.startWithConfig(alternativeConfig)
+      vermon.configure(alternativeConfig)
+      vermon.watch().then(() => {
+        let myEnv = vermon.GetEnvironment()
 
-      let myEnv = vermon.getEnvironment()
-
-      let app2 = myEnv.getWebApp()
-      chai.request(app2)
-        .get('/config/detectors1')
-        .end((err, res) => {
-          try{
-            myEnv.stop()
-            res.should.have.status(200)
-            done()
-          } catch(e){console.log(e)}
-        })
+        let app2 = myEnv.getWebApp()
+        chai.request(app2)
+          .get('/config/detectors1')
+          .end((err, res) => {
+            try{
+              myEnv.stop()
+              res.should.have.status(200)
+              done()
+            } catch(e){console.log(e)}
+          })        
+      })
     })
 
     it('when responding via handler, I should be able to access the Detectors info', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      vermon.reset()
+      helperReset()
+      vermon.use(main)
       let alternativeConfig = new vermon.Config('test/config_express_test2.js')
-      vermon.startWithConfig(alternativeConfig)
+      vermon.configure(alternativeConfig)
+      vermon.watch().then(()=>{
+        let d = vermon.GetMotionDetectors()
+        let myEnv = vermon.GetEnvironment();
 
-      let d = vermon.GetMotionDetectors()
-      let myEnv = vermon.getEnvironment();
-
-      (myEnv instanceof ent.ExpressEnvironment).should.equal(true)
-      d.length.should.equal(2)
-      let app2 = myEnv.getWebApp()
-      chai.request(app2)
-        .get('/config/detectors2')
-        .end((err, res) => {
-          myEnv.stop()
-          res.should.have.status(200)
-          res.body.length.should.equal(d.length)
-          done()
-        })
+        (myEnv instanceof ent.ExpressEnvironment).should.equal(true)
+        d.length.should.equal(2)
+        let app2 = myEnv.getWebApp()
+        chai.request(app2)
+          .get('/config/detectors2')
+          .end((err, res) => {
+            myEnv.stop()
+            res.should.have.status(200)
+            res.body.length.should.equal(d.length)
+            done()
+          })        
+      })
     })
 
     it('should be able to access system info via GET request', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      vermon.reset()
+      helperReset()
+      vermon.use(main)
       let alternativeConfig = new vermon.Config('test/config_express_test5.js')
-      vermon.startWithConfig(alternativeConfig, (myEnv, d, n, f)=>{
+      vermon.configure(alternativeConfig)
+      //Old syntax
+      vermon.watch().then(alternativeConfig, ({ myEnv, d, n, f })=>{
 
         (myEnv instanceof ent.ExpressEnvironment).should.equal(true)
         let app2 = myEnv.getWebApp()
@@ -438,14 +448,24 @@ describe('Before the test...', () => {
     })
   })
 
-  describe('To be able to disable temporarily a Motion Detector..., ', function() {
+  describe('vermon.force function must work within a plugin', function() {
+    it('should force adds', function (done) {
+      //implement
+      //Also think of separating Entities into Entities core in vermon
+      should.fail()
+    })
+  })
+
+  describe('BULK To be able to disable temporarily a Motion Detector (all tests in the describe section must be run)..., ', function() {
     let fail_helper = true
     it('I should be able to deactivate an existing active MD by name', function (done) {
       //Prepare
-      vermon.reset()
-
+      helperReset()
+      vermon.use(main)
+      vermon.force(true) //Allow forcing adds
       let alternativeConfig = new vermon.Config('test/config_express_test3.js')
-      vermon.startWithConfig(alternativeConfig, ()=>{
+      vermon.configure(alternativeConfig)
+      vermon.watch().then(()=>{
         let myEnv = vermon.GetEnvironment()
         let n = vermon.GetNotifiers()
         n[0].on('pushedNotification', function(message, text, data){
@@ -599,7 +619,9 @@ describe('Before the test...', () => {
       //Main needs to be reset explicitely because it keeps objects from previous test
       helperReset()
       let alternativeConfig = new vermon.Config('test/config_express_test7.js')
-      vermon.startWithConfig(alternativeConfig, (e1, d, n, f)=>{
+      vermon.use(main)
+      vermon.configure(alternativeConfig)
+      vermon.watch().then(({ e1, d, n, f } )=>{
         let myEnv = vermon.GetEnvironment();
         (myEnv instanceof Extensions.MultiEnvironment).should.equal(true)
      
