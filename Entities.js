@@ -68,6 +68,7 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
     this.maxAttempts = maxAttempts;
     this.name = "Express Environment";
+    this.listening = false;
     app = express();
     //Handle errors. For scope reasons, a copy of this object will be created because it needs to be accesed inside Express
     _this = this;
@@ -83,14 +84,20 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     app.use(bodyParser.json({ type: 'application/json'}));
   }
 
-  listenNext(){
+  listenNext(err){
+    this.listening = false;
     log.warn(`Some error happened while attempting to listen to port ${_this.port}, attempting next port...`);
+    log.error(err)
     this.port++;
     return this.listen();
   }
 
   listen()
   {
+    if (this.listening) {
+      log.warning("Ignoring listen request because server is already listening...");
+      return false;
+    }
     log.info(`Setting static address to ${this.static_addr} and preparing to listen on port ${this.port}...`);
     app.use(express.static(this.static_addr));
     
@@ -101,10 +108,11 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     });
     this.setBodyParser();
     this.maxAttempts--;
-    log.info(`Attempting to listen to port ${this.port}, there should be a successful confirmation message after this. Number of remaining attempts ${this.maxAttempts}...`);
+    log.info(`Attempting to listen to port ${this.port}. Number of remaining attempts ${this.maxAttempts}...`);
     if(this.maxAttempts > 0){
-      this.server = app.listen(this.port).on('error', this.listenNext);
-      log.info("Listening to port successful.");
+      this.server = app.listen(this.port)
+        .on('error', this.listenNext)
+      this.listening = true;
       return true;
     }
     return false;

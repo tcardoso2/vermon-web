@@ -4,5 +4,5 @@ profiles = {
   }
 }
 
-exports.profiles = profiles;
-exports.default = profiles.default;
+exports.profiles = profiles
+exports.default = profiles.default

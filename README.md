@@ -11,6 +11,7 @@ It has been repurposed from the original intent because I didn't see the need to
 create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
+* v 0.5.5 :ESLinted the tests code; Expressenvironment only starts listening if is not listening;  
 * v 0.5.4 :Some improvements on readibility of main.js; added a couple of plugin new tests; solved a few more unit 
            tests;  
 * v 0.5.3 :Web server can start with "> vermon --startweb";  
@@ -93,4 +94,4 @@ Added static directory, and added AngularJS, first test page;
   - module must export a PreAddPlugin function (even if it is empty);  
   - module must export a PostAddPlugin function (even if it is empty);  
   - module must export a ShouldStart function;
-  - module must export a Start function
+  - module must export a Start function;

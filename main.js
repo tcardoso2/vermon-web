@@ -43,12 +43,11 @@ function reset() {
 }
 
 function start(e,m,n,f,config) {
-  log.info('Calling vermon-web plugin start method...')
+  log.info('Calling vermon-web plugin start method, with parameters...')
   createMainEnvironment()
   setupEnvironment(e)
   setupWebServer()
   setupRoutes(m)
-  environmentListen()
 }
 
 function getWebApp() {
@@ -68,6 +67,9 @@ function setupRoutes(routes) {
     addRoutes(routes)
   } else {
     fallbackRoutes()
+    //If fallback routes are used this was called from CLI which by default
+    //does not listen to requests, will start listening now...
+    environmentListen()
   }
 }
 
@@ -89,7 +91,7 @@ function fallbackRoutes() {
 }
 
 function addRoutes(detectors) {
-  log.info(`PLUGIN: Yes, found ${detectors.length} plugin(s)`);
+  log.info(`PLUGIN: Yes, found ${detectors.length} detector(s)`);
   log.info(`  first is ${detectors[0].constructor.name}:${detectors[0].name}. Adding...`);
   vermon.AddDetector(detectors); 
 }
@@ -102,9 +104,9 @@ function setupWebServer() {
     log.error('Error getting environment, ignoring...')
     log.error(e)
   }
-  console.log('###############################################')
+  console.log('############################################')
   console.log(`##  Setting up WEB SERVER on port ${port}... ##`)
-  console.log('###############################################')  
+  console.log('############################################')  
 }
 
 function setupEnvironment(e) {
@@ -126,9 +128,9 @@ function initCLI() {
     .parse(process.argv)
 }
 
-function createMainEnvironment() {
+function createMainEnvironment(listen = false) {
   log.info('Creating express environment...')
-  mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, false)
+  mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, listen)
   webApp = mainEnv.getWebApp()
 }
 

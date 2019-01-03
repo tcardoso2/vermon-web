@@ -1,4 +1,4 @@
-  /*****************************************************
+/*****************************************************
  * Internal tests
  * What are internal tests?
  * As this is a npm package, it should be tested from
@@ -9,35 +9,35 @@
  * var md = require('t-motion-detector');
  *****************************************************/
 
-let chai = require('chai');
-let chaiAsPromised = require("chai-as-promised");
-let should = chai.should();
-let fs = require('fs');
-let vermon = require('vermon');
-let ent = require('../Entities');
-let main = require('../main.js');
-let events = require('events');
+let chai = require('chai')
+let chaiAsPromised = require('chai-as-promised')
+let should = chai.should()
+let fs = require('fs')
+let vermon = require('vermon')
+let ent = require('../Entities')
+let main = require('../main.js')
+let events = require('events')
 
 //Chai will use promises for async events
-chai.use(chaiAsPromised);
+chai.use(chaiAsPromised)
 
 before(function(done) {
-  done();
-});
+  done()
+})
 
 after(function(done) {
   // here you can clear fixtures, etc.
-  done();
-});
+  done()
+})
 
-describe("When integrating with a chatbot (DialogFlow)", function() {
+describe('When integrating with a chatbot (DialogFlow)', function() {
   xit('BotFullfillmentDetector throws an error if no arguments are passed.', function () {
   	try{
-  	  new ent.BotFullfillmentDetector();
+  	  new ent.BotFullfillmentDetector()
   	} catch(e){
-  	  e.message.should.equal("Error: BotFullfillmentDetector requires name as first argument.");
-  	  return;
+  	  e.message.should.equal('Error: BotFullfillmentDetector requires name as first argument.')
+  	  return
   	}
-    should.fail();
-  });
-});
+    should.fail()
+  })
+})

@@ -1,11 +1,11 @@
-let vermonWeb = require('../../main.js');
+let vermonWeb = require('../../main.js')
 let fs = require('fs')
 let entities = vermon.Entities
 let logger = vermon.logger
 let chai = require('chai')
-let chaiHttp = require('chai-http');
-let vermon = require('vermon');
-chai.use(chaiHttp);
+let chaiHttp = require('chai-http')
+let vermon = require('vermon')
+chai.use(chaiHttp)
 let should = chai.should()
 let defaultConfig = require('../../config.js')
 
@@ -27,7 +27,7 @@ describe('Basic new syntax, ', function () {
       // No errors should happen
     })
 
-  });
+  })
 
   describe('watch ', function () {
     it('watch: (replacer for former StartWithConfig)', function (done) {
@@ -41,7 +41,7 @@ describe('Basic new syntax, ', function () {
   	  	should.fail()
       })
     })
-  });
+  })
 
   describe('save ', function () {
     it('save: (replacer for former SaveAllToConfig)', function (done) {
