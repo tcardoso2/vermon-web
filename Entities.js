@@ -11,6 +11,7 @@ let bodyParser = require('body-parser');
 let path = require("path");
 let app;
 const defaultPort = 8080;
+let pkg = require('./package.json');
 let ko = require("knockout");
 //Increases when a new socket connection is available 'connect' event
 let newSocketConnections = 0;
@@ -107,6 +108,10 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     app.get("/welcome", (req, res) => {
       e.addChange(req.url);
       res.json({message: "Welcome to Vermon Web server!"});
+    });
+    app.get("/version", (req, res) => {
+      e.addChange(req.url);
+      res.json({version: pkg.version});
     });
     this.setBodyParser();
     this.maxAttempts--;
