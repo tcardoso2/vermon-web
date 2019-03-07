@@ -1,3 +1,5 @@
+"use strict"
+
 let m = require('vermon');
 let ent = m.Entities;
 var log = m.Log;
@@ -110,8 +112,17 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.maxAttempts--;
     log.info(`Attempting to listen to port ${this.port}. Number of remaining attempts ${this.maxAttempts}...`);
     if(this.maxAttempts > 0){
-      this.server = app.listen(this.port)
-        .on('error', this.listenNext)
+      this.server = app.listen(this.port,
+        (v) => {
+          console.log('╔═════════════════════════════════════════════╗')
+          console.log(`║             Server Started!!!!!             ║`)
+          console.log('╚═════════════════════════════════════════════╝')  
+          log.info(`Listening successful to port ${this.port}!`);          
+        })
+        .on('error', (error) => {
+          this.listenNext(error)  
+        });
+
       this.listening = true;
       return true;
     }

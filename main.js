@@ -14,7 +14,7 @@
  ******************************************************/
 
 let vermon = require('vermon')
-let log = vermon.SetTraceLevel('debug')
+let log = vermon.SetTraceLevel('error')
 let entities = require('./Entities')
 let bodyParser = require('body-parser')
 
@@ -104,9 +104,9 @@ function setupWebServer() {
     log.error('Error getting environment, ignoring...')
     log.error(e)
   }
-  console.log('############################################')
-  console.log(`##  Setting up WEB SERVER on port ${port}... ##`)
-  console.log('############################################')  
+  console.log('╔═════════════════════════════════════════════╗')
+  console.log(`║     Setting up WEB SERVER on port ${port}...   ║`)
+  console.log('╚═════════════════════════════════════════════╝')  
 }
 
 function setupEnvironment(e) {
@@ -124,8 +124,29 @@ function environmentListen() {
 function initCLI() {
   log.info('Initializing CLI commands...')
   vermon.Cli
-    .option('-sw, --startweb', 'Starts the Web server', start)
+    .option('-w, --startweb', 'Starts the Web server', start)
+    .option("-l, --log <level>", "Which log level to use (error | warn | info | debug | trace)")
+    .action(function(options){
+      if(options.log) {
+        console.log('CLI using %s log level', options.log)
+        log = vermon.SetTraceLevel(options.log)        
+      }
+    })
     .parse(process.argv)
+
+  if(vermon.Cli.startweb) {
+    //Do nothing
+  } else {
+  if (require.main === module) {
+    log.error('Module was called directly from the console without any arguments, this is not allowed.');
+    log.error(' Please use "--help" to see list of commands, or use it as a dependency (via require statement) in your application instead.');
+    process.exit(1);
+  }
+  else {
+    //
+    log.info('Module was added as library.');
+  }
+}
 }
 
 function createMainEnvironment(listen = false) {

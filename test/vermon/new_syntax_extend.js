@@ -1,13 +1,11 @@
 let vermonWeb = require('../../main.js')
 let fs = require('fs')
-let entities = vermon.Entities
-let logger = vermon.logger
 let chai = require('chai')
 let chaiHttp = require('chai-http')
 let vermon = require('vermon')
+let logger = vermon.logger
 chai.use(chaiHttp)
 let should = chai.should()
-let defaultConfig = require('../../config.js')
 
 before(function (done) {
   done()

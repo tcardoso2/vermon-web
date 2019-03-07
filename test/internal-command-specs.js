@@ -127,7 +127,7 @@ describe('Before the test...', () => {
           data_line += data
           if (data_line[data_line.length-1] == '\n') {
             console.log(data_line)
-            if (data_line.indexOf('##  STARTING WEB SERVER on port 3300... ##') > 0){
+            if (data_line.indexOf('Server Started!!!!!') > 0){
               if(_done) return
               _done = true
               done()
