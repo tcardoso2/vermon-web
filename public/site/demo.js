@@ -312,7 +312,7 @@ app.controller('MainController', function($rootScope, $scope, $http, SharedState
 
   $scope.toggle = function(detector){
   	let req = {
-  	  method: 'POST',
+  	  method: detector.verb,
   	  url: '/config/detectors/' + (detector._isActive ? 'deactivate' : 'activate'),
   	  data: { name: detector.name }
     }

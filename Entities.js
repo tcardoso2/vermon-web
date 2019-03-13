@@ -10,6 +10,7 @@ let clientIOFact = require('socket.io-client');
 let bodyParser = require('body-parser');
 let path = require("path");
 let app;
+let assert = require("assert");
 const defaultPort = 8080;
 let pkg = require('./package.json');
 let ko = require("knockout");
@@ -63,6 +64,7 @@ profiles = {
 exports.profiles = profiles;
 exports.default = profiles.default;
  */
+
 class ExpressEnvironment extends ext.SystemEnvironment{
   
   constructor(port, static_addr, command = "pwd", interval = 10000, maxAttempts = 10, listen = true, killAfter = 1){
@@ -73,6 +75,9 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     this.name = "Express Environment";
     this.listening = false;
     app = express();
+    //Basic request logger
+    this.setBodyParser();
+    app.use(requestLogger);
     //Handle errors. For scope reasons, a copy of this object will be created because it needs to be accesed inside Express
     _this = this;
     if(listen) this.listen();
@@ -81,10 +86,9 @@ class ExpressEnvironment extends ext.SystemEnvironment{
   setBodyParser(){
     log.info("Adding middleware to allow body to be parsed as json...");
     //parse application/json and look for raw text
-    app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.text());   
-    app.use(bodyParser.json({ type: 'application/json'}));
+    app.use(bodyParser.json());
   }
 
   listenNext(err){
@@ -102,8 +106,8 @@ class ExpressEnvironment extends ext.SystemEnvironment{
       return false;
     }
     log.info(`Setting static address to ${this.static_addr} and preparing to listen on port ${this.port}...`);
-    app.use(express.static(this.static_addr));
-    
+    this.setStatic(this.static_addr);
+
     let e = this;
     app.get("/welcome", (req, res) => {
       e.addChange(req.url);
@@ -113,7 +117,6 @@ class ExpressEnvironment extends ext.SystemEnvironment{
       e.addChange(req.url);
       res.json({version: pkg.version});
     });
-    this.setBodyParser();
     this.maxAttempts--;
     log.info(`Attempting to listen to port ${this.port}. Number of remaining attempts ${this.maxAttempts}...`);
     if(this.maxAttempts > 0){
@@ -201,6 +204,18 @@ class ExpressEnvironment extends ext.SystemEnvironment{
     app = {};
   }
 }
+
+//Express Middleware: TODO: Move to another more meaningful file
+var requestLogger = function (req, res, next) {
+  process.stdout.write('║')
+  let test = log.info(`Incoming: ${req.method}:${req.url}`);
+  console.log(test)
+  process.stdout.write('║')
+  test = log.debug(JSON.stringify(req.headers));
+  console.log(test)
+  next();
+};
+
 
 //This controls the Json output of the BaseNotifier class, not printing
 //unecessary members
@@ -376,7 +391,8 @@ class RequestDetector extends ent.MotionDetector{
     if (typeof handler == "string"){
       let parts = _GetFuncParts(handler);
       this.handler = (req, res)=> {
-        log.info(`Request body on route ${this.route}(${this.verb}): ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
+        if (this.verb === "POST") assert(req.body != undefined);
+        log.info(`Request body on route ${this.route}(${this.verb}): with request body = ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
           log.info(`Got result`);
@@ -400,6 +416,7 @@ class RequestDetector extends ent.MotionDetector{
           cache = null; // Enable garbage collection
         }catch(e){
           log.error(`Error: ${e}`);
+          res.status(200); //TODO: Manage proper HTTP codes according to meaning
           res.json(e.message);
         }
       };
@@ -646,6 +663,7 @@ function _GetFuncParts(fn_name){
   log.info(`Checking if function ${funcParts} exists...`)
   let func = m[funcParts[0]];
   if (!func) throw new Error(`Error: function "${fn_name}" is not defined in vermon.`);
+  else log.info(`Function exists! Returning ${funcParts.length} parts: ${funcParts}...`);
   return funcParts;
 }
 
