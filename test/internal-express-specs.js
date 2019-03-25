@@ -144,7 +144,7 @@ describe('Before the test...', () => {
       let emptyConfig = new vermon.Config('/test/config_empty_test.js')
       vermon.use(emptyConfig)
       vermon.watch().then(emptyConfig, (e,d,n,f) =>{
-        chai.request('localhost:8088')
+        chai.request(main.getWebApp())
           .get('/config/detectors')
           .end((err, res) => {
             (res == undefined).should.equal(true)
@@ -156,16 +156,16 @@ describe('Before the test...', () => {
     it('When running vermon with a config file with only the ExpressEnvironment, the system should setup detectors to add and remove elements, and route for EnvironmentSystem, and Deactivate/Activate Detectors + Get detectors and Get Notifiers (total 8)', function (done) {
       //Prepare
       helperReset()
-      vermon.PluginManager.GetPlugins().should.not.eql({})
+      //vermon.PluginManager.GetPlugins().should.not.eql({})
 
       let emptyConfig = new vermon.Config('/test/config_express_only_test.js')
       vermon.configure(emptyConfig)
-      vermon.watch.then(emptyConfig, (e,d,n,f) =>{
+      vermon.watch().then((e,d,n,f) =>{
         (e instanceof ent.ExpressEnvironment).should.equal(true)
         e.port.should.equal(8088)
         //listen needs to be called explicitely before taking any request
         //e.listen();
-        chai.request('localhost:8088')
+        chai.request(main.getWebApp())
           .get('/config/detectors')
           .end((err, res) => {
             res.should.have.status(200)
@@ -213,6 +213,22 @@ describe('Before the test...', () => {
         done()
       })
     })
+
+    it('A vermon plugin should not include vermon library! Important! should be injected instead, .', function (done) {
+      should.fail("CONTINUAR AQUI!");
+    });
+
+    it('when a plugin is added, it gains a reference to the parent.', function (done) {
+      should.fail("CONTINUAR AQUI!");
+    });
+
+    it('when a plugin is added, it injects the parent with pre-defined functions in preAddPlugin.', function (done) {
+      should.fail("CONTINUAR AQUI!");
+    });
+
+    it('A plugin entities library never references vermon, it is injected instead with main which is injected with the parent.', function (done) {
+      should.fail("CONTINUAR AQUI!");
+    });
   })
 
   describe('When starting vermon with an ExpressEnvironment programatically', function(){
@@ -623,7 +639,7 @@ describe('Before the test...', () => {
       vermon.configure(alternativeConfig)
       vermon.watch().then(({ e1, d, n, f } )=>{
         let myEnv = vermon.GetEnvironment();
-        (myEnv instanceof Extensions.MultiEnvironment).should.equal(true)
+        (myEnv instanceof ent.MultiEnvironment).should.equal(true)
      
         let myExpressEnv = myEnv.getCurrentState()['Express Environment'];
         //Another alternative way to get the Express Environment is via the function on the main module, why don't I test that as well...

@@ -28,7 +28,7 @@ let webApp = {}
 let routeAddDetector =        new entities.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
 let routeAddNotifier =        new entities.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
 let routeRemoveNotifier =     new entities.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
-let routeGetDetectors =       new entities.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectors");
+let routeGetDetectors =       new entities.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectorsNonSingleton");
 let routeGetNotifiers =       new entities.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
 let routeDeactivateDetector = new entities.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
 let routeActivateDetector =   new entities.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
@@ -178,7 +178,19 @@ function getExpressEnvironment()
   //  ╔═╗╦  ╦ ╦╔═╗╦╔╗╔   ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
   //  ╠═╝║  ║ ║║ ╦║║║║   ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
   //  ╩  ╚═╝╚═╝╚═╝╩╝╚╝   ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
-function PreAddPlugin() {}
+function PreAddPlugin(parent) {
+  log.info(`Vermon-web Plugin: will inject new functions into parent...`);
+  parent.exports.GetMotionDetectorsNonSingleton = () => {
+    return getExpressEnvironment().motionDetectors;
+    //WIP attempting to inject functions in main
+    //CONTINUAR DAQUI!
+  }
+  //Substitutes by the actual parent library;
+  vermon = parent;
+  exports._ = parent;
+  entities.inject(exports);
+  console.log(parent);
+};
 function PostAddPlugin() {}
 function ShouldStart() { return true }
 
@@ -194,7 +206,9 @@ exports.PostAddPlugin = PostAddPlugin
 exports.Start = start //Plugin calls "Start" with uppercase (S)
 exports.ShouldStart = ShouldStart
 
+
   //  ╔═╗╦ ╦╔╗ ╦  ╦╔═╗  ╔═╗╦═╗╔═╗╔═╗╔═╗╦═╗╔╦╗╦╔═╗╔═╗
   //  ╠═╝║ ║╠╩╗║  ║║    ╠═╝╠╦╝║ ║╠═╝║╣ ╠╦╝ ║ ║║╣ ╚═╗
   //  ╩  ╚═╝╚═╝╩═╝╩╚═╝  ╩  ╩╚═╚═╝╩  ╚═╝╩╚═ ╩ ╩╚═╝╚═╝
 exports.id = "VERMON_WEB"
+// this => vermon (parent) => entities._ = this

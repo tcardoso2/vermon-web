@@ -17,7 +17,7 @@
 
   "config": {
       "detectors" : {
-        "interval" : 20000,
+        "interval" : 2000,
         "useSocket" :  true,
         "divisions" : {
           "house": "10,10 900,10 900,180 1200,180 1200,700 400,700 400, 800 10,800",
@@ -61,7 +61,7 @@
       },
       "imgnlz" : {
         "interval" : 20000,
-        "baseURL" : "",
+        "baseURL" : "http://www.weather.gov.sg/files/rainarea/50km/v2/",
         "filePreffix": "dpsri_70km_",
         "fileSuffix": "0000dBR.dpsri.png"
      }

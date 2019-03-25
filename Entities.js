@@ -1,6 +1,7 @@
 "use strict"
 
-let m = require('vermon');
+let m = require('vermon'); //TO REMOVE! vermon Needs to be injected, cannot be referenced DIRECTLY!
+//Vermon utils might be a separate library!
 let ent = m.Entities;
 var log = m.Log;
 let ext = m.Extensions;
@@ -16,6 +17,7 @@ let pkg = require('./package.json');
 let ko = require("knockout");
 //Increases when a new socket connection is available 'connect' event
 let newSocketConnections = 0;
+let _;
 let _this; //Used for convenience on Express environment, when scope this is lost inside express.
 /**
  * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
@@ -395,7 +397,7 @@ class RequestDetector extends ent.MotionDetector{
         log.info(`Request body on route ${this.route}(${this.verb}): with request body = ${JSON.stringify(req.body)} \nExecuting function main.${parts[0]}...`)
         try{
           let result = _GetFuncResult(parts[0], req.body ? req.body[parts[1]] : undefined); //Do not put as parts
-          log.info(`Got result`);
+          log.info(`Got result, # of items are (length) ${result.length}`);
           //log.debug(result);
           let cache = []; //This is a method of avoiding circular reference error in JSON
           let limit = 100; //Limit which stops recursive depth otherwise a stack error might happen
@@ -693,3 +695,6 @@ exports.ExpressEnvironment = ExpressEnvironment;
 exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
 exports.APIEnvironment = APIEnvironment;
 exports.RequestDetector = RequestDetector;
+exports.inject = (parent) => {
+  _ = parent;
+}
