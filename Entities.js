@@ -1,10 +1,11 @@
 "use strict"
 
-let m = require('vermon'); //TO REMOVE! vermon Needs to be injected, cannot be referenced DIRECTLY!
+let vermon; //Vermon is no longer imported, but injected in real-time via the 'vermon.use' function
+let core = require('vermon-core-entities');
 //Vermon utils might be a separate library!
-let ent = m.Entities;
-var log = m.Log;
-let ext = m.Extensions;
+let ent = core.entities;
+var log = core.utils.log;
+let ext = core.extensions;
 let express = require('express');
 let io = require('socket.io')();
 let clientIOFact = require('socket.io-client');
@@ -17,7 +18,6 @@ let pkg = require('./package.json');
 let ko = require("knockout");
 //Increases when a new socket connection is available 'connect' event
 let newSocketConnections = 0;
-let _;
 let _this; //Used for convenience on Express environment, when scope this is lost inside express.
 /**
  * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
@@ -67,7 +67,7 @@ exports.profiles = profiles;
 exports.default = profiles.default;
  */
 
-class ExpressEnvironment extends ext.SystemEnvironment{
+class ExpressEnvironment extends ext.SystemEnvironment {
   
   constructor(port, static_addr, command = "pwd", interval = 10000, maxAttempts = 10, listen = true, killAfter = 1){
     super(command, interval, killAfter);
@@ -353,7 +353,7 @@ class CommandStdoutDetector extends ent.MotionDetector{
     let data_line = '';
     let line = 0;
     log.info(`Executing command: "${this.command} ${_args}"...`);
-    this.processRef = m.Cmd.get(this.command + _args);
+    this.processRef = ivermon.Cmd.get(this.command + _args);
     let d = this;
     this.processRef.stdout.on(
       'data', (data)=> {
@@ -652,8 +652,8 @@ class APIEnvironment extends ext.SystemEnvironment{
       key: key,
       value: value
     }
-    value.api_key = this._key;
-    return endpoints.format(this._endpoint, value);
+    value.api_key = this._key
+    return endpoints.format(this._endpoint, value)
   }
 }
 
@@ -661,23 +661,31 @@ class APIEnvironment extends ext.SystemEnvironment{
 //Given the configuration handler portion, separates into the function and arguments name and verifies if
 //the function really exists
 function _GetFuncParts(fn_name){
-  let funcParts = fn_name.split(";");
-  log.info(`Checking if function ${funcParts} exists...`)
-  let func = m[funcParts[0]];
+  let funcParts = fn_name.split(";")
+  log.info(`Checking if function ${funcParts} exists in parent library...`)
+  let func = getParent()[funcParts[0]]
   if (!func) throw new Error(`Error: function "${fn_name}" is not defined in vermon.`);
-  else log.info(`Function exists! Returning ${funcParts.length} parts: ${funcParts}...`);
-  return funcParts;
+  else log.info(`Function exists! Returning ${funcParts.length} parts: ${funcParts}...`)
+  return funcParts
 }
 
 //Executes a function with name fn_name in the main t-motion-detector module and passes its args
 function _GetFuncResult(fn_name, args){
   log.info(`Calling function ${fn_name}(${args})...`)
-  if (m[fn_name]) {
-    log.info('Function exists, will run it now...');
-    return m[fn_name](args);
+  if (getParent()[fn_name]) {
+    log.info('Function exists, will run it now...')
+    return getParent()[fn_name](args);
   } else {
-    log.error(`Function ${fn_name} does not exist in ${m}!`);
+    log.error(`Function ${fn_name} does not exist in ${m}!`)
   }
+}
+
+function getParent() {
+  log.info("Getting parent library (vermon)...");
+  if(!vermon) {
+    throw new Error("Error while getting vermon library, did you forget to call the 'vermon.use' method to add this extension?")
+  }
+  return vermon
 }
 
 //Extending Entities Factory
@@ -696,5 +704,5 @@ exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
 exports.APIEnvironment = APIEnvironment;
 exports.RequestDetector = RequestDetector;
 exports.inject = (parent) => {
-  _ = parent;
+  vermon = parent;
 }

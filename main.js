@@ -2,7 +2,7 @@
 "use strict"
 
 /*******************************************************
- * VERMON-WEB
+ * VERMON-WEB Plugin
  * There are 2 ways to use this tool:
  * 1: Via "require" keyword: This Adds the module as a 
  *    library and allows between others, running a 
@@ -13,8 +13,9 @@
  *    Starts the web-server directly on port 3300
  ******************************************************/
 
-let vermon = require('vermon')
-let log = vermon.SetTraceLevel('info')
+let vermon; //Vermon is no longer imported, but injected in real-time via the 'vermon.use' function
+let core = require('vermon-core-entities')
+let log = core.utils.setLevel('info')
 let entities = require('./Entities')
 let bodyParser = require('body-parser')
 
@@ -24,15 +25,6 @@ let bodyParser = require('body-parser')
 let port = process.env.VERMON_PORT || 3300
 let mainEnv = {}
 let webApp = {}
-  //Default routes
-let routeAddDetector =        new entities.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
-let routeAddNotifier =        new entities.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
-let routeRemoveNotifier =     new entities.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
-let routeGetDetectors =       new entities.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectorsNonSingleton");
-let routeGetNotifiers =       new entities.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
-let routeDeactivateDetector = new entities.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
-let routeActivateDetector =   new entities.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
-let routeGetEnvironment =     new entities.RequestDetector("Get Environment route", "/config/environment", "GetEnvironment");
 
   //  ╔═╗╦ ╦╔╗ ╦  ╦╔═╗  ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
   //  ╠═╝║ ║╠╩╗║  ║║    ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
@@ -79,6 +71,15 @@ function parametersExist(parameters) {
 }
 
 function fallbackRoutes() {
+  //Default routes
+  let routeAddDetector =        new entities.RequestDetector("Add detector route", "/config/detectors/add", "AddDetector", "POST");
+  let routeAddNotifier =        new entities.RequestDetector("Add notifier route", "/config/notifiers/add", "AddNotifier", "POST");
+  let routeRemoveNotifier =     new entities.RequestDetector("Remove notifier route", "/config/notifiers/remove", "RemoveNotifier", "POST");
+  let routeGetDetectors =       new entities.RequestDetector("Get Detectors route", "/config/detectors", "GetMotionDetectorsNonSingleton");
+  let routeGetNotifiers =       new entities.RequestDetector("Get Notifiers route", "/config/notifiers", "GetNotifiers");
+  let routeDeactivateDetector = new entities.RequestDetector("Deactivate Detectors route", "/config/detectors/deactivate", "DeactivateDetector;name", "POST");
+  let routeActivateDetector =   new entities.RequestDetector("Activate Detectors route", "/config/detectors/activate", "ActivateDetector;name", "POST");
+  let routeGetEnvironment =     new entities.RequestDetector("Get Environment route", "/config/environment", "GetEnvironment");
   log.info("PLUGIN: No. Adding default detectors and notifiers.");
   vermon.AddDetector(routeAddDetector);
   vermon.AddDetector(routeAddNotifier);
@@ -180,22 +181,19 @@ function getExpressEnvironment()
   //  ╩  ╚═╝╚═╝╚═╝╩╝╚╝   ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
 function PreAddPlugin(parent) {
   log.info(`Vermon-web Plugin: will inject new functions into parent...`);
-  parent.exports.GetMotionDetectorsNonSingleton = () => {
+  parent.GetMotionDetectorsNonSingleton = () => {
     return getExpressEnvironment().motionDetectors;
-    //WIP attempting to inject functions in main
-    //CONTINUAR DAQUI!
   }
   //Substitutes by the actual parent library;
-  vermon = parent;
-  exports._ = parent;
-  entities.inject(exports);
-  console.log(parent);
+  vermon = parent
+  exports._ = parent
+  //inject the parent library (e.g. vermon) in entities as well
+  entities.inject(parent)
 };
-function PostAddPlugin() {}
+function PostAddPlugin() {
+  initCLI()
+}
 function ShouldStart() { return true }
-
-  //Main
-initCLI()
 
   //Exports
 exports.getWebApp = getWebApp

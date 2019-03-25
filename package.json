@@ -3,6 +3,7 @@
     "body-parser": "^1.17.2",
     "connect": "^3.6.6",
     "express": "^4.15.3",
+    "knockout": "^3.5.0",
     "libnmap": "^0.4.14",
     "local-network-scanner": "^0.1.1",
     "minimatch": "^3.0.4",
@@ -13,14 +14,16 @@
     "pouchdb-server": "^2.3.7",
     "readline": "^1.3.0",
     "request": "^2.81.0",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "vermon-core-entities": "^0.5.2"
   },
   "devDependencies": {
     "chai": "*",
     "chai-as-promised": "^7.1.1",
     "chai-http": "*",
     "mocha": "*",
-    "mocha-reporter-badge": "^0.1.0"
+    "mocha-reporter-badge": "^0.1.0",
+    "vermon": "^0.7.0"
   },
   "repository": {
     "type": "git",
@@ -31,7 +34,7 @@
   "name": "vermon-web",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "scripts": {
     "test": "mocha test/ --exit",
     "testserver": "node test",

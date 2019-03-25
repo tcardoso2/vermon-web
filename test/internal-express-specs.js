@@ -29,6 +29,9 @@ let vermon = require('vermon')
 chai.use(chaiAsPromised)
 chai.use(chaiHttp)
 
+//vermon will use express
+vermon.use(main)
+
 function helperReset(){
   vermon.reset()
   delete require.cache[require.resolve('../main')]
@@ -79,6 +82,7 @@ describe('Before the test...', () => {
     it('I should GET a Welcome message, on the welcome path, when calling Listen()', (done) => {
       //Works when the module is called individually but seems not to work when called in bulk
       helperReset()
+      vermon.use(main)
       //This is just a basic test, so all i need to do is start.
       main.start()
       chai.request(main.getWebApp())
@@ -127,6 +131,7 @@ describe('Before the test...', () => {
     it('Plugins should also implement the "Reset" method which is run when the main.reset() method is called, via event handler', function (done) {
       //Prepare
       helperReset()
+      vermon.use(main);
       let _done = false
       main.on('reset', ()=>{
         if (_done) return
@@ -385,7 +390,7 @@ describe('Before the test...', () => {
     it('The URL route should be valid', function (done) {
       //Prepare
       //Main needs to be reset explicitely because it keeps objects from previous test
-      helperReset();
+      helperReset()
       vermon.use(main)
       let alternativeConfig = new vermon.Config('test/config_express_test.js')
       vermon.configure(alternativeConfig)

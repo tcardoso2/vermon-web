@@ -11,6 +11,8 @@
 
 process.env.NODE_ENV = 'test'
 
+let vermon = require('vermon')
+let core = require('vermon-core-entities')
 let chai = require('chai')
 let chaiAsPromised = require('chai-as-promised')
 let should = chai.should()
@@ -32,8 +34,13 @@ after(function(done) {
 
 describe('When creating a vermon-web extension, ', function() {
 
+  xit('When vermon.use is called, it extends injects the real vermon objects to Entities of vermon-web.', function (done) {
+    //Prepare
+    vermon.use(main)
+  })
   it('It should be able to access the vermon Entities via "_" accessor.', function (done) {
     //Prepare
+    vermon.use(main)
     let Entities = main._.Entities
     Entities.should.not.equal(undefined)
     done()
