@@ -12,10 +12,10 @@ create an explicit cli tool either than what the t-motion-detector tool will
 provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
 
 * v 0.5.11:
-- Badge update after some test fixes;
-- ignoring temporarily --startweb CLI tests since last 0.5.10 build broke the cli tool (issue logged #2),
-- added message "server.js" will be deprecated in future versions;
-- Started fixing some vulnerability dependencies (critical and high vulnerability);  
+  - Badge update after some test fixes;
+  - ignoring temporarily --startweb CLI tests since last 0.5.10 build broke the cli tool (issue logged #2),
+  - added message "server.js" will be deprecated in future versions;
+  - Started fixing some vulnerability dependencies (critical and high vulnerability);  
 * v 0.5.10:Starting migration to vermon-core-entities (vermon cannot be used as dependency, to solve object type issues, can only be used for tests if really necessary); implemented injection, starting to fix express tests (WIP);  
 * v 0.5.9 :Fixing Express tests; WIP on injecting parent functions (plugins work WIP);  
 * v 0.5.8 :Added Logger middleware; Fixed request body issue showing as undefined;    
