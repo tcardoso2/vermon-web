@@ -32,7 +32,7 @@
   "name": "vermon-web",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "scripts": {
     "test": "mocha test/ --exit",
     "testserver": "node test",
