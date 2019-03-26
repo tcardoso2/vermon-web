@@ -706,3 +706,4 @@ exports.RequestDetector = RequestDetector;
 exports.inject = (parent) => {
   vermon = parent;
 }
+exports.vermon;

@@ -23,6 +23,7 @@ let rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
+console.log("This file will be deprecated in future versions! Use main instead.");
 let pm = vermon.PluginManager;
 
 //TODO: Separate into different code

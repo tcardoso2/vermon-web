@@ -30,6 +30,7 @@ let webApp = {}
   //  ╠═╝║ ║╠╩╗║  ║║    ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
   //  ╩  ╚═╝╚═╝╩═╝╩╚═╝  ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
 function reset() {
+  //Called by vermon
   log.info('Calling vermon-web plugin reset method...')
   //Do some reset stuff here
 }
@@ -196,9 +197,11 @@ function PostAddPlugin() {
 function ShouldStart() { return true }
 
   //Exports
+exports._ = undefined
 exports.getWebApp = getWebApp
-exports.reset = reset
+exports.reset = exports.Reset = reset
 exports.start = start
+exports.entities = entities
 exports.PreAddPlugin = PreAddPlugin
 exports.PostAddPlugin = PostAddPlugin
 exports.Start = start //Plugin calls "Start" with uppercase (S)

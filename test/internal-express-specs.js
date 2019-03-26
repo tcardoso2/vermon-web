@@ -220,19 +220,21 @@ describe('Before the test...', () => {
     })
 
     it('A vermon plugin should not include vermon library! Important! should be injected instead, .', function (done) {
-      should.fail("CONTINUAR AQUI!");
-    });
-
-    it('when a plugin is added, it gains a reference to the parent.', function (done) {
-      should.fail("CONTINUAR AQUI!");
-    });
-
-    it('when a plugin is added, it injects the parent with pre-defined functions in preAddPlugin.', function (done) {
-      should.fail("CONTINUAR AQUI!");
-    });
-
-    it('A plugin entities library never references vermon, it is injected instead with main which is injected with the parent.', function (done) {
-      should.fail("CONTINUAR AQUI!");
+      helperReset()
+      setTimeout(()=> {
+        //Vermon is not present if vermon.use is not run (not injected yet)
+        (main._ === undefined).should.equal(true)
+        vermon.use(main);
+        //Now it should exist
+        (main._ === undefined).should.equal(false)
+        main._.should.be.eql(vermon)
+        //console.log('Checking if parent is injected')    
+        //(vermon.GetMotionDetectorsNonSingleton === undefined).should.equal(true)
+        //(vermon.GetMotionDetectorsNonSingleton == main.GetMotionDetectorsNonSingleton).should.equal(true)
+        //console.log('Checking if plugin entities is injected')  
+        //(main.entities.vermon == vermon).should.equal(2);
+        done()      
+      }, 1000)
     });
   })
 
