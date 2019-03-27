@@ -6,10 +6,13 @@
 [![Unit tests](https://github.com/tcardoso2/vermon-web/blob/master/badge.svg)](https://github.com/tcardoso2/vermon-web/blob/master/badge.svg) 
 
 # Vermon Web
-A vermon Plugin CLI/API tool (dashboard) to monitor your Environment, Motion sensors and Notifiers.
-It has been repurposed from the original intent because I didn't see the need to
-create an explicit cli tool either than what the t-motion-detector tool will
-provide, via the npm run-script command. Provides also an Express web-application which a basic API (REST services) to view and manage the environment  
+A vermon Plugin / API tool to monitor your Environment, Motion sensors and Notifiers.
+From version 0.5.11 onwards this tool no longer works standalone, but is a plugin of vermon, so you require to install vermon npm package and can use vermon-web via:
+```
+let vermon = require('vermon')
+let vermon_web = require('vermon-web')
+vermon.use(vermon_web)
+```
 
 * v 0.5.11:
   - Badge update after some test fixes;
