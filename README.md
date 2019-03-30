@@ -13,7 +13,8 @@ let vermon = require('vermon')
 let vermon_web = require('vermon-web')
 vermon.use(vermon_web)
 ```
-
+* v 0.5.12:
+  - Added RequestDetector tests / checks for mandatory arguments;   
 * v 0.5.11:
   - Badge update after some test fixes;
   - ignoring temporarily --startweb CLI tests since last 0.5.10 build broke the cli tool (issue logged #2),

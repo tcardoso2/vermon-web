@@ -385,6 +385,9 @@ class CommandStdoutDetector extends ent.MotionDetector{
 class RequestDetector extends ent.MotionDetector{
   constructor(name, route, handler, verb = "GET"){
   	super(name);
+    if(!route) {
+      throw new Error('RequestDetector second argument (route) is mandatory');
+    }
   	this.route = route;
     this.verb = verb;
     this.setHandler(handler);

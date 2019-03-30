@@ -23,6 +23,7 @@ let express = require('express')
 let chaiHttp = require('chai-http')
 let expect = chai.expect
 let vermon = require('vermon')
+let core = require('vermon-core-entities')
 
 
 //Chai will use promises for async events
@@ -346,6 +347,25 @@ describe('Before the test...', () => {
           res.should.have.status(200)
           done()
         })
+    })
+  })
+
+  describe('Request detector class tests', function(){
+    it('RequestDetector is of type Motion Detector.', function (done) {
+      //Prepare
+      (new ent.RequestDetector('name', 'route') instanceof core.entities.MotionDetector).should.equal(true)
+      done()
+    })
+    it('RequestDetector requires a route as the second argument.', function (done) {
+      //Prepare
+      try{
+        new ent.RequestDetector("Detector")
+      } catch(e) {
+        e.message.should.equal("RequestDetector second argument (route) is mandatory")
+        done()
+        return
+      }
+      should.fail()
     })
   })
 
