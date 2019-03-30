@@ -353,7 +353,7 @@ describe('Before the test...', () => {
   describe('Request detector class tests', function(){
     it('RequestDetector is of type Motion Detector.', function (done) {
       //Prepare
-      (new ent.RequestDetector('name', 'route') instanceof core.entities.MotionDetector).should.equal(true)
+      (new ent.RequestDetector('name', 'route', () => {}) instanceof core.entities.MotionDetector).should.equal(true)
       done()
     })
     it('RequestDetector requires a route as the second argument.', function (done) {
@@ -362,6 +362,17 @@ describe('Before the test...', () => {
         new ent.RequestDetector("Detector")
       } catch(e) {
         e.message.should.equal("RequestDetector second argument (route) is mandatory")
+        done()
+        return
+      }
+      should.fail()
+    })
+    it('RequestDetector requires a function handler as the third argument.', function (done) {
+      //Prepare
+      try{
+        new ent.RequestDetector("Detector", "/route")
+      } catch(e) {
+        e.message.should.equal("RequestDetector third argument (function handler) is mandatory")
         done()
         return
       }

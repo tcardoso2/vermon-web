@@ -388,6 +388,9 @@ class RequestDetector extends ent.MotionDetector{
     if(!route) {
       throw new Error('RequestDetector second argument (route) is mandatory');
     }
+    if(!handler) {
+      throw new Error('RequestDetector third argument (function handler) is mandatory');
+    }
   	this.route = route;
     this.verb = verb;
     this.setHandler(handler);
