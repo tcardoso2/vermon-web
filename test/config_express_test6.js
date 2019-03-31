@@ -1,11 +1,7 @@
 profiles = {
   default: {
     ExpressEnvironment: {
-      port: 8378,
-      static_addr: undefined,
-      command: 'ping -c 1 localhost',
-      interval: 200000,
-      maxAttempts: 2
+      port: 8378
     },
     RequestDetector: {
       name: 'My Detectors Route',
@@ -15,13 +11,7 @@ profiles = {
 	  SlackNotifier: {
 	    name: 'My Slack channel',
 	    key: 'https://hooks.slack.com/services/<MySlackURL>'
-	  },
-    SystemEnvironmentFilter: [
-      {
-        freeMemBelow: 300000,
-        applyTo: ['My Detectors Route', 'My route for detectors'],
-        stdoutMatchesRegex: 'Will never match this value'
-      }]
+	  }
   }
 }
 

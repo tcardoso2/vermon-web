@@ -67,13 +67,12 @@ exports.profiles = profiles;
 exports.default = profiles.default;
  */
 
-class ExpressEnvironment extends ext.SystemEnvironment {
+class ExpressEnvironment extends ent.Environment {
   
-  constructor(port, static_addr, command = "pwd", interval = 10000, maxAttempts = 10, listen = true, killAfter = 1){
-    super(command, interval, killAfter);
+  constructor(port, static_addr, listen = true){
+    super();
     this.port = port && Number.isInteger(port) ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
-    this.maxAttempts = maxAttempts;
     this.name = "Express Environment";
     this.listening = false;
     app = express();

@@ -489,9 +489,6 @@ describe('Before the test...', () => {
               myEnv.exit()
               console.log(res.body)
               res.should.have.status(200)
-              res.body.currentState.cpus.should.not.equal(undefined)
-              res.body.currentState.freemem.should.not.equal(undefined)
-              res.body.currentState.totalmem.should.not.equal(undefined)
               if(!_done){
                 _done = true             
                 done()
@@ -675,7 +672,7 @@ describe('Before the test...', () => {
       let alternativeConfig = new vermon.Config('test/config_express_test7.js')
       vermon.use(main)
       vermon.configure(alternativeConfig)
-      vermon.watch().then(({ e1, d, n, f } )=>{
+      vermon.watch().then(({ e1, d, n, f })=>{
         let myEnv = vermon.GetEnvironment();
         (myEnv instanceof ent.MultiEnvironment).should.equal(true)
      

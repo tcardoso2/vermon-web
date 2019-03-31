@@ -13,8 +13,11 @@ let vermon = require('vermon')
 let vermon_web = require('vermon-web')
 vermon.use(vermon_web)
 ```
+* v 0.5.13:
+  - ExpressEnvironment now inherits Environment class and not SystemEnvironment to fix complexity issues
 * v 0.5.12:
-  - Added RequestDetector tests / checks for mandatory arguments;   
+  - Added RequestDetector tests / checks for mandatory arguments;
+  - Upgraded to vermon-core-entities 0.5.6 to fix unwanted behaviour of Environment running underlying command from SystemEnvironment;
 * v 0.5.11:
   - Badge update after some test fixes;
   - ignoring temporarily --startweb CLI tests since last 0.5.10 build broke the cli tool (issue logged #2),
