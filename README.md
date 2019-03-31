@@ -13,6 +13,8 @@ let vermon = require('vermon')
 let vermon_web = require('vermon-web')
 vermon.use(vermon_web)
 ```
+* v 0.5.14:
+  - vermon-core-entities 0.5.9 dependency upgrade to fix StompNotifier bug;  
 * v 0.5.13:
   - ExpressEnvironment now inherits Environment class and not SystemEnvironment to fix complexity issues
   - vermon-core-entities 0.5.8 dependency upgrade;  
