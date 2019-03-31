@@ -15,6 +15,7 @@ vermon.use(vermon_web)
 ```
 * v 0.5.13:
   - ExpressEnvironment now inherits Environment class and not SystemEnvironment to fix complexity issues
+  - vermon-core-entities 0.5.8 dependency upgrade;  
 * v 0.5.12:
   - Added RequestDetector tests / checks for mandatory arguments;
   - Upgraded to vermon-core-entities 0.5.6 to fix unwanted behaviour of Environment running underlying command from SystemEnvironment;
