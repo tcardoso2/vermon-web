@@ -1,7 +1,9 @@
 profiles = {
   default: {
     ExpressEnvironment: {
-      port: 8378
+      port: 8378,
+      static_addr: undefined,
+      maxAttempts: 2
     },
     RequestDetector: {
       name: 'My Detectors Route',

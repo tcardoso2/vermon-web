@@ -69,11 +69,12 @@ exports.default = profiles.default;
 
 class ExpressEnvironment extends ent.Environment {
   
-  constructor(port, static_addr, listen = true){
+  constructor(port, static_addr, maxAttempts = 10, listen = true){
     super();
     this.port = port && Number.isInteger(port) ? port : defaultPort;
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
     this.name = "Express Environment";
+    this.maxAttempts = maxAttempts;
     this.listening = false;
     app = express();
     //Basic request logger
