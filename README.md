@@ -13,6 +13,8 @@ let vermon = require('vermon')
 let vermon_web = require('vermon-web')
 vermon.use(vermon_web)
 ```
+* v 0.5.16:
+  - vermon-core-entities 0.5.12 dependency upgrade which adds RequestReplyWorker to the Notifiers available;  
 * v 0.5.15:
   - vermon-core-entities 0.5.10 dependency upgrade to fix StompNotifier bug not stringifying json;  
 * v 0.5.14:

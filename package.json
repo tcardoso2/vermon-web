@@ -13,7 +13,7 @@
     "readline": "^1.3.0",
     "request": "^2.81.0",
     "socket.io": "^2.1.1",
-    "vermon-core-entities": "^0.5.10"
+    "vermon-core-entities": "^0.5.12"
   },
   "devDependencies": {
     "chai": "*",
@@ -32,7 +32,7 @@
   "name": "vermon-web",
   "main": "main",
   "readmeFilename": "README.md",
-  "version": "0.5.15",
+  "version": "0.5.16",
   "scripts": {
     "test": "mocha test/ --exit",
     "testserver": "node test",
