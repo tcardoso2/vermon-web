@@ -3,7 +3,9 @@
 [![Travis build status](https://travis-ci.org/tcardoso2/vermon-web.png?branch=master)](https://travis-ci.org/tcardoso2/t-motion-detector-cli)
 [![dependencies](https://david-dm.org/tcardoso2/vermon-web.svg)](https://david-dm.org/tcardoso2/vermon-web.svg)
 
-[![Unit tests](https://github.com/tcardoso2/vermon-web/blob/master/badge.svg)](https://github.com/tcardoso2/vermon-web/blob/master/badge.svg) 
+[![Unit tests](https://github.com/tcardoso2/vermon-web/blob/master/badges/badge.svg)](https://github.com/tcardoso2/vermon-web/blob/master/badges/badge.svg) 
+
+[![Missing tests](https://github.com/tcardoso2/vermon-web/blob/master/badges/missing_tests.svg)](https://github.com/tcardoso2/vermon-web/blob/master/badges/missing_tests.svg) 
 
 # Vermon Web
 A vermon Plugin / API tool to monitor your Environment, Motion sensors and Notifiers.
