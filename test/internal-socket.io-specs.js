@@ -6,7 +6,7 @@
  * for tests which are NOT using the npm tarball pack
  * For all others, the test should obviously include
  * something like:
- * var md = require('t-motion-detector');
+ * var vermon = require('vermon');
  *****************************************************/
 
 let chai = require('chai')
@@ -19,7 +19,9 @@ let chaiHttp = require('chai-http')
 let io = require('socket.io')()
 let motion = main._
 let client = require('socket.io-client')
+let core = require('vermon-core-entities')
 let socket = client('http://localhost:2999')
+
 
 //Chai will use promises for async events
 chai.use(chaiAsPromised)
@@ -48,7 +50,7 @@ var socketDetector
 describe('When a SocketIONotifier is created, ', function() {
   it('Should inherit the Notifier class', function () {
     socketNoti = new ent.SocketIONotifier('Socket Notifier 1');
-    (socketNoti instanceof motion.Entities.BaseNotifier).should.equal(true)
+    (socketNoti instanceof core.entities.BaseNotifier).should.equal(true)
   })
 
   it('Should be able to stop an existing Socket Notifier - Part 1 check that the socket disconnect event runs', function (done) {
@@ -126,7 +128,7 @@ describe('When a SocketIONotifier is created, ', function() {
 describe('When a SocketDetector is created, ', function() {
   it('Should inherit the Detector class', function () {
     socketDetector = new ent.SocketIODetector('socket 1');
-    (socketDetector instanceof motion.Entities.MotionDetector).should.equal(true)
+    (socketDetector instanceof core.entities.MotionDetector).should.equal(true)
   })
 
   xit('It should connect by default on port 2999 (Standalone)', function (done) {

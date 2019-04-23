@@ -25,7 +25,7 @@ let expect = chai.expect
 let vermon = require('vermon')
 let core = require('vermon-core-entities')
 
-
+vermon.setLogLevel('info')
 //Chai will use promises for async events
 chai.use(chaiAsPromised)
 chai.use(chaiHttp)
@@ -40,6 +40,7 @@ function helperReset(){
   //delete require.cache[require.resolve('chai-http')];
   main = require('../main')
   vermon = require('vermon')
+  vermon.setLogLevel('info')
   mainEnv = {}
   //chaiHttp = require('chai-http');
   //chai.use(chaiAsPromised);
@@ -84,14 +85,15 @@ describe('Before the test...', () => {
       //Works when the module is called individually but seems not to work when called in bulk
       helperReset()
       vermon.use(main)
-      //This is just a basic test, so all i need to do is start.
-      main.start()
-      chai.request(main.getWebApp())
-        .get('/welcome')
-        .end((err, res) => {
-          res.should.have.status(200)
-          res.body.should.be.eql({message: 'Welcome to Vermon Web server!'})
-          done()
+      vermon.configure('test/config_express_only_test.js')
+      vermon.watch().then((e,d,n,f) =>{
+        chai.request(main.getWebApp())
+          .get('/welcome')
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.body.should.be.eql({message: 'Welcome to Vermon Web server!'})
+            done()
+          })
         })
     })
 
@@ -113,7 +115,7 @@ describe('Before the test...', () => {
             done()
           })
       }).catch((e) => {
-        should.fail()
+        should.fail(e)
       })
     })
 
@@ -497,6 +499,31 @@ describe('Before the test...', () => {
         })
       })
     })
+  })
+
+  describe('Request detector', function() {
+    it('handler function should pass in the environment as 3rd argument', function (done) {
+      this.timeout(3000)
+      helperReset()
+      let alternativeConfig = new vermon.Config('test/config_express_test8.js')
+      vermon.use(main)
+      vermon.configure(alternativeConfig)
+      vermon.watch().then((data)=>{
+        console.log('Requesting GET on /test8...')
+        console.log(data.environment)
+        setTimeout(() => {        
+          chai.request(data.environment.getWebApp())
+            .get('/welcome')
+            .end((err, res) => {
+              (err == null).should.equal(true)
+              console.log('Got response!')
+              res.should.have.status(200)
+              response.body.should.be.eql({})
+              done()
+            })
+          }, 1000)
+      })
+   })
   })
 
   describe('vermon.force function must work within a plugin', function() {

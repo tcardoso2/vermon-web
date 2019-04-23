@@ -15,6 +15,10 @@ let vermon = require('vermon')
 let vermon_web = require('vermon-web')
 vermon.use(vermon_web)
 ```
+* v 0.5.18:
+  - Bug fixes which were causing several express instances to be created, now only one express instance can exist per process;  
+* v 0.5.17:
+  - vermon-core-entities 0.5.13 dependency, bug fixes;  
 * v 0.5.16:
   - vermon-core-entities 0.5.12 dependency upgrade which adds RequestReplyWorker to the Notifiers available;  
 * v 0.5.15:

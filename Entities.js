@@ -1,24 +1,25 @@
 "use strict"
 
-let vermon; //Vermon is no longer imported, but injected in real-time via the 'vermon.use' function
-let core = require('vermon-core-entities');
+let vermon //Vermon is no longer imported, but injected in real-time via the 'vermon.use' function
+let core = require('vermon-core-entities')
 //Vermon utils might be a separate library!
-let ent = core.entities;
-var log = core.utils.log;
-let ext = core.extensions;
-let express = require('express');
-let io = require('socket.io')();
-let clientIOFact = require('socket.io-client');
-let bodyParser = require('body-parser');
-let path = require("path");
-let app;
-let assert = require("assert");
-const defaultPort = 8080;
-let pkg = require('./package.json');
-let ko = require("knockout");
+let ent = core.entities
+var log = core.utils.log
+let ext = core.extensions
+let express = require('express')
+let io = require('socket.io')()
+let clientIOFact = require('socket.io-client')
+let bodyParser = require('body-parser')
+let path = require("path")
+let app = null
+let assert = require("assert")
+const defaultPort = 8080
+let pkg = require('./package.json')
+let ko = require("knockout")
 //Increases when a new socket connection is available 'connect' event
-let newSocketConnections = 0;
-let _this; //Used for convenience on Express environment, when scope this is lost inside express.
+let newSocketConnections = 0
+let _this //Used for convenience on Express environment, when scope this is lost inside express.
+let listenLock = false //Used to prevent other attempts to listen to a port when a first attempt has already been made but it is not yet concluded
 /**
  * Wraps an Express web-server, which will allow viewing all the Motion Detectors and
  * Notifiers in the system. See more in
@@ -75,8 +76,12 @@ class ExpressEnvironment extends ent.Environment {
     this.static_addr = static_addr ? static_addr : path.join(__dirname, '/public'); 
     this.name = "Express Environment";
     this.maxAttempts = maxAttempts;
-    this.listening = false;
+    this.isListening = false;
+    if(app) {
+      throw new Error('Only one express application per process can exist!')
+    }
     app = express();
+    this.getWebApp = () => app
     //Basic request logger
     this.setBodyParser();
     app.use(requestLogger);
@@ -93,47 +98,54 @@ class ExpressEnvironment extends ent.Environment {
     app.use(bodyParser.json());
   }
 
-  listenNext(err){
-    this.listening = false;
-    log.warn(`Some error happened while attempting to listen to port ${_this.port}, attempting next port...`);
+  listenNext(err, interval = 5000){
+    this.isListening = false;
+    log.warn(`Some error happened while attempting to listen to port ${this.port}, attempting next port in ${interval} milliseconds...`);
     log.error(err)
-    this.port++;
-    return this.listen();
+    setTimeout(()=>{
+      this.port++;
+      return this.listen();
+    }, interval)
   }
 
   listen()
   {
-    if (this.listening) {
+    if (this.isListening) {
       log.warning("Ignoring listen request because server is already listening...");
-      return false;
+      return false
+    }
+    if (listenLock) {
+      log.warning("Ignoring listen request because app is already locked for listening...");
+      return false
     }
     log.info(`Setting static address to ${this.static_addr} and preparing to listen on port ${this.port}...`);
-    this.setStatic(this.static_addr);
+    this.setStatic(this.static_addr)
 
     let e = this;
     app.get("/welcome", (req, res) => {
-      e.addChange(req.url);
-      res.json({message: "Welcome to Vermon Web server!"});
-    });
+      e.addChange(req.url)
+      res.json({message: "Welcome to Vermon Web server!"})
+    })
     app.get("/version", (req, res) => {
-      e.addChange(req.url);
-      res.json({version: pkg.version});
-    });
-    this.maxAttempts--;
+      e.addChange(req.url)
+      res.json({version: pkg.version})
+    })
+    this.maxAttempts--
+    listenLock = true
     log.info(`Attempting to listen to port ${this.port}. Number of remaining attempts ${this.maxAttempts}...`);
-    if(this.maxAttempts > 0){
-      this.server = app.listen(this.port,
-        (v) => {
-          console.log('╔═════════════════════════════════════════════╗')
-          console.log(`║             Server Started!!!!!             ║`)
-          console.log('╚═════════════════════════════════════════════╝')  
-          log.info(`Listening successful to port ${this.port}!`);          
-        })
-        .on('error', (error) => {
-          this.listenNext(error)  
-        });
-
-      this.listening = true;
+    if(this.maxAttempts > 0 && !this.isListening){
+      let _server = this
+      this.server = app.listen(this.port, () => {
+        console.log('╔═════════════════════════════════════════════╗')
+        console.log(`║             Server Started!!!!!             ║`)
+        console.log('╚═════════════════════════════════════════════╝')
+        _server.isListening = true
+        log.info(`Listening successful to port ${this.port}!`);          
+      }).on('error', (error) => {
+        log.error("Ooooops some error happened when attempting to listen to port, will attempt to listen to next port...")
+        listenLock = false
+        this.listenNext(error)
+      });
       return true;
     }
     return false;
@@ -149,31 +161,26 @@ class ExpressEnvironment extends ent.Environment {
     return this.static_addr;
   }
 
-  /* Gets a reference to the express web-app */
-  getWebApp()
-  {
-    return app;
-  }
-
   //Only when Detector is binded, it is added to the app
   bindDetector(md, notifiers, force = false){
 
     super.bindDetector(md, notifiers, force);
     let e = this;
-      if(md instanceof RequestDetector) {
+    if(md instanceof RequestDetector) {
       log.info(`Adding route: ${md.route} with verb: ${md.verb}`);
       switch (md.verb)
       {
-  	case "GET": 
+  	    case "GET": 
           app.get(md.route, (req, res) => {
-    	  	  md.send(req.url, e);;
-    	  	  md.handler(req, res);
+    	  	  md.send(req.url, e)
+    	  	  md.handler(req, res, e)
   	      });
+          console.log(`Added ${md.verb}: ${md.route}`)
           break;
         case "POST":    
           app.post(md.route, (req, res) => {
-            md.send(req.url, e);;
-            md.handler(req, res);
+            md.send(req.url, e)
+            md.handler(req, res, e)
           });
           break;
         default:
@@ -193,18 +200,29 @@ class ExpressEnvironment extends ent.Environment {
     //Do some closing steps here.
     log.info("Server will stop listening...");
     //Cleaning up on listeners...
-    app.removeListener('error', this.listenNext);
+    app.removeListener('error', this.listenNext)
     if(this.server){
-      this.server.close();
-      log.info("Server closed.");
+      this.server.close()
+      log.info("Server closed.")
     }
   }
 
   kill()
   {
-    this.stop();
-    app = {};
+    this.stop()
+    app = {}
+    listenLock = false
+    _this = undefined
   }
+}
+
+function appExists() {
+  return app != null
+}
+
+function appInstance() {
+  if(!appExists) throw new Error('There is no Express environment instance yet')
+  return app
 }
 
 //Express Middleware: TODO: Move to another more meaningful file
@@ -429,6 +447,7 @@ class RequestDetector extends ent.MotionDetector{
         }
       };
     } else {
+      console.log("%%%%%%%%% FUNCTION SET!")
       this.handler = handler;
     }    
   }
@@ -695,21 +714,23 @@ function getParent() {
 }
 
 //Extending Entities Factory
-const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector, APIEnvironment };
+const classes = { CommandStdoutDetector, ExpressEnvironment, RequestDetector, APIEnvironment }
 
-new ent.EntitiesFactory().extend(classes);
+new ent.EntitiesFactory().extend(classes)
 
-exports.GetHistoricalSocketConnections = () => newSocketConnections;
-exports.SocketIODetector = SocketIODetector;
-exports.SocketIONotifier = SocketIONotifier;
-exports.CommandStdoutDetector = CommandStdoutDetector;
-exports.DecisionNodeDetector = DecisionNodeDetector;
-exports.defaultPort = defaultPort;
-exports.ExpressEnvironment = ExpressEnvironment;
-exports.DecisionTreeEnvironment = DecisionTreeEnvironment;
-exports.APIEnvironment = APIEnvironment;
-exports.RequestDetector = RequestDetector;
+exports.GetHistoricalSocketConnections = () => newSocketConnections
+exports.SocketIODetector = SocketIODetector
+exports.SocketIONotifier = SocketIONotifier
+exports.CommandStdoutDetector = CommandStdoutDetector
+exports.DecisionNodeDetector = DecisionNodeDetector
+exports.defaultPort = defaultPort
+exports.ExpressEnvironment = ExpressEnvironment
+exports.DecisionTreeEnvironment = DecisionTreeEnvironment
+exports.APIEnvironment = APIEnvironment
+exports.RequestDetector = RequestDetector
 exports.inject = (parent) => {
-  vermon = parent;
+  vermon = parent
 }
-exports.vermon;
+exports.vermon
+exports.appExists = appExists
+exports.appInstance = appInstance

@@ -18,13 +18,13 @@ let core = require('vermon-core-entities')
 let log = core.utils.setLevel('info')
 let entities = require('./Entities')
 let bodyParser = require('body-parser')
+let assert = require('assert')
 
   //  ╔═╗╦═╗╦╦ ╦╔═╗╔╦╗╔═╗  ╔═╗╦═╗╔═╗╔═╗╔═╗╦═╗╔╦╗╦╔═╗╔═╗
   //  ╠═╝╠╦╝║╚╗║╠═╣ ║ ║╣   ╠═╝╠╦╝║ ║╠═╝║╣ ╠╦╝ ║ ║║╣ ╚═╗
   //  ╩  ╩╚═╩ ╚╝╩ ╩ ╩ ╚═╝  ╩  ╩╚═╚═╝╩  ╚═╝╩╚═ ╩ ╩╚═╝╚═╝
 let port = process.env.VERMON_PORT || 3300
 let mainEnv = {}
-let webApp = {}
 
   //  ╔═╗╦ ╦╔╗ ╦  ╦╔═╗  ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
   //  ╠═╝║ ║╠╩╗║  ║║    ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
@@ -33,27 +33,34 @@ function reset() {
   //Called by vermon
   log.info('Calling vermon-web plugin reset method...')
   //Do some reset stuff here
+  getExpressEnvironment().kill()
 }
 
 function start(e,m,n,f,config) {
   log.info('Calling vermon-web plugin start method, with parameters...')
-  createMainEnvironment()
-  setupEnvironment(e)
-  setupWebServer()
+  if (!entities.appExists()) {
+    createMainEnvironment()
+    setupEnvironment(e)
+  }
   setupRoutes(m)
+  getPort()
 }
 
 function getWebApp() {
-  log.info('Running getWebApp...')
-  if(!(webApp && webApp.request)) {
-    setupWebServer()
+  log.info(`Running getWebApp... (Exists: ${entities.appExists()})`)
+  if(!(webApp() && webApp().request)) {
+    getPort()
   }
-  return webApp
+  return webApp()
 }
 
   //  ╔═╗╦═╗╦╦ ╦╔═╗╔╦╗╔═╗  ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
   //  ╠═╝╠╦╝║╚╗║╠═╣ ║ ║╣   ║╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
   //  ╩  ╩╚═╩ ╚╝╩ ╩ ╩ ╚═╝  ╩  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
+function webApp() {
+  return entities.appInstance()
+}
+
 function setupRoutes(routes) {
   log.info('Setting up routes...')
   if (parametersExist(routes)) {
@@ -98,17 +105,14 @@ function addRoutes(detectors) {
   vermon.AddDetector(detectors); 
 }
 
-function setupWebServer() {
-  log.info('Setting up web-server...')
+function getPort() {
+  log.info('Getting port...')
   try {
     port = getExpressEnvironment().port ? getExpressEnvironment().getPort() : port
   } catch(e) {
     log.error('Error getting environment, ignoring...')
     log.error(e)
   }
-  console.log('╔═════════════════════════════════════════════╗')
-  console.log(`║     Setting up WEB SERVER on port ${port}...   ║`)
-  console.log('╚═════════════════════════════════════════════╝')  
 }
 
 function setupEnvironment(e) {
@@ -152,9 +156,9 @@ function initCLI() {
 }
 
 function createMainEnvironment(listen = false) {
-  log.info('Creating express environment...')
-  mainEnv = new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, listen)
-  webApp = mainEnv.getWebApp()
+  log.info(`Creating express environment... ${mainEnv ? mainEnv.port : mainEnv}`)
+  assert(mainEnv)
+  new entities.ExpressEnvironment(port, undefined, undefined, 200000, 10, listen)
 }
 
 //in case a MultiEnvironment exists, this module must be able to find the underlying ExpressEnvironment
