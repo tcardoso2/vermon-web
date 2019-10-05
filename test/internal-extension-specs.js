@@ -58,6 +58,10 @@ describe('When creating a vermon-web extension, ', function() {
 })
 
 describe('When creating a NetworkDetector, ', function() {
+  xit('It should detect the current discoverable nodes present in the network via nmap.', function (done) {
+    //nmap -sn 192.168.0.0/24
+  })
+  
   xit('It should detect the current discoverable nodes present in the network.', function (done) {
     //Prepare
     
