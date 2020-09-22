@@ -38,7 +38,7 @@
     "url": "https://github.com/mcasimir/mobile-angular-ui/issues"
   },
   "devDependencies": {
-    "angular": "1.5.8",
+    "angular": "1.8.0",
     "angular-mocks": "1.5.8",
     "angular-route": "1.5.8",
     "babel-core": "6.11.4",
